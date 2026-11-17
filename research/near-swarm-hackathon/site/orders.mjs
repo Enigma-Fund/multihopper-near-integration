@@ -69,7 +69,7 @@ export async function verifyOrderSignature(origin, body, now = Date.now()) {
   if (!await crypto.subtle.verify('Ed25519', key, bytes, encoder.encode(message))) throw Error('Wallet signature verification failed');
 }
 export function approvalRecord(db,origin,body,item='',reference){
-  const evidence={origin,message:signedMessage(origin,body),signature:body.signature};
+  const evidence={origin,acceptedAt:Date.now(),expires:body.expires,message:signedMessage(origin,body),signature:body.signature};
   if(body.action==='link')evidence.nearProof=body.nearProof;
   const checks={create:['SELECT 1 FROM swarm_orders WHERE owner=? AND id=? AND recipient=? AND budget=? AND cap=?',[body.recipient,body.budget,body.limit]],
     link:['SELECT 1 FROM swarm_near_links WHERE owner=? AND id=? AND job_key=?',[reference]],invoice:['SELECT 1 FROM swarm_invoices WHERE owner=? AND id=? AND external_id=?',[reference]]};

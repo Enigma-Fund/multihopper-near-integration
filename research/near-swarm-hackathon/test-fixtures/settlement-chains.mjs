@@ -7,7 +7,7 @@ import {tmpdir} from 'node:os';
 import {mkdtempSync,writeFileSync,rmSync,readFileSync,openSync,closeSync} from 'node:fs';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
-import {Sandbox} from '../../hub/near/sandbox/node.mjs';
+import {LocalNearJobs} from '../near-local.mjs';
 import {key,keyFromSeed,sha,base58} from '../../hub/near/sandbox/rpc.mjs';
 import {nearMessage,nearDigest} from '../site/near-job.mjs';
 import {signedMessage} from '../site/orders.mjs';
@@ -38,11 +38,11 @@ const routes=[0,1].map(()=>{
 const node=spawn(tools,['--ledger',join(temp,'ledger'),'--bind-address','127.0.0.1','--rpc-port','19541','--faucet-port','19544','--gossip-port','19545','--dynamic-port-range','19546-19575','--bpf-program',program.toBase58(),binary,...accounts,'--quiet'],{stdio:['ignore',log,log]});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function rpc(method,params){const r=await(await fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id:1,jsonrpc:'2.0',method,params}),signal:AbortSignal.timeout(5000)})).json();if(r.error)throw Error(JSON.stringify(r.error));return r.result;}
-const db=store(),txs=new Map();let near;
+const db=store(),txs=new Map();let near,nearApp;
 try{
  for(let i=0;;i++){try{if(await rpc('getHealth',[])==='ok')break;}catch{}if(i>100||node.exitCode!==null)throw Error('Local validator unavailable: '+readFileSync(logfile,'utf8').slice(-1000));await pause(200);}
  const genesisHash=await rpc('getGenesisHash',[]);assert.notEqual(genesisHash,'5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d');
- near=await Sandbox.create();await near.account('alice.synthetic');await near.rpc.verify();
+ nearApp=await LocalNearJobs.start();near=nearApp.sandbox;await near.rpc.verify();
  const id=randomUUID(),nearOwner='alice.synthetic',nearKey=key(nearOwner),job={recipient:agent.publicKey.toBase58(),budget:'11000000',cap:'5000000'};
  const mk=(pubkey,isSigner=false,isWritable=false)=>({pubkey,isSigner,isWritable});
  async function unsigned(payer,ixs){const {blockhash}=(await rpc('getLatestBlockhash',[{commitment:'confirmed'}])).value;return new Transaction({feePayer:payer.publicKey,recentBlockhash:blockhash}).add(...ixs);}
@@ -62,10 +62,14 @@ try{
  const b={id,owner,expires:Date.now()+230000,action,...data};b.signature=sign(null,Buffer.from(signedMessage(origin,b)),ownerEd.privateKey).toString('hex');
  const r=await serve(new Request(origin+'/near-swarm/api/'+(action==='create'?'orders':'settlement'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}),{SWARM_JOBS:db},{},undefined,services);
  const j=await r.json();assert.equal(r.status,200,JSON.stringify(j));return j;}
+ // Create the NEAR grant and job through the ordinary product entry point.
+ const nearJob=await nearApp.create(owner,'dual-chain-job','100','30');
+ assert.equal(nearJob.status,'active');assert.equal(nearJob.remaining,'100');
  await api('create',{...job,limit:job.cap});
  const body={id,owner,nearOwner,nearJobId:'dual-chain-job',expires:Date.now()+230000},nonce=randomBytes(32);
  const digest=await nearDigest(nearMessage(origin,body,job),nonce,new URL(origin).host);
  const linked=await api('link',{...body,nearProof:{nonce:nonce.toString('hex'),publicKey:nearKey.publicKey,accountId:nearOwner,signature:sign(null,Buffer.from(digest),nearKey.privateKey).toString('base64')}});
+ assert.equal(linked.jobKey,nearApp.jobKeys.get(owner+':dual-chain-job').key);
  async function wallet(invoice,mode){
  const params={invoice,mode,extra:'1000000'},batch=await api('prepare-wallet',params),tx=Transaction.from(Buffer.from(batch.items[0].bytes,'base64'));tx.partialSign(ownerKey);
  const s=await api('wallet-step',{...params,step:0,signedTx:serialize(tx)});await finalized(s.signature);
@@ -82,5 +86,7 @@ try{
  const payout=await api('refresh',{invoice:'payout'});assert.equal(payout.status,'payout-confirmed');assert.equal(payout.creditedLamports,'4999990');
  const tr=await services.status('2');tr.phase='recoverable';tr.recovery={canRescue:true};await wallet('recovery','recovery');
  const refund=await api('refresh',{invoice:'recovery'});assert.equal(refund.status,'recovery-credit-confirmed');assert.equal(refund.creditedLamports,'7999990');assert.equal(refund.jobKey,linked.jobKey);
- console.log(JSON.stringify({network:'local validators',job:linked.jobKey,payout:{status:payout.status,credit:payout.creditedLamports,slot:payout.transactions[0].slot},recovery:{status:refund.status,credit:refund.creditedLamports,slot:refund.transactions[0].slot},scope:'Simulated MultiHopper API and screening signer. Real local NEAR access key, Solana orchestrator and finality.'}));
-}finally{if(near)await near.cleanup();if(node.exitCode===null&&node.signalCode===null){const stopped=once(node,'exit');node.kill('SIGTERM');await stopped;}closeSync(log);rmSync(temp,{recursive:true,force:true});}
+ const nearClosed=await nearApp.fail(owner,'dual-chain-job');
+ assert.equal(nearClosed.returned,'100');assert.equal(nearClosed.spent,'0');
+ console.log(JSON.stringify({nearGrantReturned:nearClosed.returned,network:'local validators',job:linked.jobKey,payout:{status:payout.status,credit:payout.creditedLamports,slot:payout.transactions[0].slot},recovery:{status:refund.status,credit:refund.creditedLamports,slot:refund.transactions[0].slot},scope:'Simulated MultiHopper API and screening signer. Real local NEAR access key, Solana orchestrator and finality.'}));
+}finally{if(nearApp)await nearApp.close();if(node.exitCode===null&&node.signalCode===null){const stopped=once(node,'exit');node.kill('SIGTERM');await stopped;}closeSync(log);rmSync(temp,{recursive:true,force:true});}

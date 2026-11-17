@@ -1,4 +1,4 @@
-import {verifyOrderSignature,JOB_MINT,approvalRecord} from './orders.mjs';
+import {signedMessage,verifyOrderSignature,JOB_MINT,approvalRecord} from './orders.mjs';
 import {hashHex,verifyNearJob} from './near-job.mjs';
 import {messageHash,verifyPayout,verifyRecovery,verifyPaymentScreen,screeningSigner} from './settlement-evidence.mjs';
 import {walletBatch} from './wallet-bundle.mjs';
@@ -19,6 +19,27 @@ function matchesQuote(t,row,job,test){
   if(t.destinations!=null && (!Array.isArray(t.destinations)||t.destinations.length!==1 ||
     t.destinations[0].wallet!==job.recipient || String(t.destinations[0].amountRaw)!==t.recipientReceivesRaw))throw Error('The payout destination or amount changed');
 }
+async function verifyStoredTerms(db,job,link,row){
+  const expected=[
+    ['create','',{recipient:job.recipient,budget:job.budget,limit:job.cap}],
+    ['link','',{nearOwner:link.near_owner,nearJobId:link.near_job}],
+    ['invoice',row.invoice,{invoice:row.invoice,recipient:job.recipient,amount:row.amount,minimum:row.minimum}]
+  ];
+  let origin;
+  for(const [action,item,fields] of expected){
+    const record=await db.prepare('SELECT statement FROM swarm_approvals WHERE owner=? AND id=? AND kind=? AND item=?').bind(row.owner,row.id,action,item).first();
+    if(!record)throw Error('The signed work-order evidence is missing');
+    const proof=JSON.parse(record.statement);
+    if(origin&&origin!==proof.origin)throw Error('Work order and invoice were signed for different sites');
+    origin=proof.origin;
+    const expires=proof.expires??Date.parse(proof.message.split('\n').at(-1).slice(9));
+    const then=proof.acceptedAt??expires-1;
+    const body={id:row.id,owner:row.owner,action,expires,...fields,signature:proof.signature};
+    if(signedMessage(origin,body,then)!==proof.message)throw Error('Stored payment terms differ from the signed work order');
+    await verifyOrderSignature(origin,body,then);
+  }
+}
+
 export async function settleOrder(db,origin,body,services){
   await verifyOrderSignature(origin,body);
   return settleVerifiedOrder(db,origin,body,services);
@@ -58,6 +79,7 @@ async function settleVerifiedOrder(db,origin,body,services){
     if(!row||row.amount!==body.amount||row.minimum!==body.minimum)throw Error('Invoice conflicts with the job budget, lifecycle or existing terms');
   }
   if(!row||row.id!==id)throw Error('Invoice not found for this work order');
+  await verifyStoredTerms(db,job,link,row);
   if(row.outcome)return displayInvoice(row,link.job_key);
   if(!services.configured)throw new ServiceUnavailable('The production Solana API connection is unavailable');
   let transfer=row.transfer_id?await services.status(row.transfer_id):await services.find(row.external_id);

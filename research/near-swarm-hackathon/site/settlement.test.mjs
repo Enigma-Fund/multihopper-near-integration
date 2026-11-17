@@ -78,6 +78,9 @@ test('two-wallet job binding, budget race, signed wallet funding, lost broadcast
  receipts.set(payout,{jsonParsed:tx});t.phase='settled';t.destinations=[{wallet:agent.owner,amountRaw:'5999990',status:'paid',payoutSignature:payout}];
  const final=await send('refresh',{invoice:'one'});assert.equal(final.status,'payout-confirmed',JSON.stringify(final));assert.equal(final.transactions[0].screening.coverage,'Payment creator and destination');
  assert.deepEqual(await send('refresh',{invoice:'one'}),final);
+ db.prepare('UPDATE swarm_orders SET cap=? WHERE owner=? AND id=?').bind('5999999',owner,id).run();
+ assert.match((await send('refresh',{invoice:'one'})).error,/signed work order/);
+ db.prepare('UPDATE swarm_orders SET cap=? WHERE owner=? AND id=?').bind(job.cap,owner,id).run();
  await assert.rejects(()=>verifyPayout(services.transaction,payout,agent.owner,'1'));
  await assert.rejects(()=>verifyPaymentScreen(tx,identity().owner,agent.owner,screener.pub));
  await assert.rejects(()=>verifyPaymentScreen(tx,owner,agent.owner,identity().pub));
