@@ -18,7 +18,7 @@ if(isNear) {
   process.once('SIGINT',shutdown);
 }
 const port = Number(process.env.PORT || 18988);
-const auth = new WalletSessions({origin:`http://127.0.0.1:${port}`});
+let auth;
 let live=null;
 if(process.env.MH_LIVE_ENABLED==='1'){
   const [dbPath,baseUrl,expectedOrigin,apiKey]=['MH_LIVE_DB_PATH','MH_LIVE_API_URL','MH_LIVE_API_ORIGIN','MH_LIVE_API_KEY'].map(k=>process.env[k]);
@@ -90,5 +90,9 @@ const server = createServer(async (req,res) => {
     return reply(res,200,{job:result,environment:isNear?'local-near-synthetic':'synthetic'});
   } catch(e) { return reply(res,400,{error:e.message}); }
 });
-server.listen(port,'127.0.0.1',()=>console.log('Synthetic demo at http://127.0.0.1:'+port));
+server.listen(port,'127.0.0.1',()=>{
+  const origin='http://127.0.0.1:'+server.address().port;
+  auth=new WalletSessions({origin});
+  console.log('Synthetic demo at '+origin);
+});
 

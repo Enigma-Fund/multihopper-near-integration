@@ -1,6 +1,15 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {OperationJournal} from './operation-journal.mjs';import {executeWalletBundle} from './wallet-execution.mjs';
 const owner='11111111111111111111111111111111',signature='1'.repeat(64),bundle={keeperFundingTx:'YWJj',routeInitTxs:[{base64:'ZGVm'}],orchestratorInitTx:null,sessionInitTxs:[],dispersionInitTxs:[],recentBlockhash:'mockhash',lastValidBlockHeight:99};
 function fixtures(journal){let sends=0;return {params:{bundle,owner,expected:{recipient:'synthetic'},operationId:'operation_123',journal,inspector:{inspect:async()=>({valid:true,owner,recentBlockhash:'mockhash'})},wallet:{signAndSend:async()=>{sends++;return signature;}},rpc:{confirm:async()=>({final:true,error:null})}},sends:()=>sends};}
+test('an empty response cannot be recorded as a successful wallet execution',async()=>{
+ const journal=new OperationJournal(':memory:');
+ try {
+  const f=fixtures(journal);
+  f.params.bundle={...bundle,keeperFundingTx:null,routeInitTxs:[]};
+  await assert.rejects(executeWalletBundle(f.params),/no transactions/);
+  assert.equal(f.sends(),0);
+ } finally {journal.close();}
+});
 test('validates the whole bundle before signing and never resends on retry',async()=>{const j=new OperationJournal(':memory:'),f=fixtures(j);try{const result=await executeWalletBundle(f.params);assert.equal(result.length,2);assert.equal(f.sends(),2);await executeWalletBundle(f.params);assert.equal(f.sends(),2);}finally{j.close();}});
 test('rejected inspection stops every wallet prompt',async()=>{const j=new OperationJournal(':memory:'),f=fixtures(j);let i=0;f.params.inspector.inspect=async()=>++i===2?{valid:false}:{valid:true,owner,recentBlockhash:'mockhash'};try{await assert.rejects(()=>executeWalletBundle(f.params),/inspection/);assert.equal(f.sends(),0);}finally{j.close();}});
 test('lost wallet response stays uncertain and cannot be sent again',async()=>{const j=new OperationJournal(':memory:'),f=fixtures(j);let n=0;f.params.wallet.signAndSend=async()=>{n++;throw Error('wallet response lost');};try{await assert.rejects(()=>executeWalletBundle(f.params),/lost/);await assert.rejects(()=>executeWalletBundle(f.params),/reconciliation/);assert.equal(n,1);}finally{j.close();}});

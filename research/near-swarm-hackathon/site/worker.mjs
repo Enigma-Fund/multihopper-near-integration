@@ -1,9 +1,9 @@
 import {order} from './orders.mjs';
-import {screeningReceipt} from './receipt.mjs';
+import {screeningReceipt,lookupReceipt,ReceiptUnavailable,publicReceiptEndpoints} from './receipt.mjs';
 
 const base='/near-swarm';
 const security={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',
-  'Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.mainnet-beta.solana.com https://solana-rpc.publicnode.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"};
+  'Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.mainnet.solana.com https://solana-rpc.publicnode.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"};
 const json=(data,status=200)=>Response.json(data,{status,headers:security});
 async function input(request) {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') throw Error('JSON required');
@@ -18,27 +18,6 @@ async function input(request) {
   const data=JSON.parse(text+decoder.decode());
   if(!data || typeof data!=='object' || Array.isArray(data))throw Error('Invalid request');
   return data;
-}
-const endpoints=['https://api.mainnet-beta.solana.com','https://solana-rpc.publicnode.com'];
-class RpcUnavailable extends Error {}
-function receiptRpc(endpoint) {
-  return async (method,params)=>{
-    try {
-      const response=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(4500),redirect:'manual'});
-      if(!response.ok)throw new RpcUnavailable();
-      const data=await response.json();
-      if(data.error || data.id!==1)throw new RpcUnavailable();
-      return data.result;
-    }catch{throw new RpcUnavailable('Solana receipt service temporarily unavailable');}
-  };
-}
-async function lookup(signature,routeId,readRpc) {
-  if(readRpc)return screeningReceipt(readRpc,signature,routeId);
-  for(const endpoint of endpoints){
-    try{return await screeningReceipt(receiptRpc(endpoint),signature,routeId);}
-    catch(e){if(!(e instanceof RpcUnavailable))throw e;}
-  }
-  throw new RpcUnavailable('Solana receipt services are temporarily unavailable');
 }
 export async function serve(request,env,assets,readRpc) {
   const url=new URL(request.url);
@@ -55,11 +34,15 @@ export async function serve(request,env,assets,readRpc) {
   if(request.headers.has('origin')&&request.headers.get('origin')!==url.origin)return json({error:'Origin mismatch'},403);
   try{
     const data=await input(request);
-    if(path==='/api/screening')return json(await lookup(data.signature,data.routeId,readRpc));
+    if(path==='/api/screening'){
+      // Only an operator can configure a private archival provider. Never return its URL to the client.
+      const endpoints=env.SWARM_ARCHIVE_RPC?.startsWith('https://') ? [env.SWARM_ARCHIVE_RPC,...publicReceiptEndpoints] : publicReceiptEndpoints;
+      return json(readRpc ? await screeningReceipt(readRpc,data.signature,data.routeId) : await lookupReceipt(data.signature,data.routeId,endpoints));
+    }
     if(!env.SWARM_JOBS)return json({error:'Job storage unavailable'},503);
     return json({job:await order(env.SWARM_JOBS,url.origin,data)});
   }catch(e){
-    if(e instanceof RpcUnavailable)return json({error:e.message},503);
+    if(e instanceof ReceiptUnavailable)return json({error:e.message},503);
     if (/D1_|SQLITE|binding|database/i.test(e.message))return json({error:'Job storage unavailable'},503);
     return json({error:e instanceof SyntaxError?'Invalid JSON':e.message},400);
   }

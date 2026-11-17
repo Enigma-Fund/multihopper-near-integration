@@ -4,6 +4,7 @@ import {createHash} from 'node:crypto';
 function items(b){
  if(!b||!Array.isArray(b.routeInitTxs)||!Array.isArray(b.sessionInitTxs)||!Array.isArray(b.dispersionInitTxs)||typeof b.recentBlockhash!=='string'||!Number.isSafeInteger(b.lastValidBlockHeight)||b.lastValidBlockHeight<1)throw Error('Invalid prepared bundle');
  const v=[...(b.keeperFundingTx?[['keeper',b.keeperFundingTx]]:[]),...b.routeInitTxs.map(x=>['route',x?.base64]),...(b.orchestratorInitTx?[['orchestrator',b.orchestratorInitTx]]:[]),...b.sessionInitTxs.map(x=>['session',x]),...b.dispersionInitTxs.map(x=>['dispersion',x])];
+ if(!v.length)throw Error('Prepared bundle contains no transactions');
  if(v.length>100||v.some(([,x])=>typeof x!=='string'||x.length<4||x.length>40000||!/^[A-Za-z0-9+/]+={0,2}$/.test(x)))throw Error('Invalid transaction encoding');
  const seen=new Set();for(const [,x] of v){if(seen.has(x))throw Error('Duplicate prepared transaction');seen.add(x);}return v;
 }

@@ -1,44 +1,73 @@
 import {signedMessage} from './orders.mjs';
-import {screeningReceipt} from '/near-swarm/receipt.mjs';
+import {lookupReceipt} from '/near-swarm/receipt.mjs';
 
 const el = id => document.getElementById(id);
 const providers = [];
 let connected;
-const register = (...wallets) => {
-  for (const wallet of wallets) {
-    if (wallet?.features?.['standard:connect'] && wallet.features['solana:signMessage'] && !providers.includes(wallet)) providers.push(wallet);
-  }
+let unsubscribe;
+function forgetWallet() {
+  unsubscribe?.();
+  unsubscribe=undefined;
+  connected=undefined;
+  el('connect').textContent='Connect wallet';
+  el('job-id').value='';
+  el('order-result').textContent='';
+}
+function renderProviders() {
   const select=el('wallet');
   select.replaceChildren(...providers.map((w,i)=>new Option(w.name,String(i))));
+  if(connected?.provider && providers.includes(connected.provider))select.value=String(providers.indexOf(connected.provider));
   const injected=window.phantom?.solana || window.solana;
   if (injected?.signMessage && !providers.length) select.add(new Option('Solana wallet','injected'));
   select.hidden = select.options.length <= 1;
-  return ()=>{};
+}
+const register = (...wallets) => {
+  const added=wallets.filter(w=>w?.features?.['standard:connect'] && w.features['solana:signMessage'] && !providers.includes(w));
+  providers.push(...added);
+  renderProviders();
+  return ()=>{
+    if(added.includes(connected?.provider))forgetWallet();
+    for(const wallet of added){const index=providers.indexOf(wallet);if(index>=0)providers.splice(index,1);}
+    renderProviders();
+  };
 };
+el('wallet').addEventListener('change',forgetWallet);
 window.addEventListener('wallet-standard:register-wallet', e=>e.detail({register}));
 window.dispatchEvent(new CustomEvent('wallet-standard:app-ready',{detail:{register}}));
 register();
 
 async function connect() {
   const selected=providers[Number(el('wallet').value)];
+  const previousOwner=connected?.owner;
   if (selected) {
     const {accounts} = await selected.features['standard:connect'].connect();
     const account=accounts.find(a=>a.chains.includes('solana:mainnet') && a.features.includes('solana:signMessage'));
     if (!account) throw Error('Select an account that supports Solana message signing.');
-    connected={owner:account.address, sign:async message=>{
+    unsubscribe?.();
+    connected={owner:account.address,provider:selected,sign:async message=>{
       const [result]=await selected.features['solana:signMessage'].signMessage({account,message});
       if (!result || result.signedMessage.length!==message.length || !message.every((x,i)=>x===result.signedMessage[i])) throw Error('Wallet returned a different message.');
       return result.signature;
     }};
+    unsubscribe=selected.features['standard:events']?.on('change',event=>{
+      if(event.accounts && !event.accounts.some(a=>a.address===account.address && a.chains.includes('solana:mainnet') && a.features.includes('solana:signMessage')))forgetWallet();
+    });
   } else {
     const wallet=window.phantom?.solana || window.solana;
     if (!wallet?.connect || !wallet.signMessage) throw Error('Open this page in a Solana wallet browser or connect a compatible browser extension.');
     const {publicKey}=await wallet.connect();
-    connected={owner:publicKey.toString(),sign:async message=>(await wallet.signMessage(message,'utf8')).signature};
+    unsubscribe?.();
+    connected={owner:publicKey.toString(),provider:wallet,sign:async message=>(await wallet.signMessage(message,'utf8')).signature};
+    const changed=key=>{if(key?.toString()!==publicKey.toString())forgetWallet();};
+    wallet.on?.('accountChanged',changed);
+    wallet.on?.('disconnect',forgetWallet);
+    unsubscribe=()=>{wallet.removeListener?.('accountChanged',changed);wallet.removeListener?.('disconnect',forgetWallet);};
   }
   el('connect').textContent=connected.owner.slice(0,5)+'…'+connected.owner.slice(-5);
-  const saved=localStorage.getItem('near-swarm-job:'+connected.owner);
-  if (saved) el('job-id').value=saved;
+  if(previousOwner && previousOwner!==connected.owner)el('job-id').value='';
+  if(!el('job-id').value){
+    try {el('job-id').value=localStorage.getItem('near-swarm-job:'+connected.owner)||'';} catch { /* Optional browser storage. */ }
+  }
   return connected;
 }
 function lamports(id) {
@@ -71,8 +100,11 @@ for(const action of ['create','read','close']) button(action,'order-result',asyn
   const msg=signedMessage(location.origin,body);
   el('order-result').textContent='Review the work order in your wallet.';
   const sig=await wallet.sign(new TextEncoder().encode(msg));
+  if(wallet!==connected)throw Error('Your wallet account changed. Review the order with the current account.');
   body.signature=Array.from(sig,v=>v.toString(16).padStart(2,'0')).join('');
-  const {job}=await post('orders',body);localStorage.setItem('near-swarm-job:'+wallet.owner,id);
+  const {job}=await post('orders',body);
+  try {localStorage.setItem('near-swarm-job:'+wallet.owner,id);} catch { /* The signed order is already saved by the service. */ }
+  if(wallet!==connected)return 'Order saved for the wallet that signed it.';
   return 'Job '+job.id+' · '+job.state+' · budget '+job.budget+' lamports · per payment '+job.cap+' lamports.';
 });
 button('verify','receipt-result',async()=>{
@@ -81,20 +113,7 @@ button('verify','receipt-result',async()=>{
   try {v=await post('screening',{signature,routeId});}
   catch(error) {
     if(error.status!==503)throw error;
-    // Public data only. Some shared RPCs rate-limit data-centre traffic; the
-    // browser checks the same finalized transaction against the same program.
-    for(const endpoint of ['https://api.mainnet-beta.solana.com','https://solana-rpc.publicnode.com']){
-      try{
-        v=await screeningReceipt(async(method,params)=>{
-          const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),credentials:'omit',referrerPolicy:'no-referrer',redirect:'error',signal:AbortSignal.timeout(6500)});
-          if(!r.ok)throw Error('Solana lookup unavailable');
-          const d=await r.json();if(d.error||d.id!==1)throw Error('Solana lookup unavailable');
-          return d.result;
-        },signature,routeId);
-        break;
-      }catch(e){error=e;}
-    }
-    if(!v)throw error;
+    v=await lookupReceipt(signature,routeId);
   }
   return v.screening+' at finalized slot '+v.slot+'. Covers the '+v.coverage.toLowerCase()+'.';
 });

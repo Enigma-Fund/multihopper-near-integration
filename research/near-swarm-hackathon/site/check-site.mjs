@@ -26,12 +26,15 @@ async function send(data) {
 }
 const page=await fetch(base);assert.equal(page.status,200);assert.match(await page.text(),/Sign a work order/);
 const api=await (await fetch(base+'/api')).json();assert.equal(api.signedJobs,true);
-for(const name of ['orders','browser']){const r=await fetch(base+'/'+name+'.mjs');assert.equal(r.status,200);assert.match(r.headers.get('content-type'),/javascript/);}
+assert.equal(api.fundedPayments,false);assert.equal(api.refunds,false);
+for(const name of ['orders','browser','receipt']){const r=await fetch(base+'/'+name+'.mjs');assert.equal(r.status,200);assert.match(r.headers.get('content-type'),/javascript/);}
 const create=await signed('create');
 assert.equal((await send({...create,limit:'999'}))[0],400);
 const first=await send(create);assert.equal(first[0],200,JSON.stringify(first));assert.equal(first[1].job.state,'open');
 assert.equal((await send(create))[1].job.id,id);
 assert.equal((await send(await signed('read')))[1].job.budget,body.budget);
+const changed=await send(await signed('create',{limit:'999'}));
+assert.equal(changed[0],400);assert.match(changed[1].error,/different terms/);
 assert.equal((await send(await signed('close')))[1].job.state,'closed');
 assert.equal((await send(create))[1].job.state,'closed');
-console.log('Passed public page, API, both browser modules, signature tampering, signed create/read/close, idempotent retry and replay after closure.');
+console.log('Passed public page, API capability flags, three browser modules, signature tampering, immutable terms, signed create/read/close, idempotent retry and replay after closure.');

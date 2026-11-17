@@ -1,6 +1,18 @@
 # MultiHopper Swarm for Hire
 
-A local NEAR agent-treasury prototype with an interactive workspace, an optional disposable NEAR chain and synthetic assets. Start the local server as described below.
+[Open Swarm for Hire](https://business.multihopper.com/near-swarm/) or read the [public work-order API](https://enigma-near-swarm.multihopper-business.pages.dev/near-swarm/api).
+
+The public workspace accepts real Solana wallet message signatures for creating, reading and closing an off-chain work order. It persists terms in a dedicated database, checks the owner, origin, action, expiration, budget and per-payment limit and rejects attempts to change signed terms. A repeated creation cannot reopen a closed job. These actions do not fund a job. Public payment and refund execution are disabled. The NEAR contract integration below exercises separate agent allocations, payments and recovery with synthetic tokens.
+
+The receipt verifier checks a specified route ID and finalized transaction against the MultiHopper Solana program. It recognizes the MultiHopper screener’s route checkpoint. Independent RPC verification succeeded at slot 469384815. Hosted RPC availability varies, and the browser retries with public RPCs when the hosted lookup is unavailable. This is not a TRM-issued certificate. The official TRM mark in the header comes from the [TRM Labs press kit](https://www.trmlabs.com/press-center).
+
+**Checking a receipt.** From this directory run `node site/check-receipt.mjs TRANSACTION_SIGNATURE ROUTE_ID_HEX`. It uses the same program, network, finality and route checks as the browser and needs only public identifiers. If neither provider can retrieve the transaction, the result is unknown. Operators can configure an HTTPS archive provider in the server secret `SWARM_ARCHIVE_RPC`. Its address and credentials stay on the server.
+
+**Release status.** Judges can use a Solana wallet to sign, read and close a work order on the business-site workspace. The public API reports funded payments and refunds as disabled. Local NEAR tests exercise actual contract execution with synthetic funds. The hosted work order still needs an authenticated Solana payments service, independent validation of prepared transactions against the signed terms, and a durable connection from each NEAR job to payment and refund confirmation before customers can fund jobs.
+
+**Run the local API exercise.** With Node.js 22.13 or later, run `node --test research/near-swarm-hackathon/api.test.mjs` from the repository root. The test starts and stops its own local service, signs in two disposable wallets, pays one synthetic invoice, retries it and recovers both customers’ unused balances. This default test uses the local engine. Use the NEAR mode below to run the same requests against the contract.
+
+To reproduce the release check with a disposable unfunded signing key, run `node research/near-swarm-hackathon/site/check-site.mjs https://enigma-near-swarm.multihopper-business.pages.dev`. The check creates and closes an unfunded work order. The business site serves a static page linking to the separate workspace. Its 65 pre-existing assets were preserved.
 
 Each customer has separate agent allocations. The recorded experiment applies per-payment and total spending limits, prevents duplicate invoices, and recovers unused recognized principal after a failed job. It uses synthetic funds and software-held local test keys. Unsolicited token transfers are excluded from recognized principal and can remain stranded.
 

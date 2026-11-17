@@ -1,7 +1,38 @@
-import {test} from 'node:test';
+import {after,before,test} from 'node:test';
 import assert from 'node:assert/strict';
 import {generateKeyPairSync,randomUUID,sign} from 'node:crypto';
-const base=process.env.DEMO_TEST_BASE || 'http://127.0.0.1:18988';
+import {spawn} from 'node:child_process';
+import {once} from 'node:events';
+import {fileURLToPath} from 'node:url';
+
+let base=process.env.DEMO_TEST_BASE,child;
+before(async()=>{
+ if(base){
+  if(!/^http:\/\/127\.0\.0\.1:\d+$/.test(base))throw Error('The synthetic lifecycle check requires a loopback service.');
+  return;
+ }
+ child=spawn(process.execPath,[fileURLToPath(new URL('./server.mjs',import.meta.url))],{
+  env:{PATH:process.env.PATH,PORT:'0'},stdio:['ignore','pipe','inherit']
+ });
+ const startup=AbortSignal.timeout(10000);
+ base=await new Promise((resolve,reject)=>{
+  let buffer='';
+  const fail=()=>reject(Error('Disposable job server failed to start'));
+  child.once('error',reject);child.once('exit',fail);startup.addEventListener('abort',fail,{once:true});
+  child.stdout.on('data',data=>{
+   buffer+=data;
+   const url=buffer.match(/Synthetic demo at (http:\/\/127\.0\.0\.1:\d+)\n/);
+   if(url){startup.removeEventListener('abort',fail);child.off('exit',fail);resolve(url[1]);}
+  });
+ });
+});
+after(async()=>{
+ if(child && child.exitCode===null && child.signalCode===null){
+  const stopped=once(child,'exit');
+  child.kill('SIGTERM');
+  await stopped;
+ }
+});
 const alphabet='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 function base58(bytes) {
  let n=BigInt('0x'+bytes.toString('hex')), out='';
