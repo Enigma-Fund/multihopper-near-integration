@@ -1,0 +1,2794 @@
+{
+  "lockSha256": "4ec4c83cc403545c6dec264c1861a812be560d967362c2bd9d35cc7379d3392e",
+  "packages": [
+    {
+      "name": "Inflector",
+      "version": "0.11.4",
+      "manifestSha256": "8fb633b01ea17947fd1f76e0a447b027ddf48c019671f09e39c1338ab715605d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "allocator-api2",
+      "version": "0.2.21",
+      "manifestSha256": "ddaa434cc54a30a33bbe0096e72479d71ba5deffa2ad9bee39419d4e50b75275",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "android_system_properties",
+      "version": "0.1.6",
+      "manifestSha256": "0c52534057878bdffb8edf8c142bdf2e78eaeb954dc50a85fe1e11e82c539f61",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "anyhow",
+      "version": "1.0.104",
+      "manifestSha256": "249789761ff37004dda628765f0c9e60a61fa43cbbd2d364789dca0c789eeb59",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/anyhow-1.0.104/build.rs",
+      "procMacro": false,
+      "buildSha256": "89d1baedcff59822ed692d3a33f131c211a213bdec33c83f68b54110d9c64223",
+      "executionSourceHashes": {
+        "build.rs": "89d1baedcff59822ed692d3a33f131c211a213bdec33c83f68b54110d9c64223"
+      }
+    },
+    {
+      "name": "arbitrary",
+      "version": "1.5.0",
+      "manifestSha256": "933af5614b2e1545587a5ee9a122a468786b46dee00bcaae1c21b91cfb5321be",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "autocfg",
+      "version": "1.5.1",
+      "manifestSha256": "ed7c832b4250c3be736e040d68688c2b83a5b164a93ef533e61532cbe0d44e99",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "aws-lc-rs",
+      "version": "1.16.2",
+      "manifestSha256": "c13a940c6eb2ac2d48b934ed4d6024de054157c65065435a397acef7370776f3",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/aws-lc-rs-1.16.2/build.rs",
+      "procMacro": false,
+      "buildSha256": "791f97e6abdb685bcc722342d49f2646b3146b209f68753669c178716f6cee01",
+      "executionSourceHashes": {
+        "build.rs": "791f97e6abdb685bcc722342d49f2646b3146b209f68753669c178716f6cee01"
+      }
+    },
+    {
+      "name": "aws-lc-sys",
+      "version": "0.39.1",
+      "manifestSha256": "d8c539a9e808d47957792e575db61bc713df2ba08eae8398227b9496109e04a6",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/aws-lc-sys-0.39.1/builder/main.rs",
+      "procMacro": false,
+      "buildSha256": "2831767bfbd7e9334db0c75445f90c26421f147af06d21c7b4e42eb27656b9f3",
+      "executionSourceHashes": {
+        "builder/cc_builder/apple_aarch64.rs": "ca926578ba7a4a91b0ff37a5abd8e2289a4f98cb9b05674a998e9d8ebaa80f06",
+        "builder/cc_builder/apple_x86_64.rs": "2f874424cb8d88913c4dca97b21a6ec19c60dd759ad1ed877a7a227488776663",
+        "builder/cc_builder/linux_aarch64.rs": "6f91a146f2a7254aa8fcbe75f4b62b65900aacdd187b9e1cb6afe41e8e37a647",
+        "builder/cc_builder/linux_arm.rs": "99e2479e222bf7e21053cfa2b9f7c970b20bf0a7a3b405700fa226197e4dd793",
+        "builder/cc_builder/linux_ppc64le.rs": "8b344b24ebd86b4f438471a9b88991e78328045d49b1e3cfae8567710db7203d",
+        "builder/cc_builder/linux_x86.rs": "6f5f2211b1406b94271d93a11412242a9c2ac8d63e0460eddb4921dd6863346a",
+        "builder/cc_builder/linux_x86_64.rs": "b82ed5bcdd827836bab235c91fb8dc433890fa35bf0469f289f4c05f9e04236d",
+        "builder/cc_builder/universal.rs": "9965826ec86dc185c1e44cd499a8f7c34f66010405e74ae6c79e7a797c9ad1e3",
+        "builder/cc_builder/win_aarch64.rs": "8e05b5e112791fe4f7ceb5ede6a0c2dec319801c3747f5c27f39cc551aa9706b",
+        "builder/cc_builder/win_x86.rs": "997a111ac815607467dad689bac2cdb73c030a1f99ee1001da21fffe43bb9761",
+        "builder/cc_builder/win_x86_64.rs": "8e0e225df581f51d43e879c290ffa4e02477236735f4faec0a309fefca2e1346",
+        "builder/cc_builder.rs": "1f3d8f3e09bea8a35685dc9452b88d59c151b702e21b9109afb3403d03e54d23",
+        "builder/cmake_builder.rs": "0c7ef9cd62984d61d983623d62384f7d7de689720614182807ed41f2ba9571c8",
+        "builder/main.rs": "2831767bfbd7e9334db0c75445f90c26421f147af06d21c7b4e42eb27656b9f3",
+        "builder/nasm_builder.rs": "7d068e2d0d7fbe597e4a37ef5ad0f37f26463486dff78859affeee1e8a200bef",
+        "builder/sys_bindgen.rs": "e3e1395f2f73a7ac697fb74f23ef5a773ef9365a434a7022afd7424f4ba2b145"
+      }
+    },
+    {
+      "name": "base16ct",
+      "version": "0.2.0",
+      "manifestSha256": "5050aa1f3351bf8c11a55b9695a41f5ec4652c95d7243c5b45a301692e2782e6",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "base64",
+      "version": "0.21.7",
+      "manifestSha256": "a261c28ccafada2884a75cab0e4e67326bafe720d58c937dc235521105982165",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "base64",
+      "version": "0.22.1",
+      "manifestSha256": "52bee6a418e14918d37058fd15fccfd0f417a06fe4f9668b6f97866bf7f991e3",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "base64",
+      "version": "0.23.1",
+      "manifestSha256": "3951a99756ac9b339501a149c547ce0e24248287a10830298ea319c006090790",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "base64ct",
+      "version": "1.8.3",
+      "manifestSha256": "950ec911574afbf038e970968c9bcd03df0fe56d78eabee157012e54d487cb29",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bitflags",
+      "version": "1.3.2",
+      "manifestSha256": "87aced7532a7974eb37ab5fe6037f0abafc36d6b2d74891ecd2bf2f14f50d11e",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bitflags",
+      "version": "2.13.2",
+      "manifestSha256": "562e660adbb084de042fc9ecc5ac7ba32b5f565d53188823bab9159a027b2b44",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bitvec",
+      "version": "1.1.1",
+      "manifestSha256": "2735dda2aad59ac0e02777717f6cc94165e3265789a2ce5379a36785a2dab738",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "blake2",
+      "version": "0.10.6",
+      "manifestSha256": "44e9d8775828733264ddd041abf6faab096ddc25b4d6138c0274a5c98b000bda",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "block-buffer",
+      "version": "0.10.4",
+      "manifestSha256": "c76e4bd298cd6223882238449e31939d75613e82757ca87e249df843decf5f9a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "block-buffer",
+      "version": "0.12.1",
+      "manifestSha256": "f21191120ab1d04327657b7125f25b0e3f2bce34af5e921d3c66d24de11d5e60",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "blst",
+      "version": "0.3.17",
+      "manifestSha256": "4702ed65c5ec606f015a720a8ce5e318f6e24e3eb550caff8251ddd6ab85847b",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/blst-0.3.17/build.rs",
+      "procMacro": false,
+      "buildSha256": "3b0a6eea2bf5c4d0c327fbe48f81b900e6896bdf92d4cfafcc1010d999b0fea7",
+      "executionSourceHashes": {
+        "build.rs": "3b0a6eea2bf5c4d0c327fbe48f81b900e6896bdf92d4cfafcc1010d999b0fea7"
+      }
+    },
+    {
+      "name": "borsh",
+      "version": "1.8.1",
+      "manifestSha256": "09836fe1b88b9435bc76325860540b7960423d690258d42550d4775d0103ef27",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/borsh-1.8.1/build.rs",
+      "procMacro": false,
+      "buildSha256": "82fe063f8195129b109c988c0d33165a472d579b53dfe3342d7d78c71579b361",
+      "executionSourceHashes": {
+        "build.rs": "82fe063f8195129b109c988c0d33165a472d579b53dfe3342d7d78c71579b361"
+      }
+    },
+    {
+      "name": "borsh-derive",
+      "version": "1.8.1",
+      "manifestSha256": "ca91356fb5140b22b6c6155baf7562e03f6686eb711a900113ffccf8b6b48430",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/internals/attributes/field/bounds.rs": "a623234983edb07901d1f0c8424b871b1706b54b84b1616a0236cb10704aac65",
+        "src/internals/attributes/field/mod.rs": "6b4622ec3716e9221b6f5d64df025fe5f3c90bd140ac808723c19232fb48bbe7",
+        "src/internals/attributes/field/schema/with_funcs.rs": "42445422dc5430ec90d898bac262e0231c2d72601e2e8cdccf93c81fb9bf7ed7",
+        "src/internals/attributes/field/schema.rs": "2e4c935e34ca5a6c34163701de748148ce97b8f69161d57f037cacff004b7c95",
+        "src/internals/attributes/item/mod.rs": "48715303ea62848cd4fc0d27c2e9b4ea1f55a5e12449a06a3a19dd453a129e60",
+        "src/internals/attributes/mod.rs": "282a396fb200e4a10c25a8bb5b840f85aca4123f85e44a65d7d0550a49b736fc",
+        "src/internals/attributes/parsing.rs": "cac893619c0e810e1baab82fc29e18e879067ac67982c9fcc80916847a59d433",
+        "src/internals/cratename.rs": "2342d44cfb39bb894e5d15e4f4ff184323ead9312b5017f6112f1bb4e393cd36",
+        "src/internals/deserialize/enums/mod.rs": "da9b06287ec366f1d7cfe8a9cbb4c493e1427e93b114356cc9aeac8733191452",
+        "src/internals/deserialize/mod.rs": "5bed700efc05ae9873c6cd4670bc048554934556d33104b0e2db21edaed0c0e9",
+        "src/internals/deserialize/structs/mod.rs": "7b760779bfc19de9b5103f8536ce072ff2a9cb2e18b55919f07a038c7f324fd1",
+        "src/internals/deserialize/unions/mod.rs": "2d920688df5c4d5e767763850b9456f20ac1c571c4ed107a5c6140bbc90c4890",
+        "src/internals/enum_discriminant.rs": "9131db25af885a2c5386495f874cf972cb8545cfa862c3618ce890195721a413",
+        "src/internals/generics.rs": "3e79095261af07d093da1f3046f8ca45aa11f0ef8e69611f70db71d7291d1006",
+        "src/internals/mod.rs": "cdb2ab9c3ce905533f5c2f73557e2e08c49b1b2fc5e857eaef75e4b2e468b45b",
+        "src/internals/schema/enums/mod.rs": "0495aecf0903fb7f3d96b96fc7a2e47ecb6142960f767e0f8c53841cbd630a90",
+        "src/internals/schema/mod.rs": "d3213589932ae252141333c42e366cbbb81c327bc3348bbb252ca2dad80eb76c",
+        "src/internals/schema/structs/mod.rs": "6f09cc2555d5ca27d2f90f75e43aac4d7a1e2314e42528779550f241859f95d4",
+        "src/internals/serialize/enums/mod.rs": "f61de4278ad418f375e9530e5606bf68d0689604f30366267dff891a5ff77882",
+        "src/internals/serialize/mod.rs": "f626fe6125804c05bd2f80ccca54a874a237adb8f38a114542063ee2e473a1fe",
+        "src/internals/serialize/structs/mod.rs": "f7d64105be68199b5f740399bb34df0b8dc93b28e79f0bafe2e5ece8a884e1c3",
+        "src/internals/serialize/unions/mod.rs": "2d920688df5c4d5e767763850b9456f20ac1c571c4ed107a5c6140bbc90c4890",
+        "src/internals/test_helpers.rs": "79b3d717a9c5cee2a4a78350e8a4bb554fae6fed3e9884f315b04e6302c4537f",
+        "src/lib.rs": "1b0eaa7b0c06408ad2bac588703bc3c7a8ea5a9a72abe38cc352b5e11930c4b8"
+      }
+    },
+    {
+      "name": "bs58",
+      "version": "0.4.0",
+      "manifestSha256": "6f90891103a4bf96f21665daa114c613e5529c6247146647f01f378a454d7148",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bs58",
+      "version": "0.5.1",
+      "manifestSha256": "7e4aba10d4e35a34cf3d94ec1fbf4af0ebaf1c37f054cf3915f09d9b7492e411",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bumpalo",
+      "version": "3.20.3",
+      "manifestSha256": "a6d2d81f09f1c739f738032bbcb5ecf4d3ce56d2f75e2e8bae9c753b09a6db4c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "byteorder",
+      "version": "1.5.0",
+      "manifestSha256": "94ba374cb26f3c68fb83da2e5e7dce85920fc4fb827620b06b39d71a9d0e1e18",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bytes",
+      "version": "1.12.1",
+      "manifestSha256": "dc260d0d04b58aea819f8d6762c2feb51e66f8edd77e4e64cc1eac6f447a8143",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "bytesize",
+      "version": "1.3.3",
+      "manifestSha256": "8d2767b6dcff101f55cb6b38a14ed4083bd50f4e35a0527a8e674e4d31233060",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cc",
+      "version": "1.11.0",
+      "manifestSha256": "da5cff1b8c279ba57b6e89cc2a60dc0092e0e883248968d74e80c7b325c16f96",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cfg-if",
+      "version": "0.1.10",
+      "manifestSha256": "2cb2370b62c56a7d51b51f9e405b2f377b3ad6f7f8d33bc69e20eb819ad66012",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.5",
+      "manifestSha256": "d646663ec1bd4e8e795bd6a386cff9c374880d6237bbfa36bbac08b7f26ce65c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cfg_aliases",
+      "version": "0.2.2",
+      "manifestSha256": "714317efebb5635660abe816709d2a7e5831cd9496bc169d2f898c4bbcf470c1",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cfg_eval",
+      "version": "0.1.2",
+      "manifestSha256": "49fba3aef55c88b2f2ba9816d242a23b98ecaede22c1a41a5f68d8f305b9f5b7",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "f2e143566cba64c4758bd76dd0e3273fa8be0b0a92b90477322976823a3afd4e"
+      }
+    },
+    {
+      "name": "chrono",
+      "version": "0.4.45",
+      "manifestSha256": "89b7bdca1f8745c0894ff039971c04fc51e444becbc9eb87598509a32955b1b5",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cmake",
+      "version": "0.1.58",
+      "manifestSha256": "0121aed5881f01256018d360d58a0c5eb80abb1653d3d0bd695469df26eaef7f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "const-oid",
+      "version": "0.10.2",
+      "manifestSha256": "591ac78fc8cd99d8a31110e8cb572534bb9d04af23bc48db855a34d4a6c78569",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "const-oid",
+      "version": "0.9.6",
+      "manifestSha256": "c646206dd9067b48ca550efcedd9eed7fd2ed230e7d05757a569bbe18f01081c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "convert_case",
+      "version": "0.10.0",
+      "manifestSha256": "8bf4cf0dc14cd346830d2031ce1ae4d2d5abdc59a6af1779dfcb20d4622bb926",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "core-foundation-sys",
+      "version": "0.8.7",
+      "manifestSha256": "8f18dba99a0470c9d6b59917291e7ece5465b3a05def7c244217bfa56867c8cc",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.2.17",
+      "manifestSha256": "25160ea4dfa195721d352d42827b882a41f18f4c55fff58e5c3878ecae84ca44",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.3.1",
+      "manifestSha256": "2e82ee61a94e8ef99197ca59723e9794d0f08363f28bacab680292af6ccdde61",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "crossbeam-deque",
+      "version": "0.8.8",
+      "manifestSha256": "d000cd463fb12a575d291905e3e4d125382964542626839eb818ade1e26db9b4",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/crossbeam-deque-0.8.8/build.rs",
+      "procMacro": false,
+      "buildSha256": "c8c35fc536a2e6481549bc13979293cb51244cd9c72d4ed9e35c22a1d70fa9ae",
+      "executionSourceHashes": {
+        "build.rs": "c8c35fc536a2e6481549bc13979293cb51244cd9c72d4ed9e35c22a1d70fa9ae"
+      }
+    },
+    {
+      "name": "crossbeam-epoch",
+      "version": "0.9.21",
+      "manifestSha256": "630ac9711ae7d4844bd8b60929934e28c945c87a28eab65e320f940efb247805",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/crossbeam-epoch-0.9.21/build.rs",
+      "procMacro": false,
+      "buildSha256": "c8c35fc536a2e6481549bc13979293cb51244cd9c72d4ed9e35c22a1d70fa9ae",
+      "executionSourceHashes": {
+        "build.rs": "c8c35fc536a2e6481549bc13979293cb51244cd9c72d4ed9e35c22a1d70fa9ae"
+      }
+    },
+    {
+      "name": "crossbeam-utils",
+      "version": "0.8.23",
+      "manifestSha256": "e7a383373c60dea49a5c0dd2558aebbdae26ba9b07878d4f8fa004a5538e2b80",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/crossbeam-utils-0.8.23/build.rs",
+      "procMacro": false,
+      "buildSha256": "79cc5363313f77ab76e2de4779e384c672a747fbcd4b96647a79286568714807",
+      "executionSourceHashes": {
+        "build.rs": "79cc5363313f77ab76e2de4779e384c672a747fbcd4b96647a79286568714807"
+      }
+    },
+    {
+      "name": "crunchy",
+      "version": "0.2.4",
+      "manifestSha256": "830244f7c63478a57e214ef9ca2b76d6c7e6fd3d30bfe1cadcf58dc1942ff019",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/crunchy-0.2.4/build.rs",
+      "procMacro": false,
+      "buildSha256": "08bfcfa380ded6870ed262baa4b6e87ec54482306aebffabefbd19c83ad4b6ba",
+      "executionSourceHashes": {
+        "build.rs": "08bfcfa380ded6870ed262baa4b6e87ec54482306aebffabefbd19c83ad4b6ba"
+      }
+    },
+    {
+      "name": "crypto-bigint",
+      "version": "0.5.5",
+      "manifestSha256": "8f04f1a2190bdd3f86b286c9877cfc84760a3e8d405d58bca3b51612e5a3e2ff",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "crypto-common",
+      "version": "0.1.6",
+      "manifestSha256": "0d7c931e6a6c24d1b440ba45ae038f396d5356c39d9eff40df8ba224254bd64a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "crypto-common",
+      "version": "0.2.2",
+      "manifestSha256": "1b47561054dd2fe13246f2f6e19c29eac256269e02c96162fd6efed28247e78a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "curve25519-dalek",
+      "version": "4.1.3",
+      "manifestSha256": "ef9a2ca89de6eb3e09adf27478df06d246f27ee025150241e847aff26d78129d",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/curve25519-dalek-4.1.3/build.rs",
+      "procMacro": false,
+      "buildSha256": "c479ea95fa9cac8b3374564261c15cfcb110738ddcaa5e0852644b6083bd9189",
+      "executionSourceHashes": {
+        "build.rs": "c479ea95fa9cac8b3374564261c15cfcb110738ddcaa5e0852644b6083bd9189"
+      }
+    },
+    {
+      "name": "curve25519-dalek-derive",
+      "version": "0.1.1",
+      "manifestSha256": "60d2093fbabea9e72ad1350ae4a616ae56b2592742a64d2bd679a749f7a6bb4d",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "fb56c338b6294eb1cfc91c3561c2cb01a5a56305dbf0957d5c34fa8927f23895"
+      }
+    },
+    {
+      "name": "darling",
+      "version": "0.20.11",
+      "manifestSha256": "85a022a791c824412157e37a22c85cc339bd5e6f0577aeb17af48ae30f6535ad",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "darling",
+      "version": "0.24.1",
+      "manifestSha256": "6be744d88a2c998aad4727cf276baeb414166a99dfb4b8fa8715298bee3fc7fa",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "darling_core",
+      "version": "0.20.11",
+      "manifestSha256": "5c19d2a71bd5bf1007b56e252fa60b15eafadc1648a167162b922f8037925e9d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "darling_core",
+      "version": "0.24.1",
+      "manifestSha256": "0a3f738d117944d035979586a44e8b8bec663798facaaae2a620559ff11323fe",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "darling_macro",
+      "version": "0.20.11",
+      "manifestSha256": "b3e738adb3b693f2115fcb5afc7a407b2cd681005785d6a14de1bb4b0b02afc5",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "728be3bb12c9cdaaf0520bce87e489a0820e436c78fa3627e238fc1acc11dd7f"
+      }
+    },
+    {
+      "name": "darling_macro",
+      "version": "0.24.1",
+      "manifestSha256": "921d0e4bf10de02a9cbae1cc2410d257886ee1af36f71d52c0152d7e8ed1fd0f",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "728be3bb12c9cdaaf0520bce87e489a0820e436c78fa3627e238fc1acc11dd7f"
+      }
+    },
+    {
+      "name": "dashmap",
+      "version": "6.2.1",
+      "manifestSha256": "e106c81b532f1aa7b98b969afc144003827d9f67b353d5d973d286ae62117273",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "defmt",
+      "version": "1.2.0",
+      "manifestSha256": "eb1339386dd145e1baa407348c5e82e2371cfae1b42f439acde787d5c8a05dcb",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/defmt-1.2.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "9477326f9231bbbbb894499e9c3b28f70f06bc37ce08527def13d7fc634db1c7",
+      "executionSourceHashes": {
+        "build.rs": "9477326f9231bbbbb894499e9c3b28f70f06bc37ce08527def13d7fc634db1c7"
+      }
+    },
+    {
+      "name": "defmt-macros",
+      "version": "1.2.0",
+      "manifestSha256": "87398c4dd57042d160f544a5a9e9c471e63725e00cb3f08fa5db77b7c296636b",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/defmt-macros-1.2.0/build.rs",
+      "procMacro": true,
+      "buildSha256": "e95adebcba8785d938de75f1555c0baf2ab7a7bf527c01fb9a5f36380fc4a2aa",
+      "executionSourceHashes": {
+        "build.rs": "e95adebcba8785d938de75f1555c0baf2ab7a7bf527c01fb9a5f36380fc4a2aa",
+        "src/attributes/global_logger.rs": "f61811b2a6db273009ec9373d6a6aae5889cc9bbd5c1acda853bb913a9684dc1",
+        "src/attributes/panic_handler.rs": "9232e7c3032ec894f5627d8176247472220306538a7b8e5ab7db875c031a046b",
+        "src/attributes.rs": "90a5d3493cddb2f020302e80559554e52c150ddfa5a1fd78bebf3bc8456960e0",
+        "src/cargo.rs": "42862e04cdd1cab46061ffb64a8bad5947d29e14dccb8cb53c7b0af5ef9a7bc4",
+        "src/construct/symbol.rs": "085e6450a615fd78d75b54b884a184b525811f44601233d0c8e54a53a489dae0",
+        "src/construct.rs": "4afcfd960fda8564371e8448da5dcf8b36b83ddf86f000570330e0fdf16762b6",
+        "src/consts.rs": "3c39d7e829ff1fb0b8d5c7fd39e5084ab0b88417bafe6baf154a3a55d1f08b97",
+        "src/derives/format/codegen/enum_data.rs": "4a66f671ca902dd3941cf99e66387c7685255a553e687b67db7be9588c998067",
+        "src/derives/format/codegen/fields.rs": "1789482dfe920cfa895d5caf33bd576a2f5c8f80db741a21ec5b3f4c4a56aec5",
+        "src/derives/format/codegen.rs": "0f633bcad255f957c16b331163fcc4d36640a1a93e5155930a6fc06e47434ca8",
+        "src/derives/format.rs": "3ff47957b50fe8d7d4755874ed1400cf328fc2a44be56439e761dcc550cb95aa",
+        "src/derives.rs": "3cf769348e8e12ecda93bdab2939ed2b104c9d160fdf0db160a126d3f98e2964",
+        "src/function_like/assert_binop/args.rs": "754045bf1b3f8bb51299f76cee83a3d88b55fed9b57268ad63097b7e6ad7bd35",
+        "src/function_like/assert_binop.rs": "712b2ad877ebd565c3a74cd9cf510fac59d33017fb92b98caacada5f3db1ff76",
+        "src/function_like/assert_like/assert.rs": "730c85fc98d3f0ef9aefa705d6fb369587b290e07f542094a27d1fce5046bda5",
+        "src/function_like/assert_like/unwrap.rs": "e5719607e9e2dcbe94687b41cd4035137672993b06ff51b988cb2661a957b825",
+        "src/function_like/assert_like.rs": "96b123f1e02eb80eb5e60deea92d7eace1aefac0179fb0e3279e7a4504178fa3",
+        "src/function_like/dbg/args.rs": "ddc9677f6188b2ef7ca7ea068ac0d1e5cee6236c3fc64e05363f90ad64c61bfd",
+        "src/function_like/dbg.rs": "e6d9014f112fd54e495be2078bd5399d50bdbee301d83c6c04d254d584782fe9",
+        "src/function_like/intern.rs": "6f265bec62e83ca75b99b90f4749b62d36dd5310f32ae2fe1447d716c61195ab",
+        "src/function_like/internp.rs": "4546356e90c5f059ac3eaeb97b3b824eaeab0bb3f58b83115003fea24c595f9c",
+        "src/function_like/log/args.rs": "2c86b3f8d748faf1a2e4067232d60516cd9bd4d24921f4ea5848b0797ce0edfd",
+        "src/function_like/log/codegen.rs": "d6d3943bed8b8ca72471ab4aa0f41586faceb2d68e8a0c3a21fa831d3ce5529c",
+        "src/function_like/log/env_filter/parse.rs": "f4397780b7cf62a64d375fbaa5a1f2802f9f23b77c20c090e7cd658dded771fc",
+        "src/function_like/log/env_filter.rs": "e3096a9b527a75ce61d150f11e1f2f07cda4ca691574a8bfe05896b7301c3b07",
+        "src/function_like/log.rs": "bb9bb38a62b9e90d982d9e831b3a50edd25c96d00eca2293db218db248b4ce17",
+        "src/function_like/panic_like.rs": "26650c320a8480595f8d97ab9c17b13df42ef0bf96995db03fb589767fd4e706",
+        "src/function_like/println.rs": "831f1485fdcc1185072b961387af5532ca487d5ab841c20663e4e7ba42a28ccb",
+        "src/function_like/write/args.rs": "67eca9612845b0e62c8098cf7be08b2ab172953df4c25cdc9cd107d673c0c742",
+        "src/function_like/write.rs": "7cc7ab625d6a142f80f12184d9fd47956979a1c18f677620bfc507ec469e5eab",
+        "src/function_like.rs": "c53829b5c90f726f81146cfa7741f24dd9e16219591a93d726a0ee7a25f7a07a",
+        "src/items/bitflags/input.rs": "7d4e202ce7e9b60b690831c5f26483910934a3121d0cadfe7cab52d0445f01ad",
+        "src/items/bitflags.rs": "6f3675236315ae7e4c0d42e5ac04d42207d5a077d0ea8e1e12c6af1d39c43340",
+        "src/items/timestamp.rs": "4b8c945418ccf3e6d6b714df83eabae9d63efb4692267f684f3690de2410e847",
+        "src/items.rs": "ac6068952ec12add139db6d87779e94d1af772374d68a2b03ab6b59fecda22dd",
+        "src/lib.rs": "2f8cae7fc0aa41518e8d22a8c6a07b7a688bb3cba3871ae24c33658a53fa06d6"
+      }
+    },
+    {
+      "name": "defmt-parser",
+      "version": "1.1.0",
+      "manifestSha256": "2428f4c9845b052613fed8071491c164f8e0d879615140b71247b6ef3b8589fe",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "der",
+      "version": "0.7.10",
+      "manifestSha256": "ab115a95d89b2a7da3cd8264684f74f905322331db94ec7044511ad87d1cf331",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "deranged",
+      "version": "0.5.9",
+      "manifestSha256": "8604c48d0f13a96386d4ef94448d295c64a1639a9a6352b3a060bc00da5bc011",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "derive_arbitrary",
+      "version": "1.5.0",
+      "manifestSha256": "701f8be2bcb15843a8a998e3923e7b48e635982db6a9a033640a63274be8d5ed",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/container_attributes.rs": "9342a89e5e5f412159d1a1a88ae4ee0248180f30adc13e61ebf5f96b5f09877f",
+        "src/field_attributes.rs": "15093171d7f1e30c2b2523788e54c69c816029b310133ceb1ac811d1f11a76d5",
+        "src/lib.rs": "e658da7b811abfbc89ea21b308c48a04aeaffa1bea588a1099df029ef0133bdf",
+        "src/variant_attributes.rs": "01428d7c9db83d06e6b846e9057352e830f9d45090c6cb21415426c4bab9df09"
+      }
+    },
+    {
+      "name": "derive_builder",
+      "version": "0.20.2",
+      "manifestSha256": "cb5f6811ad40ee5b7f6846989234e3566a2ba0c934ddb1b38f6b80510d1ca49c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "derive_builder_core",
+      "version": "0.20.2",
+      "manifestSha256": "fa5cd02373ba6ada793bd0878d350502df5b43ba41f34db6fa3770164105f764",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "derive_builder_macro",
+      "version": "0.20.2",
+      "manifestSha256": "879f0b3c0e31481dd684a0763762a0a78b89dfb0881a3307b1ca1a06b2ffd333",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "7326e35558d9f2b9be9b41b28553cd965a52acbddef77ed842630143cecc8ad4"
+      }
+    },
+    {
+      "name": "derive_more",
+      "version": "2.1.1",
+      "manifestSha256": "f11dd5e6c080995c76e0916fc4e573b57457d145aff5c26e7bdcf243481a014c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "derive_more-impl",
+      "version": "2.1.1",
+      "manifestSha256": "a9c5ce200f3ea3822be272c1af53129a992b9e31f51b08c928ff340740d7c1c5",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/as/mod.rs": "767fe0f2cb67c57028ca69d138757c5fdd894ad6fa54fcb11ef8f4a7d4b4ef82",
+        "src/as/mut.rs": "ed4a37c46e7933f263fadd7d8af68bb57ba942e540e5a6a890f8b0cbcd52df8d",
+        "src/as/ref.rs": "06f9f3379037f8002874119b864ca62c65d8dd785c821a1fdfd74b59d988f133",
+        "src/cmp/eq.rs": "484476815f67fc3f6a5d9d3512f221be70b420def3acc9b85c67d8d0f97659a2",
+        "src/cmp/mod.rs": "749e6e10bd51390432ba2f623f6b2d1316b54537c6572f5103b5c79f579df12c",
+        "src/cmp/partial_eq.rs": "c96b41097c549f4afc5aabed2bcfa46e5b107d83b5c4d2bbb373c210b359647b",
+        "src/constructor.rs": "5752133576cd1ea50a9c8de544e5ecba7ca5300e7a7213a82f4cecfc2fbe6b22",
+        "src/deref.rs": "1cc2efc33ac59ed083c7c56a6998094020a75ed5ee2ea79d4395431e7507765d",
+        "src/deref_mut.rs": "5f99b9474ace25507e53ad661332df382daa1be98823c7eab040e6580340e388",
+        "src/error.rs": "40cfa53d126eae5284310d5814318d32269e482e3491bf561ec9cd6168646aeb",
+        "src/fmt/debug.rs": "fc08a1ba363604452860b034b171f9dcbc4a90e34b70ba0864644f9dc6481815",
+        "src/fmt/display.rs": "d89038991be0df38f51d280f8fc3f0ed0a21beba1b3fd3330b9a395c87bf9781",
+        "src/fmt/mod.rs": "0c9dcaa605e7ded3f277deca9da93b622d835a412374c71f64e91dd2091b790b",
+        "src/fmt/parsing.rs": "b77ec1d9ce3c59cae289d319378494d29fb2ea74e09d2aaf0ed8175461df0a93",
+        "src/from.rs": "dbcea1f655618518d366313124b59d50181928e1f0a092ff8796d5accec81fd6",
+        "src/from_str.rs": "d717624c6bc684dd427980f03dd4df63dce609a0be6fbf52c4e73030a73f1f33",
+        "src/index.rs": "6604e4c89286cfcb4973335cc8e680e4f2b92d5cfc22e2e88911f867dff65993",
+        "src/index_mut.rs": "ed30934c9df2614095877320e1ed046fe4bc6b6c573f3c65c733ce6f9a384424",
+        "src/into.rs": "97d1989d050a3a7f95757a29a91bd4712f7b5862fff57d5aa25e0bb63bbb5a47",
+        "src/into_iterator.rs": "5c4c9170f6ee71508be6ae60e5a6780632862bc7db8d26b40a5613b5becc18ba",
+        "src/is_variant.rs": "3fe36afa0e9a04e35dd752127096295e020ab01f2a7dae485c7b6cfe33cefe3a",
+        "src/lib.rs": "895212067718a72aa9fff1c086ca67e90c8a97132b71406c95f9a390d67a41e8",
+        "src/not_like.rs": "01a5ccd3822171438b7641d9aa53254cbbc8306c03d5970fbf9c9e7859675b2f",
+        "src/ops/add.rs": "1453ed2e6c0b8e2ef9f801b0fc7529c987a01eedec89fce488af95bdb93b6893",
+        "src/ops/add_assign.rs": "fdfaeab7da567836b514557c2d49f13bb9942d9fbe05ffa8af794438893b136c",
+        "src/ops/mod.rs": "d6689b901eab15272beff37652f7a52763feaad732cd293ece316f6f1746cbb5",
+        "src/ops/mul.rs": "3f02d6034a512cae3080b42758033b0b9d79e9403adb731e17263599e36a8c42",
+        "src/ops/mul_assign.rs": "82d54451ce1018a3128510bd48f55cb737e134a752656d912376331cd6716de4",
+        "src/parsing.rs": "6e9184a7293d5653a0e69404c8bcd75149bd9b40cc77459e904f732fc1a737c8",
+        "src/sum_like.rs": "0fd801e4744a4b030572bec08fea32e2f90a96c37c533ef816357dace1589970",
+        "src/try_from.rs": "0c4188bc951af24bd67514f55bb3891427ac0c55184f4cc341f82aaf360c5d1f",
+        "src/try_into.rs": "17e3f98145367fbb8aa56b8e3335ef6fcc4b1631877b876ad6937f6d155f613e",
+        "src/try_unwrap.rs": "b9056b5d62974c4245b7e298c031fc257750353d54d7454ef27b07c8363eb985",
+        "src/unwrap.rs": "92470f4591f2dc3814ea6b639bd82d846f99dfa86bee5a611dddb104c7bad6a4",
+        "src/utils.rs": "4801ae8348907fa512f73283995d231bcafff1638729ff1de231f07ad18ace3f"
+      }
+    },
+    {
+      "name": "digest",
+      "version": "0.10.7",
+      "manifestSha256": "f0cc2fc18c6e7f3533658b9e59d71b55e641e7d8226e5d1b915a5e7c0a1d3f36",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "digest",
+      "version": "0.11.3",
+      "manifestSha256": "59c4f2cba7e34831c87e8f4844718d91d0f276af7bd192de76fda7d5a8978eb9",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "digest-io",
+      "version": "0.1.0",
+      "manifestSha256": "550d919efe651eac91611d695042d2b95700e04c2f75bf90d627152c8c268733",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "dunce",
+      "version": "1.0.5",
+      "manifestSha256": "4c43171921da7db4e1a52c7eb43aa1f5321a7dee887d6b185d2adb6f3d4d3469",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "dyn-clone",
+      "version": "1.0.20",
+      "manifestSha256": "6753280e066f943c3569ef818b09e1400cca53501dcd462fa1aa25d4f516c162",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "easy-ext",
+      "version": "0.2.9",
+      "manifestSha256": "ecbc7c86148dd23627f7bbbd486c5f9c4c7a1617f161122fe25118be06f2d12c",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/ast.rs": "2d75d68e38c624eb289da1b6abca328e6ca3d26e4c8e6856a1af99cf7da68191",
+        "src/error.rs": "4297e0731e2baf3fb004794d52e3c09868981c2f8f30b8fa91c3db9a1b6158c3",
+        "src/iter.rs": "51cbb007c5be966c6259b6e5ec013bb7fc0fc9357d4c888f57aafd08e2beb056",
+        "src/lib.rs": "c7022bb2a1687080bb4d52bb9d266f3ff241d86f410bb943eb288f8c69ee5e64",
+        "src/to_tokens.rs": "d592019c658ba86c552241eff7266aefd42c4de5d8956ae47a67bbaa20613160"
+      }
+    },
+    {
+      "name": "ecdsa",
+      "version": "0.16.9",
+      "manifestSha256": "a1e1f54de247dd373355a433e3f45c657ea9a127a56154efc285a05b0a82ef52",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ed25519",
+      "version": "2.2.3",
+      "manifestSha256": "c6fffc86c6297739753fd78ad9ccb9c15385704329259a986530e09732957c82",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ed25519-dalek",
+      "version": "2.2.0",
+      "manifestSha256": "65e415110f13ea42e3205a6d49426257c3242aa1f46ffca2e6cbafae0b205b14",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "either",
+      "version": "1.19.0",
+      "manifestSha256": "a245f305b622e445db7b93c14dda11a8157741a7f119d9b7cd0a532fa4e66834",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "elliptic-curve",
+      "version": "0.13.8",
+      "manifestSha256": "ae28aa3db758a5b18bf9e4b1253082b2503067f41be65e0bf3dc89917fda3f76",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "enum-map",
+      "version": "2.7.3",
+      "manifestSha256": "94a380dc0296261c3f80d1ef71a7c1355757bb67ca902367432084bde5b87233",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "enum-map-derive",
+      "version": "0.17.0",
+      "manifestSha256": "ebe51a5658f0e34f3f31cd0f4af2a90affbc5e562b6d4695fab1ae31348c2590",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/derive_enum.rs": "fc478b32e580dabfa31f71db2958faf05125e58b17bf420a881930d96e76ce11",
+        "src/derive_struct.rs": "ec7e4d1f44925713098713c8c77af87142f499999a812687d52306cc9255224f",
+        "src/lib.rs": "531dd501eced4ebf2733d525417adc9ef724e1c117ffb20be7453a79200c2988"
+      }
+    },
+    {
+      "name": "equivalent",
+      "version": "1.0.3",
+      "manifestSha256": "e7ef6daa56f849a07bb27bdb5ad7c9634bc9899976dd4e5a6d93ef859e5759d3",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "errno",
+      "version": "0.3.14",
+      "manifestSha256": "a25f16ccaa127602fc0cc9d1c80186619a0b8f42331a27b6f04b6bfa4aa29de2",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "fastrand",
+      "version": "2.5.0",
+      "manifestSha256": "3f01725ad91d1a1705762821e9231ea15ddfa62648143516e68d64021ae31e08",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ff",
+      "version": "0.13.1",
+      "manifestSha256": "3dc57e64db6bcffb9ee83ecd1e732d0b7be93a1ab2c881ff83220748ed0f704f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "fiat-crypto",
+      "version": "0.2.9",
+      "manifestSha256": "33265490768ba75aae4d3fc75e786eb1d00ee6404a8eac26db80f46c128c6ef4",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.15",
+      "manifestSha256": "d71ae71febecc514eaacb932c7ffecd9dce4ba3a935dce5c619dbb7114793625",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "fixed-hash",
+      "version": "0.7.0",
+      "manifestSha256": "9f137e2baa51a3e6909cdfbb12d31eba33de9345061d25ed60bd8fdbd72c0ba7",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "fnv",
+      "version": "1.0.7",
+      "manifestSha256": "0854ced32611c6389356c0b43ae663da9d4480376c5f0825b82eb442dd84e8d8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "foldhash",
+      "version": "0.2.0",
+      "manifestSha256": "0a76cc29da1c33f4bdb505f5828ecdc20859c4cb9faa402e000f5f10511a27cc",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "fs_extra",
+      "version": "1.3.0",
+      "manifestSha256": "84508fee5e8b314e18c1fab6d601975bff0b0897b9dbfe1fbf1451efe71a4449",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "funty",
+      "version": "2.0.0",
+      "manifestSha256": "32592e4fc609561a1f7da60da38f684b5e54bdee0db4c31fab476b2340186326",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "futures-core",
+      "version": "0.3.34",
+      "manifestSha256": "fa88cec6d0c527df4ff51ad034de09d3c552f6174ab8e4aa83cfaeacc36c4c7d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "futures-task",
+      "version": "0.3.34",
+      "manifestSha256": "7d9159735fa6a29df379bfff623f6cece41584334ca022ebd34ef56152637fa8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "futures-util",
+      "version": "0.3.34",
+      "manifestSha256": "7e672d306e8de25359ed9c452e7cdc115121dc7e985008af31c85a36b70ac835",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "generic-array",
+      "version": "0.14.9",
+      "manifestSha256": "6242f7e7b89db7025174aa03c33f07b48e39867cf2b9cb85183f5eb7d7f639c8",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/generic-array-0.14.9/build.rs",
+      "procMacro": false,
+      "buildSha256": "595eefc53394bb56b047d1419d6da7fdfb2345f30d09f1b8cec6c88a40c4afe8",
+      "executionSourceHashes": {
+        "build.rs": "595eefc53394bb56b047d1419d6da7fdfb2345f30d09f1b8cec6c88a40c4afe8"
+      }
+    },
+    {
+      "name": "getrandom",
+      "version": "0.2.17",
+      "manifestSha256": "032d84ffe843860402ec2339ae4179be20fd6f432109e595a3fa83be54893ec7",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "getrandom",
+      "version": "0.4.3",
+      "manifestSha256": "4f107fe4ceacee71d0068cfbbc69554b3d8523a1fcbb99b17e9fa0d008961ff9",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.3/build.rs",
+      "procMacro": false,
+      "buildSha256": "662faa06d7b2a9c5bea2c17a127a90e00b9f9b31105b0360da516e47cf816e95",
+      "executionSourceHashes": {
+        "build.rs": "662faa06d7b2a9c5bea2c17a127a90e00b9f9b31105b0360da516e47cf816e95"
+      }
+    },
+    {
+      "name": "glob",
+      "version": "0.3.4",
+      "manifestSha256": "c4b859bffbea146e2d1fd20743653e1447299169fc259430d6a59dd291e00aa1",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "group",
+      "version": "0.13.0",
+      "manifestSha256": "5bd9c11858db53976ad77e8cfec6142ec515d66bbac254d118dbbe97c6778ede",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.12.3",
+      "manifestSha256": "421b3a71d97faf0a7e52c3b2bfbe0f1c036b9dbf6232b4e5b41221bb54358f5a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.14.5",
+      "manifestSha256": "c011f10385da722056537329f3fcf8c9b93af742e79e38885c0152a0105fc227",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.16.1",
+      "manifestSha256": "e5cbc66eeb71d7544bcbbda22065478c5ea270dd620fbcc6d9757e7b18485d47",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "manifestSha256": "afcb0e62d498f756bd4ddf69785c8282d01ee4fa40016158c7eac12ceb302f8c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "heck",
+      "version": "0.4.1",
+      "manifestSha256": "bef2e967708cafccb70a6de0f2eeed8914f9a58c1fc9094cf0e6bde671768f7b",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "heck",
+      "version": "0.5.0",
+      "manifestSha256": "db0e63b72de157a2f5194458b73b6542c3f4e17e33ab34a71d0260bfc035467e",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hermit-abi",
+      "version": "0.5.3",
+      "manifestSha256": "f9c1cf5c051787c34fa0cd1a6d7faa7b9625a9ae5bbc10549bb28e5af263b29f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hex",
+      "version": "0.4.3",
+      "manifestSha256": "85a822957796d1aa30bd28d695fae3dc86ca8832d6879a8f71e323cc4a130174",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hmac",
+      "version": "0.12.1",
+      "manifestSha256": "b56253cfaec8c49b49ce90736dde78025f0b820f2a018edff569bba27e5a5080",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "hybrid-array",
+      "version": "0.4.15",
+      "manifestSha256": "0f4ca21a2707a25425c1b7f8977a7534bd350c0c650cdea4c49497397a5a8aa8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "iana-time-zone",
+      "version": "0.1.65",
+      "manifestSha256": "d1ef413992ad304def4305f3127a047bfd5adbeb2c8fd73fd63886a2217cd361",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "iana-time-zone-haiku",
+      "version": "0.1.2",
+      "manifestSha256": "8f06eca1c0e108d0422687eeb87030520ae7bd956efc92352599cc9cf079d9a3",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/iana-time-zone-haiku-0.1.2/build.rs",
+      "procMacro": false,
+      "buildSha256": "10304831100a60c1c2b990762dcfeb47dae8342cf9b54595bec94884e7de5784",
+      "executionSourceHashes": {
+        "build.rs": "10304831100a60c1c2b990762dcfeb47dae8342cf9b54595bec94884e7de5784"
+      }
+    },
+    {
+      "name": "ident_case",
+      "version": "1.0.1",
+      "manifestSha256": "560eba8d5cf4f2c71cc06ef9145eb8f4c163a616cd6d08b031b1eae3448d8203",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "indexmap",
+      "version": "1.9.3",
+      "manifestSha256": "1290d383adfdcd24f158a4619afb5547d633c83c0a1ab3b5c1ee0dabe4fb1f36",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/indexmap-1.9.3/build.rs",
+      "procMacro": false,
+      "buildSha256": "558b4d0b9e9b3a44f7e1a2b69f7a7567ea721cd45cb54f4e458e850bf702f35c",
+      "executionSourceHashes": {
+        "build.rs": "558b4d0b9e9b3a44f7e1a2b69f7a7567ea721cd45cb54f4e458e850bf702f35c"
+      }
+    },
+    {
+      "name": "indexmap",
+      "version": "2.14.2",
+      "manifestSha256": "7b2aec83d5afb43fa5788bda468ce1d65df9dd8f406058e2eada3546ef906ea1",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "itertools",
+      "version": "0.14.0",
+      "manifestSha256": "77735549383196a4156a2246dd1cd6742029b223679b3004531456d33562b0ce",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.18",
+      "manifestSha256": "894c215e4e7e973b556b0e9627bf9b6a719a043fac9b5af9838660816392a09f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "jiff",
+      "version": "0.2.39",
+      "manifestSha256": "a8433d2fed5ac51ec8c6f560bd50e76a77050ca8f1bdbe840b107e2c2c6935fd",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "jiff-core",
+      "version": "0.1.2",
+      "manifestSha256": "8cf4c04a7eec9a501b04dc75e0c675564a28d595798c904dc5a7e319fb85e353",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "jiff-static",
+      "version": "0.2.39",
+      "manifestSha256": "c8ca7a7d8046ce19e648987a6ca4749861c0892b74cb27cb3b5af83f8a37ad3d",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "616c0843a1be3b5038f09aa25f31e23098e2e1a4f7c79b176f22cfb1792bc72b"
+      }
+    },
+    {
+      "name": "jiff-tzdb",
+      "version": "0.1.9",
+      "manifestSha256": "ea1be8051f756e44140b45ed91d657770d3c56625a666d7327928a5e756616d6",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "jiff-tzdb-platform",
+      "version": "0.1.3",
+      "manifestSha256": "c6e01bfffc327f617522eeb2b4f26db55a427263269469f2e6cc0fc33e2900e1",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "jobserver",
+      "version": "0.1.35",
+      "manifestSha256": "5475de657d1c10b1c27f76a2d54fdd3162027705f663410b091294cd08482a72",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "js-sys",
+      "version": "0.3.107",
+      "manifestSha256": "8418fd8ee43d2871b09c9d9098813f52c5d4871c2bc6fdbe29f0c06dc129105b",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "json_comments",
+      "version": "0.2.2",
+      "manifestSha256": "992c911e60fdaa693ee11b3623472414204000cc381dfb01ae99d7c2dd6f9a04",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "keccak",
+      "version": "0.1.6",
+      "manifestSha256": "caee935a44813ae577515d594ae80ed73b7560e8053642629abce46d214d2c52",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "keccak",
+      "version": "0.2.2",
+      "manifestSha256": "a059fa772f385e2e5929da96fea33916f1f4984e457beaf5919acf42019f076a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "lazy_static",
+      "version": "1.5.1",
+      "manifestSha256": "032c43c141ba8df09f2bf4910e0a660a790394458cc319ad45e444e08458a742",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "libc",
+      "version": "0.2.191",
+      "manifestSha256": "c8e45fe04427917e1bbadf4b628353571c9a0f2574971231814bb71dc6a86f1f",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.191/build.rs",
+      "procMacro": false,
+      "buildSha256": "e70593206df4d2a3138eab463567e0ae8f91c1bea565da4ab5370ea8986840ac",
+      "executionSourceHashes": {
+        "build.rs": "e70593206df4d2a3138eab463567e0ae8f91c1bea565da4ab5370ea8986840ac"
+      }
+    },
+    {
+      "name": "linux-raw-sys",
+      "version": "0.12.1",
+      "manifestSha256": "1d24fe227d87b23fc5220ddf2ca4708e5e0d794a3f77961b71cd8140bf33faa5",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "lock_api",
+      "version": "0.4.14",
+      "manifestSha256": "dd67edbeff9cee46c3ea6411098aeec7363cb4fe865006c8eca321d321332484",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "log",
+      "version": "0.4.35",
+      "manifestSha256": "00ae82a037e32cc43c0f0826fb9e72e52b6b19ce109217c2f6f769537bac4145",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "lru",
+      "version": "0.16.4",
+      "manifestSha256": "a6969ba90cad8de6a40d2a313bd89ea9e53c3787ee12f78205c859e0d0295c8d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.3",
+      "manifestSha256": "a14f68b8fa55f15fd03b15dced37bcf66a0a628f568eedc82817cdb7f9281951",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "memory_units",
+      "version": "0.4.0",
+      "manifestSha256": "6e6a44cb39a96ff2e1eaada3135aec3d70e770ad032de9f4bc5a3bff32ebeac1",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-account-id",
+      "version": "2.6.0",
+      "manifestSha256": "c8cab44eee11ee43013874be5a95546cb3dce8181b5139de75d84c01d53dc6ce",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-config-utils",
+      "version": "0.37.4",
+      "manifestSha256": "5c61eb8eeb3f2381cbaf4cd05a1b57c645ae09939b37aa7f7e2f0eea49fbd196",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-crypto",
+      "version": "0.37.4",
+      "manifestSha256": "3a41c82fe7b77cb0217cedcb128c61a1560e3dd7e2f5c1218c282c82a838edb7",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-crypto-hash",
+      "version": "0.2.0",
+      "manifestSha256": "3f0d25e285e5cc592c852c5109bb73640e684ff81f1977225e00caabef833616",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-fmt",
+      "version": "0.37.4",
+      "manifestSha256": "655c4231e5a123a4e6c4c164e4dcf559b3defab6fa444fb398139ea8458d2b69",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-gas",
+      "version": "0.3.7",
+      "manifestSha256": "c2be7c54de9fdfe3c888d91af12bf53a97b7ce753b44dacdccf7c12a54b0b23c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-global-contracts",
+      "version": "0.2.6",
+      "manifestSha256": "4807a6d968e55c95e4ce2f79f5b82191594082361b8903a4a90b44a7bd409f60",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-parameters",
+      "version": "0.37.4",
+      "manifestSha256": "b64bd69ef4d1b79b21792536ceded9c83f110c631eb5794904e91e9af04ef746",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-primitives",
+      "version": "0.37.4",
+      "manifestSha256": "37c4506db850c3a6bccb90c86c1aeaf263364e61d380e8dff7358f5fe5742b29",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-primitives-core",
+      "version": "0.37.4",
+      "manifestSha256": "c4deb3c3f1e13ccb28930ed0a2c45c9fbb081de950565286c20552882649c61c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-schema-checker-core",
+      "version": "0.37.4",
+      "manifestSha256": "835e7009c159fdfeaa3e72fcf7b166d3cab382128b77db43ea610b5309431c61",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-schema-checker-lib",
+      "version": "0.37.4",
+      "manifestSha256": "bdf6aabf4eff935c57ff82aafe0a9094be8b13d5a8cd871d398beb308e035a40",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-schema-checker-macro",
+      "version": "0.37.4",
+      "manifestSha256": "39b4e85b8fcbbcf960ffdf9fe7a95c3a15f9e6b5af9ed8eba58440f35678b4ab",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "84a2618426a544fc67a5d5904af794c3e6d72d91dbe537c9a47e21ac4f8b0e21"
+      }
+    },
+    {
+      "name": "near-sdk",
+      "version": "5.29.1",
+      "manifestSha256": "b06500a1addd3d33acd363011db644d3d8ba3c1fc25a45b7748d76e8e6e01509",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-sdk-core",
+      "version": "4.2.3",
+      "manifestSha256": "e61c3a3644e7a81414a5e66caf8783d31023c8dd089865f5492806da4d9930f4",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-sdk-env",
+      "version": "0.1.8",
+      "manifestSha256": "d7f55b8682e2bb294d5749eec53026630d19b741abfaa36b7e14cca236573bc8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-sdk-macros",
+      "version": "5.29.1",
+      "manifestSha256": "14a2c48bcd140c1dbcb9a01eb6f5242b41d48e87a7f842ee4d30d6795eb6b467",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/near-sdk-macros-5.29.1/build.rs",
+      "procMacro": true,
+      "buildSha256": "575113dfb16c87d5bf6a5e8f2d14b8fe3acca165c9dc4513c9ac2f4b1b6c97a1",
+      "executionSourceHashes": {
+        "build.rs": "575113dfb16c87d5bf6a5e8f2d14b8fe3acca165c9dc4513c9ac2f4b1b6c97a1",
+        "src/core_impl/abi/abi_embed.rs": "27b4bb21f1ce351d5850cb0ef2ccc1f191a2e1e560e250664110cac5593da639",
+        "src/core_impl/abi/abi_generator.rs": "9a94b15c7f46abacacc29b475f11b9f86ae30ebcd0466bf30817f251c214d696",
+        "src/core_impl/abi/mod.rs": "d0483c9fc2f1bbd1931ef2c21feeb6ae9afc0ba63bd4043e215f369dfa8bd225",
+        "src/core_impl/code_generator/attr_sig_info.rs": "940514223b0eef00fa928793e08780f705b2a4c9b7b2e5ea7d3db2f6b42ab5e5",
+        "src/core_impl/code_generator/ext.rs": "9c9c7ed0b8d96fb792d54f0b700ea88e19d71dda505cd9facc74c2511e667491",
+        "src/core_impl/code_generator/impl_item_method_info.rs": "1e6fad17f72063631421efafdca5b8602e522642187601a39ed0fb301a7582a9",
+        "src/core_impl/code_generator/item_impl_info.rs": "ba3a6386c2dc5ebfea2806d4f83242b2c7a65c8484f6cc07820f8ab08256ac7f",
+        "src/core_impl/code_generator/item_trait_info.rs": "a65e99008cd5740b1b2df52342db7d3f1a0826c76d2aaceda4145f741a4bbaa4",
+        "src/core_impl/code_generator/metadata.rs": "fc9f3f36567aed561ac33557e4de866eab2d1d53adc59c18103a34a1a11ca737",
+        "src/core_impl/code_generator/mod.rs": "62e2490df7f8493348ead9f47cd120f7b43a824d4e136d8aaa07e1ca9aaf4f89",
+        "src/core_impl/code_generator/serializer.rs": "d734752f9f5f1fcf2513f3f264d706cac9b95d116b9775434eacad022e53c143",
+        "src/core_impl/code_generator/state.rs": "80429c306cba2a00036ecfc88603a5f873e5e7ce2ebfcfc11e191473b4b85718",
+        "src/core_impl/contract_metadata/build_info.rs": "03455b83dcfa66a983d4da1fb09e8986417958f8970f48ca0f39bd55218196d4",
+        "src/core_impl/contract_metadata/mod.rs": "e343923965cf857c4ac6600f9b160c7f8d86b04f2609c737583f93333bb5f496",
+        "src/core_impl/event/mod.rs": "14d4b5da3426ad04a20ecf21893acc7c032d37fe5de925d3f5c840fe1aaf0d7f",
+        "src/core_impl/info_extractor/arg_info.rs": "8514c7c9e4988f2bbedeca35677c2df6fa12e780979f44839d1d6c498105aa70",
+        "src/core_impl/info_extractor/attr_sig_info.rs": "0cc45f04a03ab42dc48f57de123807d49f957de880f552257bd50576bdf5f570",
+        "src/core_impl/info_extractor/handle_result_attr.rs": "ade586887d51c744e3d28fc606c116a3ead67f33755faa71b880ad59773dfa6f",
+        "src/core_impl/info_extractor/impl_item_method_info.rs": "2024913e4e874d318708865d7445593686db6c15404883c3144491c2219f04c7",
+        "src/core_impl/info_extractor/init_attr.rs": "44dc73f46d9a2f14315d7bbbac1118a8d175bb271c951beaf1a70f69f7b73c09",
+        "src/core_impl/info_extractor/item_impl_info.rs": "c7f20c129a54f7ecb511f50a4b90f886bdf518b2dcb21945d34eba22cd6dc53e",
+        "src/core_impl/info_extractor/item_trait_info.rs": "76c3e38e17a381e6ed24658fb22d83b76d6fbe7d27585b11bd30dd5c7f8ad82e",
+        "src/core_impl/info_extractor/mod.rs": "44473035f71c477444d90b38b79b33c142cc1dcf5e4d0eecdf906fb1867707ff",
+        "src/core_impl/info_extractor/serializer_attr.rs": "3bbdfa49d828b23e13853a4847624d0c0f4921530a96c3312e41fb578175b737",
+        "src/core_impl/info_extractor/trait_item_method_info.rs": "bf47cb8b8c25f8568a29906313ff48703ec07fac8c9e506e113efca16e07b19d",
+        "src/core_impl/info_extractor/visitor.rs": "dff986cce9d62d747f37d9ae465d1165d20083d74272412b2d2c5ebb0209974b",
+        "src/core_impl/mod.rs": "0a2bc35d7e4f9a2a7d00ff3f9319410d5f419bd7cb5ee4ad135bcc0ea2de4681",
+        "src/core_impl/utils/mod.rs": "4d5597bb0721cba1acad1af2fc55d74f60339689ff144de5f7f9b54bef0170e8",
+        "src/core_impl/utils/test_helpers.rs": "9115d3a67076695f7fe972352a59da8370b2eed4eb70f787631cb25b3b658eca",
+        "src/lib.rs": "b6a27a654c9e578183b23452ebcf9b85b6142fde30ea55e715bac1a726b055b6"
+      }
+    },
+    {
+      "name": "near-stdx",
+      "version": "0.37.4",
+      "manifestSha256": "4dfe6ba7ca696c7a0551483f7e81dbe8f6bb1224473da7f65a930836147f5a67",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-sys",
+      "version": "0.2.14",
+      "manifestSha256": "9d3bd6577b4718efa4591b764c7d09491c79b01b0c3886bc8bc17d764f92b868",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-sys",
+      "version": "0.4.0",
+      "manifestSha256": "32cc878f6706df8d90058adc8ce75c76a7fbedfc474a82d110b517e946ac01e6",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-time",
+      "version": "0.37.4",
+      "manifestSha256": "107e3e80b89ab31168e5200815bbac6b7107f0197492095411251803c3b8779f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-token",
+      "version": "0.3.6",
+      "manifestSha256": "477519d0633da6c83099705e90d7da93353d61032d6eeaf26b68d23240f4be10",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "near-vm-runner",
+      "version": "0.37.4",
+      "manifestSha256": "253bff32e86af25e28bc27bcbb2cd7ab106205e4a2325d62910a1d0f14facb7b",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "num-bigint",
+      "version": "0.3.3",
+      "manifestSha256": "90a918321269f0cfba80e22ed673dc25f9887b64cc30d35a6910cf64af99a119",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/num-bigint-0.3.3/build.rs",
+      "procMacro": false,
+      "buildSha256": "4955639b370d3636b8c44cb7743e6c5fb129077b069d78becbc135eba37e1ece",
+      "executionSourceHashes": {
+        "build.rs": "4955639b370d3636b8c44cb7743e6c5fb129077b069d78becbc135eba37e1ece"
+      }
+    },
+    {
+      "name": "num-conv",
+      "version": "0.2.2",
+      "manifestSha256": "ecd9eaa1fb85eb5c739bce95bf50387e018e3b3f0d109e97416111acbb190028",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "num-integer",
+      "version": "0.1.47",
+      "manifestSha256": "a0fc4aee99b0663bb80ce2fc8052491b7e28872765711266faddb2ed0474cb96",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "num-rational",
+      "version": "0.3.2",
+      "manifestSha256": "1c14a5c142286c8cb605eb349d6765caec9b46212766a7738615e8f6ea5d3c19",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/num-rational-0.3.2/build.rs",
+      "procMacro": false,
+      "buildSha256": "43a2d0ec88488d561f7b367d83f8cce81ad68bdfd352a3db9c881574a734c44f",
+      "executionSourceHashes": {
+        "build.rs": "43a2d0ec88488d561f7b367d83f8cce81ad68bdfd352a3db9c881574a734c44f"
+      }
+    },
+    {
+      "name": "num-traits",
+      "version": "0.2.19",
+      "manifestSha256": "dd701a0da6cce7e6e047cc944b2330f3c5e48cd64329e10942ea7d9299d435be",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/num-traits-0.2.19/build.rs",
+      "procMacro": false,
+      "buildSha256": "d3969209fc1c9d201c66ed11820d0b328600d75b3971f8ceebeab04900bc0587",
+      "executionSourceHashes": {
+        "build.rs": "d3969209fc1c9d201c66ed11820d0b328600d75b3971f8ceebeab04900bc0587"
+      }
+    },
+    {
+      "name": "num_cpus",
+      "version": "1.17.0",
+      "manifestSha256": "c9b91e8556fe8b2b4c06ff359f3f9ce9c2b8191fb90a57b982e08f9b05f1a657",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "once_cell",
+      "version": "1.21.4",
+      "manifestSha256": "87e5b7ee438abdef12e46386e86370f54ad70cabdcf949556b9ef012a9da9587",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ordered-float",
+      "version": "4.6.0",
+      "manifestSha256": "fddccaf85061ced520954068d6e2ba220f45a1940025acc9a194099296394fd2",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "p256",
+      "version": "0.13.2",
+      "manifestSha256": "7f2c98e9af91a495cf341425f77b782d6c253dba9cf4f63a16d63489ecb9ddfc",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "parking_lot",
+      "version": "0.12.5",
+      "manifestSha256": "3a52d781dd42d10f8c2dd3336bb61c4beaa850b5d62ebe7580070b8d0a4e3b98",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "parking_lot_core",
+      "version": "0.9.12",
+      "manifestSha256": "617b6fd7c1133961c993fd5baa560180d688f6d42f59b73da11fb90089a93ca7",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/parking_lot_core-0.9.12/build.rs",
+      "procMacro": false,
+      "buildSha256": "3698c936b75f8332d9b6b30a8a6838ea116c1ff0a819a025c9ea9696e4d8ce72",
+      "executionSourceHashes": {
+        "build.rs": "3698c936b75f8332d9b6b30a8a6838ea116c1ff0a819a025c9ea9696e4d8ce72"
+      }
+    },
+    {
+      "name": "pin-project-lite",
+      "version": "0.2.17",
+      "manifestSha256": "473f9cfe9738986d0d1c46e306bd11ad3e36bca8f1eab5bbe9f7297313fb33f4",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "pkcs8",
+      "version": "0.10.2",
+      "manifestSha256": "440cf271c696da0bcef123a4e005f9f47273d140b9b824f4b7b0d4fa4639cb12",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "pkg-config",
+      "version": "0.3.34",
+      "manifestSha256": "26612dc6bbb8c045f4c91f95fc026b926e9adb942655dddfd21ffecf2595b70b",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "portable-atomic",
+      "version": "1.15.0",
+      "manifestSha256": "30e602bcf54f19dbdcf52315a262c88e8efbd12455ee4d4fe63f2880e4ac10e1",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/portable-atomic-1.15.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "9d0b1e071715580497aadb918d4b3b124ee366ba66f15ac05a3d8045f0bc2cf0",
+      "executionSourceHashes": {
+        "build.rs": "9d0b1e071715580497aadb918d4b3b124ee366ba66f15ac05a3d8045f0bc2cf0"
+      }
+    },
+    {
+      "name": "portable-atomic-util",
+      "version": "0.2.8",
+      "manifestSha256": "27d857892513acbb2bf4b615991822388d3b30c568a677d50ad031735517517c",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/portable-atomic-util-0.2.8/build.rs",
+      "procMacro": false,
+      "buildSha256": "f17a8f6b7c93fa6bcefc325a7b75e9e03fc9c97f23ded051f31d6dc8b8e0d478",
+      "executionSourceHashes": {
+        "build.rs": "f17a8f6b7c93fa6bcefc325a7b75e9e03fc9c97f23ded051f31d6dc8b8e0d478"
+      }
+    },
+    {
+      "name": "powerfmt",
+      "version": "0.2.1",
+      "manifestSha256": "623e62724836792656467cabde148f04a3e4fefb5b86ae5e43195cb79a3fcdfb",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ppv-lite86",
+      "version": "0.2.21",
+      "manifestSha256": "aa9337145bd03a6e76fd42c2ee5f07c5c23ff6b2eb73cfc35c3070d76c5bacb8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "primeorder",
+      "version": "0.13.6",
+      "manifestSha256": "b2c33028ef1a7763ac1828c3f3c009e73085773de8adbfc043a6f5ca8ba7dba7",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "primitive-types",
+      "version": "0.10.1",
+      "manifestSha256": "da4178188e154b89847ad24f35c0c10912416b867e7d506e21f0ecab360b0592",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "proc-macro-crate",
+      "version": "3.5.0",
+      "manifestSha256": "e67f9a551770d5e0eea15db9977f257f390ae893068b1cc6425a0a87ac314bb3",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "manifestSha256": "6bdbe54a7f052e552dcfca90351764476e2767237ec3f954df8bd9f602861056",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/build.rs",
+      "procMacro": false,
+      "buildSha256": "baeb20b52f6b536be8657a566591a507bb2e34a45cf8baa42b135510a0c3c729",
+      "executionSourceHashes": {
+        "build.rs": "baeb20b52f6b536be8657a566591a507bb2e34a45cf8baa42b135510a0c3c729"
+      }
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47",
+      "manifestSha256": "13d8c50837f14aff48cd622349f98fb2c46350b7a0c08fd574cf7de4def27d06",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/build.rs",
+      "procMacro": false,
+      "buildSha256": "cd6808c02e476b09a520105e2c6f6d325cccb1ecd542cbbcc836a0ae6f6fb0f1",
+      "executionSourceHashes": {
+        "build.rs": "cd6808c02e476b09a520105e2c6f6d325cccb1ecd542cbbcc836a0ae6f6fb0f1"
+      }
+    },
+    {
+      "name": "r-efi",
+      "version": "6.0.0",
+      "manifestSha256": "a021f9fb0645cc5de5770cf7f41594c1deff4b388eca933b289752aa52666829",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "radium",
+      "version": "0.7.0",
+      "manifestSha256": "b41fc2b1f6259ab32f9c93aeb73074efa00739c587a4ebbf5c13beb45a9edb3f",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/radium-0.7.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "198e126042203936db2a99e9440569f3b5ff0f8bd9b3648e3b79807e26a82591",
+      "executionSourceHashes": {
+        "build.rs": "198e126042203936db2a99e9440569f3b5ff0f8bd9b3648e3b79807e26a82591"
+      }
+    },
+    {
+      "name": "rand",
+      "version": "0.8.8",
+      "manifestSha256": "673137d359a9075e90e63d4bef1ea4a4fc827d771d99f1731ae58e7f6b3ea809",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rand_chacha",
+      "version": "0.3.1",
+      "manifestSha256": "e2ef45f3c9d6f013da266b76ca1e1f664ad5fa1d526b46580a77fb311c659fd8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rand_core",
+      "version": "0.6.4",
+      "manifestSha256": "4a6762f8364d1a60f1436f4ba7d710de22465722340d2028101fcbd68e89396f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rayon",
+      "version": "1.12.0",
+      "manifestSha256": "bcc6eda50025991d8db6ccaaad2e26477072a359762451a4e55a7e700ad0e42d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rayon-core",
+      "version": "1.13.0",
+      "manifestSha256": "ab50ad4709436f6bda04e5345444f1197b1eda2bd3b49f9412c0cb318111b5a2",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/rayon-core-1.13.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "fa31cb198b772600d100a7c403ddedccef637d2e6b2da431fa7f02ca41307fc6",
+      "executionSourceHashes": {
+        "build.rs": "fa31cb198b772600d100a7c403ddedccef637d2e6b2da431fa7f02ca41307fc6"
+      }
+    },
+    {
+      "name": "redox_syscall",
+      "version": "0.5.18",
+      "manifestSha256": "759aa8628397afc10f79fd4e0653f00be1b2123da15b7a8f7c1ac70c23fcb061",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ref-cast",
+      "version": "1.0.27",
+      "manifestSha256": "2fe32c6aa381f44c6e97e375ed646f2f81f7658847e98366ff869e54fde8db2d",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/ref-cast-1.0.27/build.rs",
+      "procMacro": false,
+      "buildSha256": "095bc1870b75dd5c80a68bddaae03d2de9f817e134b026ebf3f63e0ff81cf5ca",
+      "executionSourceHashes": {
+        "build.rs": "095bc1870b75dd5c80a68bddaae03d2de9f817e134b026ebf3f63e0ff81cf5ca"
+      }
+    },
+    {
+      "name": "ref-cast-impl",
+      "version": "1.0.27",
+      "manifestSha256": "80f990055931f04350224af0a136795e42f1f79c47780ed0a94eb7bd2a129c33",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "9ea20de5ba784993a12f7f0ce98d3ea9b4c05aaa4ac4974f37bff9f8ac727cfb"
+      }
+    },
+    {
+      "name": "rfc6979",
+      "version": "0.4.0",
+      "manifestSha256": "48f7844dac3a7959ce8ff71ac9cb65073abdcf3940cbb3fe38e36942fe10fbe1",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "ripemd",
+      "version": "0.1.3",
+      "manifestSha256": "300f177f3400fcc6c1b350ff3bdd6df6314a5bc6ed26daf7710222da3da64427",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rustc-hex",
+      "version": "2.1.0",
+      "manifestSha256": "c7daeabce60115ce7cec16d05118570324db6eed3124e5f8cb54d14b5cd2fd7d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rustc_version",
+      "version": "0.4.1",
+      "manifestSha256": "c7d1d07fcb4f604eac7c2f9ad1262f93c81f2e45c6be6031de2d83da5ab59ccb",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "rustix",
+      "version": "1.1.6",
+      "manifestSha256": "43d4bcaf19bf857aaa17ada056e7561a50abdcb3201a1722770948ce050c77cb",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.6/build.rs",
+      "procMacro": false,
+      "buildSha256": "f7609b919173e7121493266d0f89db724a1e47bb105ebd05397f869639603eec",
+      "executionSourceHashes": {
+        "build.rs": "f7609b919173e7121493266d0f89db724a1e47bb105ebd05397f869639603eec"
+      }
+    },
+    {
+      "name": "rustversion",
+      "version": "1.0.23",
+      "manifestSha256": "fc211ccd64d3ad59a0715c1a6f8cbfbbd83045f644194394595d16646eee9947",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.23/build/build.rs",
+      "procMacro": true,
+      "buildSha256": "4438b108d5b198ca43ef0a78509da89861020674abd05166addd1c3058afbfa6",
+      "executionSourceHashes": {
+        "build/build.rs": "4438b108d5b198ca43ef0a78509da89861020674abd05166addd1c3058afbfa6",
+        "src/attr.rs": "9301cd4aff5a9648c057d5d8de9eb66921f0c3a715c51ada4459576bd49c8b19",
+        "src/bound.rs": "13c35302bd5d96ebe54509477e736a8b720e18cb2474e5805480c4517a20e5b0",
+        "src/constfn.rs": "613b8f53b21cc06b4f619fce9000993d3e7873b650701ca01cef1e53bed5b40a",
+        "src/date.rs": "f79c55ddcd18e124610cd5c9867b1ebaae1feeb6dfc37e2b7f94e3137aa883b6",
+        "src/error.rs": "cb37102f03ebbaca313d80f9714fe08dfef92fe956789ee87d93eb6121705f4f",
+        "src/expand.rs": "9c93525a8c4a0e620369ed256a1ee40a0b48f984e0fad8db8c0e2998bc8ecb23",
+        "src/expr.rs": "8e8ca76f4f5838436d9d7273f499c698bb41f6c15bc07d32ec5c1cb8bd3dd731",
+        "src/iter.rs": "8d4b817b9abc4e817105b673e15f29ef9bb8284a010ce01ac2d83387fe136947",
+        "src/lib.rs": "77c732493550b7e7a46ae2d25e89c363a851ba25a9e9a89f1aad67bad4afbb04",
+        "src/release.rs": "e0755ed1889b4c6f0faaa5adee5f60f27f9926becff875dbb41b6a65ae756591",
+        "src/time.rs": "6fcf3a1ed238a97bd7a39b187c88bdcef0246878424e06aa7eb779f841529b34",
+        "src/token.rs": "824ce765f692db73afa02d3ebb0281c750748035efc98fa547be29d3072665ce",
+        "src/version.rs": "afdb048bba95bbb885945eba5527b6bf0eca0105642bfc304c2f82a8b7d556df"
+      }
+    },
+    {
+      "name": "ryu",
+      "version": "1.0.23",
+      "manifestSha256": "410de3eae58a75b9d2558d0a4e3ed43c2c8317781ffbd30a7cbe4aebaa833e1a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "schemars",
+      "version": "0.9.0",
+      "manifestSha256": "3195a3f35777732b521985594f186b287faac1b958948db27e4d9fff251562c9",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "schemars",
+      "version": "1.2.3",
+      "manifestSha256": "2d26401484506d5d8ef9c566248faa2db4ccf6c1a2df2e3324d13c769f4b2e01",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "scopeguard",
+      "version": "1.2.0",
+      "manifestSha256": "68899251551903e2e1ba03c927f12e4c19fc8a15e8bd3756610f53f5ec075b48",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "sec1",
+      "version": "0.7.3",
+      "manifestSha256": "24a70b7095f9fd000e904aea11d5c67846e1aa252962d73c2d85085da49593aa",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "secp256k1",
+      "version": "0.27.0",
+      "manifestSha256": "113fdcf261cd7619de6c845f973f48167094f8e51dd25a3606c8a8a00ff1ed3d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "secp256k1-sys",
+      "version": "0.8.2",
+      "manifestSha256": "1d0abcfb5da1ec8d4f5e6d1427018aba367f1a96bc0aaef5769fa252a0d93802",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/secp256k1-sys-0.8.2/build.rs",
+      "procMacro": false,
+      "buildSha256": "b68037b44ad6c1b7df0805da298ced920db1b5a0ffbf4acfe80e93f892e67611",
+      "executionSourceHashes": {
+        "build.rs": "b68037b44ad6c1b7df0805da298ced920db1b5a0ffbf4acfe80e93f892e67611"
+      }
+    },
+    {
+      "name": "semver",
+      "version": "1.0.28",
+      "manifestSha256": "cf7fb84578260eec81ce5af4bdb176ec590d45fdcb78f06710f0aa13e3078761",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229",
+      "manifestSha256": "6883caefd46e86eb15d22d3a6d274ad304c5e7934ab70eb58d81b7c4a29ef9db",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/build.rs",
+      "procMacro": false,
+      "buildSha256": "e2ea6a7a82f5404c3e28cb055883c737ee7903367a10206fbb47b75c009f0eb3",
+      "executionSourceHashes": {
+        "build.rs": "e2ea6a7a82f5404c3e28cb055883c737ee7903367a10206fbb47b75c009f0eb3"
+      }
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.229",
+      "manifestSha256": "c6049e170e4f7c2b48749fefab59db583bfac4e466cde6d0c53e4f49bc5044f7",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/build.rs",
+      "procMacro": false,
+      "buildSha256": "7bc6b1eec8913ff4cd8e4b9b92cd04a82a4f38beb30a0b73a64c1e6e49f07b5f",
+      "executionSourceHashes": {
+        "build.rs": "7bc6b1eec8913ff4cd8e4b9b92cd04a82a4f38beb30a0b73a64c1e6e49f07b5f"
+      }
+    },
+    {
+      "name": "serde_derive",
+      "version": "1.0.229",
+      "manifestSha256": "d2581160ffa61baa386f882e08b0db20051dc3c782a82268d6473998b61c926e",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/bound.rs": "7daa248b3b1121bba90c5a184bbd9b630d46bca4b4c1b5814df97f494bf1ee9e",
+        "src/de/enum_.rs": "5a099a25034e4f9364d421a53cfb4428ea8a94fd66515c66207bf8bfb7c4db4f",
+        "src/de/enum_adjacently.rs": "987d3a9fc7eda53776f0ccc3fbe64147ccfc8caf2ee202d3ad6432daf033a194",
+        "src/de/enum_externally.rs": "d001b7eab7f89165f29c7459a12c2baf4898c0ff456c219afabb5d19c20462e3",
+        "src/de/enum_internally.rs": "9d898dbc1c46262f695ef7ba1660b2af70de48e07bbac8f44b740326b7c5b303",
+        "src/de/enum_untagged.rs": "b66ad3cea36ee786d50270f6648f1075c1e615b5f04173b47f034a251df5220e",
+        "src/de/identifier.rs": "b653c26f4274e5c323e3f893c6f9a2b21bd5c873abdc2a801f0289a5e56a9f6c",
+        "src/de/struct_.rs": "7b26982ce59504a9bb5a18c3ab56eee2d75e70fd465774ff035d15c50452c118",
+        "src/de/tuple.rs": "5496ee711b935b17269960f4a0cfcb7d23de668db9489dfca7276ce1fcdf0f6f",
+        "src/de/unit.rs": "b792db7952fc2e4719fdce9552fe4ba1836086cc967ae9a5b919c28b30f2b4a0",
+        "src/de.rs": "a04fdb321ce47b479b42b2dd0ca1cfd57db88e06451d7dc95303c582fedc135c",
+        "src/deprecated.rs": "cff374e86ea5f134913a2a194a68d7c2510ffd5214956d10b9c496e90a20a952",
+        "src/dummy.rs": "dce9d53f7f6efb41043d6dbd741e03e65fe0a56b2f739a041184036cd7491b16",
+        "src/fragment.rs": "6757cb4c3131d4300f093572efc273c4ab5a20e3e1efb54a311dcfa52d0bd6eb",
+        "src/internals/ast.rs": "bc6244a25f536cfee82f14a29df25b7e9bc299a639debe702b9bb060c1ac99fb",
+        "src/internals/attr.rs": "7abe82fde303a3c31f967c13e0ee1afe49ea584d882b9d2c32b067888e1c8225",
+        "src/internals/case.rs": "10c8dda2b32d8c6c6b63cf09cdc63d02375af7e95ecefe8fecb34f93b65191bb",
+        "src/internals/check.rs": "86ea817316638ec33f70ecdf9634a31c934fd3df84533e3e315816dc130f0bff",
+        "src/internals/ctxt.rs": "79c058495febd402facbfa24d8a82d0d53fd91a6497ad4e9595a4dcca2e0e0bc",
+        "src/internals/mod.rs": "c1ece6bbce5a5e8a2bf5d6d9a29e85551258db9c610fab73ac19c6b7d8cf98fd",
+        "src/internals/name.rs": "9bc1553d7b493794cd436664ee6b43fccb914f271fa86705ae2937ae923a876f",
+        "src/internals/receiver.rs": "c75e0ba04602c5771d662004f32b82bf01e11c1905153ba4c073969788b75abe",
+        "src/internals/respan.rs": "899753859c58ce5f532a3ec4584796a52f13ed5a0533191e48c953ba5c1b52ff",
+        "src/internals/symbol.rs": "d2590f1c8356d6a10923476b558c39a85b77392ba09c92fa97e05e2c403e73c7",
+        "src/lib.rs": "9c8efaaaad77caa41178ca4316bff1ccbb7a864673d88639d258b7c5619a4ad4",
+        "src/pretend.rs": "b3e4928f49b1f380c91afc575733586e5bced5d76f02847736c267c00872df91",
+        "src/ser.rs": "18b3a4d06cd721c402835b17f008a63fdbaad379734f0fd4132aa28d8ea5c1de",
+        "src/this.rs": "87818dc80cbb521b51938a653d09daf10aafc220bb10425948de82ad670fcb85"
+      }
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.154",
+      "manifestSha256": "548aafeb7c702b69b9de950033f10b59f70baf38592d275d8ca8cff19f7750c3",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.154/build.rs",
+      "procMacro": false,
+      "buildSha256": "a681e754be844c7dbef957f5d2d00b01f37c5dca160ef1055a8d8f975697a881",
+      "executionSourceHashes": {
+        "build.rs": "a681e754be844c7dbef957f5d2d00b01f37c5dca160ef1055a8d8f975697a881"
+      }
+    },
+    {
+      "name": "serde_repr",
+      "version": "0.1.21",
+      "manifestSha256": "dfa3951971fcf5409988c1be9dcd45848022a7c8aa4aac683fe8200511f798d5",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "5e687c2b53270065cf6d68a54e97bbe54c832913a44001b3a5016f89a90e3476",
+        "src/parse.rs": "5b73af36e8efa3cc4143647d480ef1ca030ca1946bfe42c5786ce8c2e42c6e27"
+      }
+    },
+    {
+      "name": "serde_with",
+      "version": "3.24.0",
+      "manifestSha256": "ec3188653ce42a7090c697617d67150c1dd141fb525e48d21774fc3883a0bd69",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "serde_with_macros",
+      "version": "3.24.0",
+      "manifestSha256": "bb5b793a9959bc021f874ff3d97775ef4d9c0159c75c5423e6c291e505fba116",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/apply.rs": "1815f39d5900f096f58698d35e5df1b899f2c1c02770ab6407388724192a9cc1",
+        "src/lazy_bool.rs": "783ea7b20a61dc279c6964e60f434a421706f15b7e5806a3f5ee16db9744b16f",
+        "src/lib.rs": "04429ca1dbc103f75419f40d7612dce29a024d74d0a67106cc323c86873ce543",
+        "src/utils.rs": "b4afdff1f191aed0158cb3e957e2105f48d354a973103b4d57f270f128cf8048"
+      }
+    },
+    {
+      "name": "serde_yaml",
+      "version": "0.9.34+deprecated",
+      "manifestSha256": "2aff50a39422e68805e272871afd09f3a1fed4bb09ba817822f0807122a4dab7",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "sha2",
+      "version": "0.10.9",
+      "manifestSha256": "f5b86209df69360114aaee67a66c3fcd31d8c840b8f34b9ad383aacd63cd15da",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "sha2",
+      "version": "0.11.1",
+      "manifestSha256": "a2eb64ea4fa73cd686f453b7428c415dad6dda57c4e0b6825ffc6f6d765dcc05",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "sha3",
+      "version": "0.10.9",
+      "manifestSha256": "df7d885d7804fe8a279a915c6595fd37fed35065b312dc112c6d50a009992509",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "sha3",
+      "version": "0.11.0",
+      "manifestSha256": "2471a9ad5ccb8f21c4fcaf3ee44ad4568cd413745598b382222b07f80e533820",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "shlex",
+      "version": "2.0.1",
+      "manifestSha256": "b6ead6cf404555ced33f7574c6c11413e29e7bcd5eb0ceeb59452830a46675ed",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "signature",
+      "version": "2.2.0",
+      "manifestSha256": "9a0ed264f832101d9e2e786db0e22d90a2a2544ed19c760ec7f2d501d950a9dd",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "slab",
+      "version": "0.4.12",
+      "manifestSha256": "11f31284be0c30b612f4e2c2e46aa14494a81639b12661f01f07394e270c0070",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "smallvec",
+      "version": "1.16.4",
+      "manifestSha256": "01b4c86d677ccf162137a6ce62ff6f243fdb6996322ad1863da1481d514a2cbb",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "smart-default",
+      "version": "0.7.1",
+      "manifestSha256": "886220167526d72040ace0629cab35e9e7a2b22d76bb28c7332a2e9ab2e42db8",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/body_impl.rs": "d1e3a209037d43ad653fdf7628ad52c4b70eced8d03e5e7b12e4381de8eb642a",
+        "src/default_attr.rs": "89e721794c16da3dbf59fc71381cbff74b7c0b5a5805765306fdfda0a9615ec2",
+        "src/lib.rs": "ff620a9442205980f0445f1624dba132f710ba5fcaccd65b8d1493f8af232333",
+        "src/util.rs": "8c553bfcf7d8a7d7960a1c3e3517218648ab4bd3ec5144b972a623b98bff1427"
+      }
+    },
+    {
+      "name": "spin",
+      "version": "0.9.9",
+      "manifestSha256": "ce275e3891b9202434e322adc20ee0f6420956f20df64453f1b8afa6ad2c9897",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "spki",
+      "version": "0.7.3",
+      "manifestSha256": "c2ce81d32a2e9586591d313c324e83bd3822ba13736fdd5209f06da1ac27bd5e",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "static_assertions",
+      "version": "1.1.0",
+      "manifestSha256": "6531dbe3d557e427f9e3510e50cdf3de751a319eece11c9a937b35cfab8744c4",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "strsim",
+      "version": "0.11.1",
+      "manifestSha256": "e74cc8f9ab1f8680c26aebab519e3fbda7521eebd1e8fdcebdfc2e1bf138a875",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "strum",
+      "version": "0.24.1",
+      "manifestSha256": "d774c37cc785796bf7e225cea70050a204280b691dc738f08c3d524220f72b14",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "strum",
+      "version": "0.26.3",
+      "manifestSha256": "d42134f7fdb99557a91eb2baf346dceb46e50d09edf17fe1da588b6856a93e54",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "strum_macros",
+      "version": "0.24.3",
+      "manifestSha256": "b2b904d21a38b55aee8f00c0fbe02ecb2b232cb04bd8cd6c06c6d7dedb31dc2a",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/helpers/case_style.rs": "59a99a5252f977de5f24eed598aa842660d8f1107fe9721b95271191c49aeb59",
+        "src/helpers/metadata.rs": "bd4e091098d2ed3f37b996573f4373dce5a1a1619b8bca8dfaa33df6594a6bf8",
+        "src/helpers/mod.rs": "6d99335c86623ff6e260d8d913ed96f86f11130784177469c6608bab8a6a2aed",
+        "src/helpers/type_props.rs": "f9c5f1ae29173f5dd51025f83e723e176d47b01de0abc45105cedaa7abccbb47",
+        "src/helpers/variant_props.rs": "14ee35d5709bad450a394125c08b860beb448d97cf2f3fcfe575061dfa83cc9c",
+        "src/lib.rs": "e2f3ff514588d51cfb7e1098944e220823c021dc3afdbba955ab08ee066957e7",
+        "src/macros/enum_count.rs": "00e470b4a0f68d2e41391a133f452e451e21233a081cee21d3f4d388f7145ed3",
+        "src/macros/enum_discriminants.rs": "af2deee6815236e59599732ceabb4fbf20b0c4afea120fd5b048fef786ba1b03",
+        "src/macros/enum_iter.rs": "cb4aa83fc0eee345301cb84faa34929b9a312430a5184020704f75fe583c2ab4",
+        "src/macros/enum_messages.rs": "d23b427e1b0f8ab9709e93837aba16bff12ccd92fb55bf013ca80a292ed7ffc5",
+        "src/macros/enum_properties.rs": "5a58931ca2ec09f2348a37cf31f1771a30916375b3232bb4122783e77ed3d0c1",
+        "src/macros/enum_variant_names.rs": "7d6d381ab10c603d1e87a089057138ef21c9b3de1246ba1fdcec894ef239a461",
+        "src/macros/from_repr.rs": "29b3df07580e3de40aeb1414add8a622b77876a14dffa997ed95b6d900279300",
+        "src/macros/mod.rs": "fa1204114c00f464cf07fe42908138e089cfe63d124892e3f616fa548dbd1b2c",
+        "src/macros/strings/as_ref_str.rs": "b6895fbde4eb804c0b250db8278b26521e62b83ebcf53f3de677db9b3098a28e",
+        "src/macros/strings/display.rs": "5d8d42a4ad16186d6e2c63f928369e3ae0a9517a31b18484f73f9de31f6db02f",
+        "src/macros/strings/from_string.rs": "99d8b8c1a7aa99ab12f63e5f74e96c980e17740738e800a854d688d6fed59ecb",
+        "src/macros/strings/mod.rs": "b7937f72a46c807fd87c787f3d23029509565a0388a30106e7026363782f2b56",
+        "src/macros/strings/to_string.rs": "e5cfca6766f5e50b4ce1ba947b7895856139c78ab876d1c74afd2e4ee9da4fd1"
+      }
+    },
+    {
+      "name": "strum_macros",
+      "version": "0.26.4",
+      "manifestSha256": "8ec1aea0236e97817ede93c32ac56fcd04bf9cc561fa8a553ea329fa0fa639e2",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/helpers/case_style.rs": "ac429454fad24d1a5a9829711f2024ae9477ffad7cc293b711fe588d1a5e1edf",
+        "src/helpers/inner_variant_props.rs": "09c4a2c73aadaaa934e6a20b429b99d4229ce76a4cc1edc916298100d971deb4",
+        "src/helpers/metadata.rs": "a9391071f1d4750781eda79bdf4553e77c65c28b1df87dfb3d00df6b290c18dd",
+        "src/helpers/mod.rs": "dc171dd27e723aede6c45cb981d48c710f42167afb06a5fbf013470a2962b9f2",
+        "src/helpers/type_props.rs": "cb1cdfb0e7927d3b0e364237e7048285ef5968e036d2ebacea642c66d96cc669",
+        "src/helpers/variant_props.rs": "36cc466e29b20246f87b9b87d39e4d23545596c522a201e0fb320ac2b231b045",
+        "src/lib.rs": "6b3d94635c078f4659500e31c3b682be6a64b5fb4b757e34d9aae3fa37afc10e",
+        "src/macros/enum_count.rs": "44084ab800ca8fca3b17f76c6025e8e59855598c0119807ce7bc80d5dc345d99",
+        "src/macros/enum_discriminants.rs": "98abbefad100dda4aaafa959ebb9fa77f518dd483414113e6c8bd1eea193bdff",
+        "src/macros/enum_is.rs": "cd63fb79f4f9b3479f11bce2ad45d3cb5d23f1d5c9c2a5fbb7af7e813fb70fa7",
+        "src/macros/enum_iter.rs": "462f949e7cb4ff3b7a7e30b723a3f86609e0e14c0f8e6b76e095376b0277396d",
+        "src/macros/enum_messages.rs": "ee89c3a10ebb553aa9c342f4b3b4346e97be1744fc5df72f580a331d4ea87393",
+        "src/macros/enum_properties.rs": "a9e1bf27504d46df689aad8910c7ad8ae7b3780ee97b6e659b2b19e481474030",
+        "src/macros/enum_table.rs": "434da77cbca12082d4daeba28ef0e416cea3064f1f641b31f4a330589369e04f",
+        "src/macros/enum_try_as.rs": "8bd311522786f0186290ea31a6f3483aa3fa23ccb3441b7fcf9b3743c9d3670b",
+        "src/macros/enum_variant_array.rs": "cb8de5cb5841fa9514c423c195b47a2fc13b9f5fb257093311fbb9c136c737d9",
+        "src/macros/enum_variant_names.rs": "ad4d2f87bf26e4d07327896118382a4b83c2cca5de6fdfecca6e7639eb73118b",
+        "src/macros/from_repr.rs": "561a6f10372c365674e064b31c6eb4c531ffa0b39f03476452bb0746201d579d",
+        "src/macros/mod.rs": "c94b29d4ad0f40a7803605d42647cc9fafec76545c7f3c435fe675a3102eb0ef",
+        "src/macros/strings/as_ref_str.rs": "594f29efd111ceef258ab0dd449db4cb52e638e1bd17efe589c5a90ee03686b9",
+        "src/macros/strings/display.rs": "5e466307196c428da9d31f8e7db46976a077d3e48805d93fa8a178563cc5b599",
+        "src/macros/strings/from_string.rs": "53d298f6859df3c13197a8bd303971d2a9ac14cb9860ea1e7c4df1bffdea58bd",
+        "src/macros/strings/mod.rs": "b7937f72a46c807fd87c787f3d23029509565a0388a30106e7026363782f2b56",
+        "src/macros/strings/to_string.rs": "983e6c1b1dec145acfa0c6a7ef8ff01d30507145753a1d85d0387c5ab61f6fa1"
+      }
+    },
+    {
+      "name": "subtle",
+      "version": "2.6.1",
+      "manifestSha256": "a3b9aefa358b0cd742de62e880ea080414ead838847a95892acaa58575dfc4cf",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "syn",
+      "version": "1.0.109",
+      "manifestSha256": "139a7e42e4c95f9730d4dfe05dd5e09ee59f713eacc310921a61d9fdfc0bdce0",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/syn-1.0.109/build.rs",
+      "procMacro": false,
+      "buildSha256": "b815649fd2929d3debd93a58f5da2fb8eba506047a6a5ba538347305828a87b0",
+      "executionSourceHashes": {
+        "build.rs": "b815649fd2929d3debd93a58f5da2fb8eba506047a6a5ba538347305828a87b0"
+      }
+    },
+    {
+      "name": "syn",
+      "version": "2.0.119",
+      "manifestSha256": "da8b83ac2c66a7b404dc55d88ae42592f70714823251f51b620ae349b246a18f",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "syn",
+      "version": "3.0.9",
+      "manifestSha256": "b6f7f6069d92142d3e294f84855a68049bebc5b886c557ed4ae980ddbc866e1c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "tap",
+      "version": "1.0.1",
+      "manifestSha256": "e1411b0ffb2a7d409e1706baf31dd4536fdf8834bcc62ca6d4bb1105733fe7cd",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "tempfile",
+      "version": "3.27.0",
+      "manifestSha256": "4ffd8ce684ce8f34075633101c8e627761387b5e66e5efe95010b0aa1414bf1b",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "thiserror",
+      "version": "2.0.21",
+      "manifestSha256": "4ab1fdd3cba041dbaa5b813dff268978a93b1542dcc31935fb903772cc700a47",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/build.rs",
+      "procMacro": false,
+      "buildSha256": "ccc38283604f99237ad2333bbe395259e29fdf2ff4e04a60a95de9e4499c09a3",
+      "executionSourceHashes": {
+        "build.rs": "ccc38283604f99237ad2333bbe395259e29fdf2ff4e04a60a95de9e4499c09a3"
+      }
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "2.0.21",
+      "manifestSha256": "cc5e3660d65270da1302d5b24cbefb50b4993b258d344a9ac9b4b69a612aa27f",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/ast.rs": "c717fffeb2923b2840d58fd02923a1926a48fa8336039f57a9e94f9275ae7ec6",
+        "src/attr.rs": "e257a7d93aab11f0f5d203ba83575903c577ebb25cea4f2fe50d8c2b07ed2555",
+        "src/expand.rs": "76285acc08ccb8a0a93a3cbd58c3e12cbcde61720ad676be181fff7b1f278df3",
+        "src/fallback.rs": "b862dac9c70af839654287dfbd7612f1241249fde9251d01921ecede078e6cc0",
+        "src/fmt.rs": "64cee5b33e78b7e56adb583b682cea38bc88e739ddb48159ca2853a9113dac85",
+        "src/generics.rs": "03134b3882790f657a11700e5fb0b0ca744214a47d609febaabc14926d2d7e03",
+        "src/lib.rs": "c1ba27791c3c9124517c3df66da113a7b6c5e1292c6bb05847223343000647b1",
+        "src/prop.rs": "9f350183bae7cb3b82e5cfe893212572c386fa52337cacf9976e0856312a468f",
+        "src/scan_expr.rs": "d46ae7a3eaaa6476553db3164676ec71aa82bcd8a2e4cad59deb07893c79f1c8",
+        "src/unraw.rs": "d4ee6048f7722160c3d61f69378d2c8d17068a319a8e6a33c6f25ea673e88312",
+        "src/valid.rs": "700ac9fd6ecfbefe39b943ecd7c1f99dff8f1412b9aafef3b7c9feace4145c1b"
+      }
+    },
+    {
+      "name": "threadpool",
+      "version": "1.8.1",
+      "manifestSha256": "16d9b37ffdb58a7f77fd89742597eb35ab7aa2d0840f4f086a5580d95949849b",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "time",
+      "version": "0.3.55",
+      "manifestSha256": "cc10e8f4bdbda88efd94e5df3636c909a12df9780d198e41b75acab3ba25045a",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "time-core",
+      "version": "0.1.9",
+      "manifestSha256": "e4fcb8945ac8299fa6ece980320f557d1f1b32f9281e4dc9d047c87bc81fb41e",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "time-macros",
+      "version": "0.2.32",
+      "manifestSha256": "26d08e95ebfc19a4f74668251de04bac0856597126a2db21d153f5962459e856",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/date.rs": "bce87ca82730426382b0aaece1f4bc8affaba67cbab87c81a6ed62cf1034e02b",
+        "src/datetime.rs": "c81258e32158f215a268d5eb674c81cb56aa2f7cfd3da33a5d55939432e6ac92",
+        "src/error.rs": "1978fb4bc94fde7389aab20a31ae9189263080117701cbb88f34eb5c3be40cd8",
+        "src/format_description/ast.rs": "b61ffa546745ad582183039e62a62a676ce7c85aca6d0d7e2d7de55617e8bb61",
+        "src/format_description/format_item.rs": "1a06f3c7bb5b5c11020f7b4a82d19d039de900c57914f631c4583594a1899f26",
+        "src/format_description/lexer.rs": "0454a3e5ab335d54aca0c416410531a32608aab593873f21c9f3bc9445400c81",
+        "src/format_description/mod.rs": "69b766a2b675ec2dbd7a8933b58109b2f77e89ebb28aa879e61ff22b1e04ee24",
+        "src/format_description/public/component.rs": "37e45f8b83ee2f862b660c6eabf194c8b5cdfe16ba5112fd98678eaa8a265d6e",
+        "src/format_description/public/mod.rs": "fa567c52560f1b52d431a674ef45721cce27771c002343757f4447fe969776b0",
+        "src/format_description/public/modifier.rs": "89bb713529db048f00de0db50824f3e60c13b227889c7c71f72b69cb3ea8f0db",
+        "src/format_description/public/optimizing.rs": "7e4f9dba0fec66cc90f0f934227a66e28ac6c72fd9124b82f380affc5f60a66d",
+        "src/helpers/mod.rs": "ba9b62092cd155db0d60d15b5cccb4edef952fcdea4d49f00f4dc21dbfa6a97f",
+        "src/helpers/string.rs": "ed701b5a8fb1815525367df12d0677a8d817fa87eca59afad0802fe50baf66d7",
+        "src/lib.rs": "033880bea18338352e72850c89d5cec301a5f193f3294871d269c1e3ec0aab59",
+        "src/offset.rs": "d504898384f2eae903235aae027374934ec153263b566e4d205039cd83ae6657",
+        "src/quote.rs": "eada69cac078f3efa81bef04fda75935e8a09f1cef7c707cf161f4db75400771",
+        "src/serde_format_description.rs": "4993e264fb12ccb3b9e0baacf87d08be1385b512b091604333d8d51f036a51a1",
+        "src/time.rs": "b61d710c374a94352340e1945fc87a2e22b1630b14714f57baf6eb2407f96df3",
+        "src/timestamp.rs": "46ed95e997f83bbcd3322bd7b95f872f58bf9a59d4001ac4219678e444bcec16",
+        "src/to_tokens.rs": "d7fdd4cdcc151bacfaf1dd49a4f51873c67948d03e50df00dfed7080d8431819",
+        "src/utc_datetime.rs": "95cf61a44e77ce8d13df158a198563f59b22f30b7b363391b54b1d17b0d7e5e0"
+      }
+    },
+    {
+      "name": "tinyvec",
+      "version": "1.13.3",
+      "manifestSha256": "431976069fdb12e129521aa4c5c09d225d80a84afe678130d41bdd51ec361688",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "toml_datetime",
+      "version": "1.1.2+spec-1.1.0",
+      "manifestSha256": "02085053b825e43bde98e113bdf869c2a1317a865e5808d276ed3daeb5da9cf8",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "toml_edit",
+      "version": "0.25.18+spec-1.1.0",
+      "manifestSha256": "7e07eef39f5ce3db7dd05f5aae8c87f868863e60d65261b6f11fa3e54e4f7f01",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "toml_parser",
+      "version": "1.1.5+spec-1.1.0",
+      "manifestSha256": "d0e8ff64feee54087ec8e3b5a538eefe0330f7c09e30ce09cead91d0a49b6fa6",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "tracing",
+      "version": "0.1.44",
+      "manifestSha256": "b7e201be4f3872fe25da1fa45aa404c8751a661755d4883fdbb5c0c558303e6d",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "tracing-attributes",
+      "version": "0.1.31",
+      "manifestSha256": "646214905e4c61a54c111ba9b16834c692fda2969be6f2cdb190a910ab1f2a51",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/attr.rs": "1fd342b6de06da3c064a04ce952c55ee21d46ce17b254c1d053121db0c161f73",
+        "src/expand.rs": "4541050b6a7397fef08f0dd32da36f5138263ef2497da83a3e2b5e1c43345c30",
+        "src/lib.rs": "635bb0d42e3ca670ef6a2dda49c131db9c65e7229d82129600358991917b7efd"
+      }
+    },
+    {
+      "name": "tracing-core",
+      "version": "0.1.36",
+      "manifestSha256": "610cf318865f1d349164f4420b53b49b2b3662b6938c2e730873371eb92e050e",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "typenum",
+      "version": "1.20.1",
+      "manifestSha256": "00785a81eae34b3298dfdde78a6bd96fe3ec000de46edd509bd13b7cab7a9870",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "uint",
+      "version": "0.9.5",
+      "manifestSha256": "0f09ced076d9f76767a8862954de54484ff4968eefda9eacd5e9cde32be2a424",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.27",
+      "manifestSha256": "c0e96a9c7ee62f5f9ab12de69e0ad44826ad753911d47638f605c936f7ea2c1c",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "unicode-segmentation",
+      "version": "1.13.3",
+      "manifestSha256": "86f0e8158aae32d3791f182cf50131f678462da65a713b18cab6c0b5638f1a50",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "unicode-xid",
+      "version": "0.2.6",
+      "manifestSha256": "030ed8e60fcd73b831f174ab2df10e0f913d5d1476909c92aee26849323370f3",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "unsafe-libyaml",
+      "version": "0.2.11",
+      "manifestSha256": "39d7eb7914105623a7baa0e953d82d8c4bb31e40f613e7e413e22c85f652bc69",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "untrusted",
+      "version": "0.7.1",
+      "manifestSha256": "59bb105a246b4729fc4bd17a4c3d6a86baa93ff912d29832afeb1bbc4668ea82",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "manifestSha256": "399ea74400a173c02eabe91cb9487d0cf351117857a5d2ebc6231f0efde67681",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "wasi",
+      "version": "0.11.1+wasi-snapshot-preview1",
+      "manifestSha256": "25915be68a3057b798a4a6d4e5ceef36047e03bf0353d3f2a99236cd23e410db",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "wasm-bindgen",
+      "version": "0.2.130",
+      "manifestSha256": "7e7d8ff4467eec1f59a1a0458f5a75379cb99037f8ee1609c9bb2d68f206befb",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/wasm-bindgen-0.2.130/build.rs",
+      "procMacro": false,
+      "buildSha256": "363b0c2cf7b1353ff702898612ab98956a87fa85e943b41377627c08a053406a",
+      "executionSourceHashes": {
+        "build.rs": "363b0c2cf7b1353ff702898612ab98956a87fa85e943b41377627c08a053406a"
+      }
+    },
+    {
+      "name": "wasm-bindgen-macro",
+      "version": "0.2.130",
+      "manifestSha256": "ec9a713a523cc15dc8624a786bf972d5d18a8740309fb1b008905362a8d5e18d",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "70fd5a23812befee8ff7cd4f85caf581d38d14d6dcfa77e8c98115d47710b8c2"
+      }
+    },
+    {
+      "name": "wasm-bindgen-macro-support",
+      "version": "0.2.130",
+      "manifestSha256": "5651833507accf1c759fa0723265a47f89f963f06843bba7a743be09448570e2",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "wasm-bindgen-shared",
+      "version": "0.2.130",
+      "manifestSha256": "bb5f8ff99ad057721e310a968ccb91a9c7c3df07f421fa638f12921b74d3b613",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/wasm-bindgen-shared-0.2.130/build.rs",
+      "procMacro": false,
+      "buildSha256": "2ad2b0d08ef35c6a9013b5488bdf568630f0fc517d10b47f3851ad5c6ef10da4",
+      "executionSourceHashes": {
+        "build.rs": "2ad2b0d08ef35c6a9013b5488bdf568630f0fc517d10b47f3851ad5c6ef10da4"
+      }
+    },
+    {
+      "name": "wee_alloc",
+      "version": "0.4.5",
+      "manifestSha256": "6fd4f4297e00d3964431db67de8c9df4875c0d23db7f8386d110c19ec88432d9",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/wee_alloc-0.4.5/build.rs",
+      "procMacro": false,
+      "buildSha256": "ac72f31d4245ecb029e39af21f5fa6fa3dfce373e62c22961d966c6fcfaf04a4",
+      "executionSourceHashes": {
+        "build.rs": "ac72f31d4245ecb029e39af21f5fa6fa3dfce373e62c22961d966c6fcfaf04a4"
+      }
+    },
+    {
+      "name": "winapi",
+      "version": "0.3.9",
+      "manifestSha256": "d25b7c71c515a1869c75b3ff957bf845386bec03bcb407532e3726919f0b36c7",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/winapi-0.3.9/build.rs",
+      "procMacro": false,
+      "buildSha256": "fa1782968d33345772093666220c7841c2fb4f6dd32fa47951c68a3a400a1a98",
+      "executionSourceHashes": {
+        "build.rs": "fa1782968d33345772093666220c7841c2fb4f6dd32fa47951c68a3a400a1a98"
+      }
+    },
+    {
+      "name": "winapi-i686-pc-windows-gnu",
+      "version": "0.4.0",
+      "manifestSha256": "9652222664ffc7e2a26fdcdebdce0917a455b39d8fbcbf451bf0b011a3067bf7",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/winapi-i686-pc-windows-gnu-0.4.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "4344ce95f51197e1377429cd9ef7a8e3f97d39546776705857991f2f9416f545",
+      "executionSourceHashes": {
+        "build.rs": "4344ce95f51197e1377429cd9ef7a8e3f97d39546776705857991f2f9416f545"
+      }
+    },
+    {
+      "name": "winapi-x86_64-pc-windows-gnu",
+      "version": "0.4.0",
+      "manifestSha256": "a88605a11db5def9b6cf73398e83b3edb72228cb43ea935729fac5cd33cec22c",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/winapi-x86_64-pc-windows-gnu-0.4.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "b4ab421e1dc98159dd4440813cdaf7d9ea98278324bc6118d0f7cf378933f371",
+      "executionSourceHashes": {
+        "build.rs": "b4ab421e1dc98159dd4440813cdaf7d9ea98278324bc6118d0f7cf378933f371"
+      }
+    },
+    {
+      "name": "windows-core",
+      "version": "0.62.2",
+      "manifestSha256": "8a1d754ca9637813f9aa3cf2faac93f7a1827bbaf575dde47e300043a2139546",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "windows-implement",
+      "version": "0.60.2",
+      "manifestSha256": "46380b1aaaf5ea3b850f30ceefa9894cd29412feaf41dc7266a9d1577e7b26b0",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/gen.rs": "ce704067089cf587556326a2502f9b050aaa7f83eb53d3707379236830429a20",
+        "src/lib.rs": "21655fb31ddb7e1489530b7625c3860222b8d8a0aaceb6a71b5964adbe36d81a",
+        "src/tests.rs": "ea34a27316c2c7440bdc41d03fa7a3426be344a238588d3728b490a44bfecc2e"
+      }
+    },
+    {
+      "name": "windows-interface",
+      "version": "0.59.3",
+      "manifestSha256": "dd3e0b382b8b9efa4047630781b905086f821bfe14927b74bc2e0bdf25f9425f",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "823b42444789094620dc319351f86b63abb8d10aefdf37ecaef13c9797ae1f82"
+      }
+    },
+    {
+      "name": "windows-link",
+      "version": "0.2.1",
+      "manifestSha256": "abf0b74b168ec7d7c600f44eb90502c47e44480a199b9adc9ec74ea990605707",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "windows-result",
+      "version": "0.4.1",
+      "manifestSha256": "fb2b11e12c9d99325bebc74d083ee6ff0e96c5fd0fc9edf5b38a5bfbdec249bb",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "windows-strings",
+      "version": "0.5.1",
+      "manifestSha256": "4d72a51e7a6f71120de32387f66118bb1aed6a6aee72aa058fa6964af7a0a5a6",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.61.2",
+      "manifestSha256": "1adbc955d5460fa64dc16e6c8198b25672e8d4b97d45ecfb262eb2693ce08422",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "winnow",
+      "version": "1.0.4",
+      "manifestSha256": "cff392f2e5af8a662aed09551f50bbe74eafa5a53dc051c62add73ea82a3cab0",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "wyz",
+      "version": "0.5.1",
+      "manifestSha256": "91e8b522b0a6f9bdfca01cf33e3e4ce22ed0d2c777200ca8c6dc98dff25e88b0",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "zerocopy",
+      "version": "0.8.63",
+      "manifestSha256": "73182670f07c89a4b463e6369da7a6b8f87bf5a838627103bb606bd7b4e0a88d",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/zerocopy-0.8.63/build.rs",
+      "procMacro": false,
+      "buildSha256": "075d31f4f99cf4e42132e9c3652c846de832576e2f18be281b16405235644fcd",
+      "executionSourceHashes": {
+        "build.rs": "075d31f4f99cf4e42132e9c3652c846de832576e2f18be281b16405235644fcd"
+      }
+    },
+    {
+      "name": "zerocopy-derive",
+      "version": "0.8.63",
+      "manifestSha256": "f8b9128d66324adf3b6af5542fae833e3d370533f5a782ca785874f706209d16",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/derive/from_bytes.rs": "6cd784417e0c657026f72eb60f5b2f69290c6e669c5775c9c0cf2e714b3d5533",
+        "src/derive/into_bytes.rs": "ec26199f87c9a544d249509e35abec1e6397c3f431207bf5f5be1ecd5db30493",
+        "src/derive/known_layout.rs": "abc0325f71428e4d357a745bbf235ff950f62ec3b5b53ba3d5d8b82dbc676d16",
+        "src/derive/mod.rs": "28e32df3b8d0eab5fcf6af56c443ad0807f9c32641082b6eda8eb8da203eed0e",
+        "src/derive/project.rs": "9d116f84ab6a998790a32d621e27ab4ba1c169f1be8bcee9330b3536fbf78a29",
+        "src/derive/try_from_bytes.rs": "c5ef4996afd692800ba99a5d544ac554f5b80282b0aa532eceb55b4febce038a",
+        "src/derive/unaligned.rs": "59eda2d1b65cd0b54112d66a48373f7acc1c66564fb7fcf440fe9a2e07b6c0b2",
+        "src/invariant.rs": "d90c92486fda33afe90db5aab822dd7cff4e42daa3c4a3fc853d6413db593f71",
+        "src/lib.rs": "ddf22139f2bfb423a59f8d09e5805aa72623159657a1238e376514b2ca16e11c",
+        "src/output_tests/expected/eq.expected.rs": "ca9967422f9010b330aad8e605abed5463bfea0b0eec750c65d3b7b35248565c",
+        "src/output_tests/expected/from_bytes_enum.expected.rs": "dd2e53bfba88d6760c91dd04c91eb38438fa10811d1759b5c2c1057b036dfbbf",
+        "src/output_tests/expected/from_bytes_struct.expected.rs": "dd2e53bfba88d6760c91dd04c91eb38438fa10811d1759b5c2c1057b036dfbbf",
+        "src/output_tests/expected/from_bytes_union.expected.rs": "e7b90f3bcd2ac056d3077c821f0701fe20575328e183dc7c12ca897b0f669ece",
+        "src/output_tests/expected/from_zeros.expected.rs": "59d929c30e7f17540f2d55b7ad8ab58ef0de549417fad31cf76b7e8a844411a3",
+        "src/output_tests/expected/hash.expected.rs": "bf33fa9d4117d12bd05e2acb86a795230d207401568910257af60c3b1fd3d70b",
+        "src/output_tests/expected/immutable.expected.rs": "18e347b77c82ca1d2a1cd27fc45c030d62cf3f6bcf629a919dfa21c2130d0317",
+        "src/output_tests/expected/into_bytes_enum.repr(C).expected.rs": "f683f6525d4d4435a6057044275f2fc4efc9db99afd1a3bbda2875a7f2901e3b",
+        "src/output_tests/expected/into_bytes_enum.repr(i128).expected.rs": "3651fb4f4fc9dbfb8affbfbf4feb16af421e5daf5892b5e0347b5953540dcf62",
+        "src/output_tests/expected/into_bytes_enum.repr(i16).expected.rs": "d32499b2e4d3318bacdd663cecf36ea09085cc4b2160bedbac4d44878d7231d4",
+        "src/output_tests/expected/into_bytes_enum.repr(i32).expected.rs": "379fc59d0e7bce846e6284eaafb847c0cb0630e038bd24e30552819bbddcb5c1",
+        "src/output_tests/expected/into_bytes_enum.repr(i64).expected.rs": "61126ff0bf65dcede8f9c4ea74fbfd164f0b11818a6e28e73c2b2cd33d764cd4",
+        "src/output_tests/expected/into_bytes_enum.repr(i8).expected.rs": "6003865afd1bd9c976a23fd25c762bf682644aa1ca95b8473c20e2eb093c3146",
+        "src/output_tests/expected/into_bytes_enum.repr(isize).expected.rs": "08e7ee5b212591a5561ffb2ada4bc102c22bd6b05bf03a9280581a9d4cb4b69d",
+        "src/output_tests/expected/into_bytes_enum.repr(u128).expected.rs": "2d093e15196b684ac4b0f5474c30690840d0225dfe6f0a26e60e9b5c8eaddccf",
+        "src/output_tests/expected/into_bytes_enum.repr(u16).expected.rs": "d3edd45eb170448986e8e357133ad2a2f763baaaf407a10fe0eaf8f96fca2b1c",
+        "src/output_tests/expected/into_bytes_enum.repr(u32).expected.rs": "4100cc8891883777b726d34610d06cf30d7d11261bdba2c62de20e2376cfa9d0",
+        "src/output_tests/expected/into_bytes_enum.repr(u64).expected.rs": "e0b5b2509a711c43c37c41182eca643403f75758f370ca6725f72510ac3e4602",
+        "src/output_tests/expected/into_bytes_enum.repr(u8).expected.rs": "5cdf5f94abbfd35573988b905cc871c63e4963641b4a8defec9cf9333c20d71f",
+        "src/output_tests/expected/into_bytes_enum.repr(usize).expected.rs": "5ff298c39496d64005c952b17997f74a656db542069acffa4897bc21d95f8926",
+        "src/output_tests/expected/into_bytes_struct_basic.expected.rs": "553bc4a48e15f77c9e378014a99afed8b587b5e5fb57060d54119c3a0cb20245",
+        "src/output_tests/expected/into_bytes_struct_empty.expected.rs": "a5acd221de00f6c09ed895c267541ae566ec88a3164d1ccf300117996fc94f06",
+        "src/output_tests/expected/into_bytes_struct_homogeneous_generic.expected.rs": "dd6a9e1aeceec0af026e926af8101647e791f4773fc9ccaf550fc45f8c855a2b",
+        "src/output_tests/expected/into_bytes_struct_trailing.expected.rs": "55aab6b3b0d365c5c127c43da8a93f4bc346bcd3aca79932a18e67690f550f37",
+        "src/output_tests/expected/into_bytes_struct_trailing_generic.expected.rs": "43734b843fac0339f2070f2048dfa6afb0369a30963ee7c82cec42fe59dc30b9",
+        "src/output_tests/expected/known_layout_repr_c_struct.expected.rs": "1722635fdd61d56c441833630d11b22818dd91e26985b4f9b4e16ee90d3ce414",
+        "src/output_tests/expected/known_layout_struct.expected.rs": "a820c628e0904650974562383ae14ce4878af0652fef25978398e408755f1d71",
+        "src/output_tests/expected/project_enum_1.expected.rs": "e05d7f437c77632197cdabad78414a7f52d989392e2649e190d6dd599efdd265",
+        "src/output_tests/expected/project_enum_2.expected.rs": "91a18eafe8fab9866e2418a9efae6841ece814ffa2d9e7738e6091d3d581e2d1",
+        "src/output_tests/expected/project_enum_3.expected.rs": "8e7045cc832ff7059f9a7a284dec248ed2e92b0c06ad2f802f00c76edbc4642f",
+        "src/output_tests/expected/project_struct.expected.rs": "0124567af2e53527e65cbdef58a68dd57bf99a62da21c00ac0eb1ce8731b7268",
+        "src/output_tests/expected/project_union_default_repr.expected.rs": "c86a2135c0a00e4eb4d863d5f2317c6cea015c7462547f30f8f5de74d1f9c4cd",
+        "src/output_tests/expected/project_union_repr_c.expected.rs": "cbace294ce52e4e7f1274d0cb9c7c23355ead20b6f2e6355c8905abbb15c854c",
+        "src/output_tests/expected/split_at_repr_c.expected.rs": "7aa5abd3cd581620c59843bcecbd121ff2e13e257044afd500b61226d652fa78",
+        "src/output_tests/expected/split_at_repr_c_packed.expected.rs": "6b6ac334560cf7ff0781a511b1190fd9ca775cfe991bc7229aa1389f926574d5",
+        "src/output_tests/expected/split_at_repr_transparent.expected.rs": "7aa5abd3cd581620c59843bcecbd121ff2e13e257044afd500b61226d652fa78",
+        "src/output_tests/expected/try_from_bytes.expected.rs": "dbeb00f21f461450b20ffb5d8f2ab7c87965b99f628fa63d241b22649f923061",
+        "src/output_tests/expected/try_from_bytes_enum_1.expected.rs": "c5b8ad0220bbf7652cf44f4efd7ea670f5e71d784d258d6578b729c5d750a8ea",
+        "src/output_tests/expected/try_from_bytes_enum_2.expected.rs": "5087d813813586bb0089130b94dfa3bfbe49aaf17510862a506f295de062a3f9",
+        "src/output_tests/expected/try_from_bytes_enum_3.expected.rs": "6131b5b47c15fb1220863b42766f0acbe1a5061a40782eb7f22d88643564d5b0",
+        "src/output_tests/expected/try_from_bytes_trivial_is_safe_enum.expected.rs": "e1acb91c4f8beb91970e746589352d761075a60de8c6b0094eff8688290ddfd5",
+        "src/output_tests/expected/unaligned.expected.rs": "8c833f97005b6fd84875ace51bddbb8c0185696c4435eb5cd05ce720f89a0ef7",
+        "src/output_tests/mod.rs": "473c4ec790e914027ef7e83ab3020103e54c580a417d08a814f4e352a450ac68",
+        "src/repr.rs": "fa65696e9f70d25bb0f68f1d7d8d89808205a6e3bb2336afd39348be3813de7d",
+        "src/util.rs": "a4e8660d444fa0d32055f29516f3ab1e323b9c6d478a98ffe4c372c06cbbb2a7"
+      }
+    },
+    {
+      "name": "zeroize",
+      "version": "1.9.1",
+      "manifestSha256": "71dd9b47dcf1ea92e55517d3543d1524448c76582a0a49d1d4c16c24a09f7cb0",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "zeroize_derive",
+      "version": "1.5.0",
+      "manifestSha256": "68bea85ad66f80bd96611edf839fdfdc64882742b1508326963a68df5788877b",
+      "build": null,
+      "procMacro": true,
+      "executionSourceHashes": {
+        "src/lib.rs": "7f1791449de20397f03148f1cefa11a6d6087522054279f29561010fb0371aa5"
+      }
+    },
+    {
+      "name": "zeropool-bn",
+      "version": "0.5.11",
+      "manifestSha256": "d01ba816b6fe5ac1f102eabcf03707781721c5dacb56e072b9dba3f08992c1e7",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "zmij",
+      "version": "1.0.23",
+      "manifestSha256": "b31420c7a806fae5b9ea2438dd4cbb99dcb3a22da67697fdf2776cc44a69527e",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/build.rs",
+      "procMacro": false,
+      "buildSha256": "ad320bc635887879bdbbf1b9322da4a157ec2c5a4243bd7c2cf9b6884a3b2a41",
+      "executionSourceHashes": {
+        "build.rs": "ad320bc635887879bdbbf1b9322da4a157ec2c5a4243bd7c2cf9b6884a3b2a41"
+      }
+    },
+    {
+      "name": "zstd",
+      "version": "0.13.4",
+      "manifestSha256": "162ce8434fffda4f579b124258fd2de210996bdbed5d18978e898ab9cce2cef5",
+      "build": null,
+      "procMacro": false,
+      "executionSourceHashes": {}
+    },
+    {
+      "name": "zstd-safe",
+      "version": "7.4.0",
+      "manifestSha256": "96bfb96afdd8f42e61543499467b13751db73770b97fcbb8a0dacc08388d50ad",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/zstd-safe-7.4.0/build.rs",
+      "procMacro": false,
+      "buildSha256": "2342e59833e2ebca2980884d4f242a6bf1b0143037c212e05514626ad5213505",
+      "executionSourceHashes": {
+        "build.rs": "2342e59833e2ebca2980884d4f242a6bf1b0143037c212e05514626ad5213505"
+      }
+    },
+    {
+      "name": "zstd-sys",
+      "version": "2.1.2+zstd.1.5.7",
+      "manifestSha256": "c7847f90b732a4a86edd51c87d4847f020e2689d26f8ea01aadd19d2b17f9569",
+      "build": "/tmp/mh-near-cargo-20261104/registry/src/index.crates.io-1949cf8c6b5b557f/zstd-sys-2.1.2+zstd.1.5.7/build.rs",
+      "procMacro": false,
+      "buildSha256": "ff97fca52b72ba76c2c71f0d4ca3475d5fa746e184e7d01c6085f9efee360171",
+      "executionSourceHashes": {
+        "build.rs": "ff97fca52b72ba76c2c71f0d4ca3475d5fa746e184e7d01c6085f9efee360171"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+[package]
+name = "multihopper-near-policy-research"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "=5.29.1"
+
+[dev-dependencies]
+near-sdk = { version = "=5.29.1", features = ["unit-testing"] }
+
+[workspace]
+members = ["fixtures/token", "fixtures/ordinary-token", "chamber", "controller"]
+
+[features]
+local-harness = ["near-sdk/unit-testing"]
+
+[[bin]]
+name = "near-policy-fixture"
+path = "src/bin/fixture.rs"
+required-features = ["local-harness"]
