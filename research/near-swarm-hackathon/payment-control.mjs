@@ -10,18 +10,32 @@ function digest(...parts){return createHash('sha256').update(JSON.stringify(part
 // Local research coordinator. The caller must supply an independently verified,
 // server-side job plan and authenticated actor; this is not an on-chain grant.
 export class PaymentControl {
- constructor(path,clientForOwner){this.db=new DatabaseSync(path);this.db.exec("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS reservations (id TEXT PRIMARY KEY, owner TEXT NOT NULL, job_id TEXT NOT NULL, invoice_id TEXT NOT NULL, binding TEXT NOT NULL, amount TEXT NOT NULL, status TEXT NOT NULL, transfer_id TEXT); CREATE TABLE IF NOT EXISTS job_bindings (owner TEXT NOT NULL,job_id TEXT NOT NULL,binding TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'active',PRIMARY KEY(owner,job_id));");if(!this.db.prepare('PRAGMA table_info(job_bindings)').all().some(c=>c.name==='status'))this.db.exec("ALTER TABLE job_bindings ADD COLUMN status TEXT NOT NULL DEFAULT 'active'");this.clientForOwner=clientForOwner;}
+ constructor(path,clientForOwner){this.db=new DatabaseSync(path);this.db.exec("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS reservations (id TEXT PRIMARY KEY, owner TEXT NOT NULL, job_id TEXT NOT NULL, invoice_id TEXT NOT NULL, binding TEXT NOT NULL, amount TEXT NOT NULL, status TEXT NOT NULL, transfer_id TEXT); CREATE TABLE IF NOT EXISTS job_bindings (owner TEXT NOT NULL,job_id TEXT NOT NULL,binding TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'active',plan TEXT,PRIMARY KEY(owner,job_id));");const columns=this.db.prepare('PRAGMA table_info(job_bindings)').all();if(!columns.some(c=>c.name==='status'))this.db.exec("ALTER TABLE job_bindings ADD COLUMN status TEXT NOT NULL DEFAULT 'active'");if(!columns.some(c=>c.name==='plan'))this.db.exec('ALTER TABLE job_bindings ADD COLUMN plan TEXT');this.clientForOwner=clientForOwner;}
  close(){this.db.close();}
  registerJob(owner,plan){
-  if(!validAddress(owner)||!plan||plan.owner!==owner||!validId(plan.agent)||plan.status!=='active'||!validId(plan.jobId)||!validAddress(plan.recipient)||!validAddress(plan.tokenMint)||!Number.isInteger(plan.tokenDecimals)||plan.tokenDecimals<0||plan.tokenDecimals>18||units(plan.perPaymentRaw)>units(plan.budgetRaw))throw Error('Valid owner-approved job required');
+  if(!validAddress(owner)||!plan||Object.keys(plan).sort().join()!=='agent,budgetRaw,jobId,owner,perPaymentRaw,recipient,status,tokenDecimals,tokenMint'||plan.owner!==owner||!validId(plan.agent)||plan.status!=='active'||!validId(plan.jobId)||!validAddress(plan.recipient)||!validAddress(plan.tokenMint)||!Number.isInteger(plan.tokenDecimals)||plan.tokenDecimals<0||plan.tokenDecimals>18||units(plan.perPaymentRaw)>units(plan.budgetRaw))throw Error('Valid owner-approved job required');
   const binding=digest('job-v1',owner,plan.jobId,plan.agent,plan.recipient,plan.tokenMint,plan.tokenDecimals,plan.budgetRaw,plan.perPaymentRaw);
   this.db.exec('BEGIN IMMEDIATE');try{
    const old=this.db.prepare('SELECT binding,status FROM job_bindings WHERE owner=? AND job_id=?').get(owner,plan.jobId);
    if(old && old.binding!==binding)throw Error('Job plan is immutable');
    if(old && old.status!=='active')throw Error('Job is frozen');
-   if(!old)this.db.prepare('INSERT INTO job_bindings(owner,job_id,binding) VALUES(?,?,?)').run(owner,plan.jobId,binding);
+   if(!old)this.db.prepare('INSERT INTO job_bindings(owner,job_id,binding,plan) VALUES(?,?,?,?)').run(owner,plan.jobId,binding,JSON.stringify(plan));
    this.db.exec('COMMIT');return {status:'active'};
   }catch(e){this.db.exec('ROLLBACK');throw e;}
+ }
+ getJob(owner,jobId){
+  if(!validAddress(owner)||!validId(jobId))throw Error('Valid job identity required');
+  const row=this.db.prepare('SELECT plan,status FROM job_bindings WHERE owner=? AND job_id=?').get(owner,jobId);
+  if(!row||!row.plan)throw Error('Job not found or requires migration');
+  return {...JSON.parse(row.plan),status:row.status};
+ }
+ getPayment(owner,jobId,invoiceId){
+  if(!validAddress(owner)||!validId(jobId)||!validId(invoiceId))throw Error('Valid payment identity required');
+  const id=digest('invoice-v1',owner,invoiceId);
+  const row=this.db.prepare('SELECT owner,job_id,amount,status,transfer_id FROM reservations WHERE id=?').get(id);
+  if(!row||row.owner!==owner||row.job_id!==jobId)throw Error('Payment not found');
+  if(row.status!=='quoted'||!row.transfer_id)throw Error('Payment requires reconciliation');
+  return {transferId:row.transfer_id,amountRaw:row.amount,status:row.status};
  }
  freeze(owner,jobId){
   if(!validAddress(owner)||!validId(jobId))throw Error('Valid job identity required');

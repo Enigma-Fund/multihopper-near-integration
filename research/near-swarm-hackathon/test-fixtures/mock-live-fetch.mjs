@@ -1,0 +1,2 @@
+// Test fixture: never delegates to network. The API key is intentionally synthetic.
+globalThis.fetch=async(url,options)=>{if(String(url)!=='https://api.example/api/v1/transfers'||options.method!=='POST'||options.headers['x-api-key']!=='mh_live_synthetic')throw Error('Unexpected network request');const body=JSON.parse(options.body);return new Response(JSON.stringify({id:1,...body,status:'quote',isTest:false}),{status:200,headers:{'content-type':'application/json'}});};

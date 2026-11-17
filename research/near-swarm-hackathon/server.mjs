@@ -6,18 +6,25 @@ import {join, dirname} from 'node:path';
 import {WalletSessions} from './auth.mjs';
 import {LocalNearJobs} from './near-local.mjs';
 import {createSolanaReader} from './solana-reader.mjs';
+import {LiveRuntime} from './live-runtime.mjs';
 const require = createRequire(import.meta.url);
 const {SwarmDemo} = require('./engine.cjs');
 const root = dirname(fileURLToPath(import.meta.url));
 const isNear=process.env.DEMO_NEAR === '1';
 const demo = isNear ? await LocalNearJobs.start() : new SwarmDemo();
 if(isNear) {
-  const shutdown=async()=>{server.close();await demo.close();process.exit(0);};
+  const shutdown=async()=>{server.close();await demo.close();if(live)live.close();process.exit(0);};
   process.once('SIGTERM',shutdown);
   process.once('SIGINT',shutdown);
 }
 const port = Number(process.env.PORT || 18988);
 const auth = new WalletSessions({origin:`http://127.0.0.1:${port}`});
+let live=null;
+if(process.env.MH_LIVE_ENABLED==='1'){
+  const [dbPath,baseUrl,expectedOrigin,apiKey]=['MH_LIVE_DB_PATH','MH_LIVE_API_URL','MH_LIVE_API_ORIGIN','MH_LIVE_API_KEY'].map(k=>process.env[k]);
+  if(!dbPath||!baseUrl||!expectedOrigin||!apiKey)throw Error('Incomplete local live API configuration');
+  live=new LiveRuntime({dbPath,baseUrl,expectedOrigin,apiKey});
+}
 // The test-only reader is an optional, server-side integration. Never expose its key.
 const solanaReader = process.env.MH_SOLANA_TEST_API_URL && process.env.MH_SOLANA_TEST_API_KEY
   ? createSolanaReader({baseUrl:process.env.MH_SOLANA_TEST_API_URL,apiKey:process.env.MH_SOLANA_TEST_API_KEY})
@@ -49,7 +56,7 @@ const server = createServer(async (req,res) => {
       return reply(res,200,{transfer:{id:transfer.id,status:transfer.status,tokenSymbol:transfer.tokenSymbol,amountRaw:transfer.amountRaw,isTest:true}});
     } catch { return reply(res,404,{error:'Transfer not found'}); }
   }
-  if(req.method !== 'POST' || !['/api/jobs','/api/payments','/api/recover','/api/auth/challenge','/api/auth/confirm'].includes(url.pathname)) return reply(res,404,{error:'Not found'});
+  if(req.method !== 'POST' || !['/api/jobs','/api/payments','/api/recover','/api/auth/challenge','/api/auth/confirm','/api/live/jobs','/api/live/quote','/api/live/freeze'].includes(url.pathname)) return reply(res,404,{error:'Not found'});
   if(req.headers['content-type'] !== 'application/json') return reply(res,415,{error:'JSON required'});
   if(req.headers.origin && req.headers.origin !== `http://127.0.0.1:${server.address().port}`) return reply(res,403,{error:'Local origin required'});
   let input='';
@@ -67,6 +74,14 @@ const server = createServer(async (req,res) => {
       return reply(res,200,{authenticated:true});
     }
     const token=req.headers.cookie?.split(';').map(x=>x.trim()).find(x=>x.startsWith('session='))?.slice(8);
+    if(url.pathname.startsWith('/api/live/')){
+      if(!token)return reply(res,401,{error:'Wallet session required'});
+      if(!live)return reply(res,503,{error:'Solana integration is not configured'});
+      const owner=auth.owner(token);
+      if(url.pathname==='/api/live/jobs')return reply(res,200,{job:live.register(owner,data)});
+      if(url.pathname==='/api/live/quote')return reply(res,200,{payment:await live.quote(owner,data)});
+      if(url.pathname==='/api/live/freeze')return reply(res,200,{job:live.freeze(owner,data)});
+    }
     const owner=token ? auth.owner(token) : 'demo.synthetic';
     let result;
     if(url.pathname === '/api/jobs') result=await demo.create(owner,data.jobId,data.budget,data.limit);

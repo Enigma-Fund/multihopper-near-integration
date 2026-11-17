@@ -25,6 +25,8 @@ async function login() {
 }
 test('wallet authentication, segregation, idempotency, limits and recovery',async()=>{
  const id=randomUUID().slice(0,8), a=await login(), b=await login();
+ assert.equal((await post('/api/live/jobs',{})).status,401);
+ assert.equal((await post('/api/live/jobs',{},a.cookie)).status,503);
  const duplicate=await Promise.all([post('/api/jobs',{jobId:id,budget:'100',limit:'25'},a.cookie),post('/api/jobs',{jobId:id,budget:'100',limit:'25'},a.cookie)]);
  assert.deepEqual(duplicate.map(x=>x.status).sort(),[200,400]);
  assert.equal((await post('/api/jobs',{jobId:id+'b',budget:'100',limit:'25'},b.cookie)).status,200);
