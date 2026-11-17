@@ -1,13 +1,17 @@
 import {meteorRequest} from '/near-swarm/near-wallet.mjs';
+import {localDemoWallet,localNearRequest} from '/near-swarm/local-demo-wallet.mjs';
 import {signedMessage,fromBase58} from './orders.mjs';
 import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
 
 const el = id => document.getElementById(id);
 const providers = [];
+const demoMode=new URL(location.href).searchParams.get('localDemo')==='1';
+const nearWalletRequest=demoMode?localNearRequest:meteorRequest;
 let connected;
 let currentJob;
 let unsubscribe;
+let working=false;
 function forgetWallet() {
   unsubscribe?.();
   unsubscribe=undefined;
@@ -39,6 +43,11 @@ el('wallet').addEventListener('change',forgetWallet);
 window.addEventListener('wallet-standard:register-wallet', e=>e.detail({register}));
 window.dispatchEvent(new CustomEvent('wallet-standard:app-ready',{detail:{register}}));
 register();
+if(demoMode){
+  const wallet=localDemoWallet(info=>{el('near-owner').value=info.near;});
+  register(wallet);el('wallet').value=String(providers.indexOf(wallet));
+  el('link-job').textContent='Create NEAR job';
+}
 
 async function connect() {
   const selected=providers[Number(el('wallet').value)];
@@ -89,10 +98,11 @@ async function post(path,body) {
 }
 function button(id,output,fn) {
   el(id).onclick=async()=>{
+    if(working)return;working=true;
     const buttons=document.querySelectorAll('button');buttons.forEach(b=>b.disabled=true);
     el(output).textContent='Working…';
     try {el(output).textContent=await fn();} catch(e){el(output).textContent=e.message;}
-    finally{buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
+    finally{working=false;buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
   };
 }
 button('connect','order-result',async()=>{const w=await connect();return 'Connected '+w.owner;});
@@ -148,7 +158,7 @@ async function authorize(action,fields){
   return body;
 }
 async function approveNearOperation(plan,popup) {
-  const result=await meteorRequest('sign',{transactions:plan.transaction},popup);
+  const result=await nearWalletRequest('sign',{transactions:plan.transaction},popup);
   const outcomes=result?.executionOutcomes;
   if(!Array.isArray(outcomes)||outcomes.length!==1)throw Error('The NEAR wallet did not return one transaction. Resume this invoice to reconcile it.');
   const hash=outcomes[0]?.transaction?.hash;
@@ -177,7 +187,7 @@ button('link-job','settlement-result',async()=>{
   signedMessage(location.origin,body);
   const wallet=connected,nonce=crypto.getRandomValues(new Uint8Array(32));
   const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
-  const proof=await meteorRequest('sign_message',{message:nearMessage(location.origin,body,job),nonce,
+  const proof=await nearWalletRequest('sign_message',{message:nearMessage(location.origin,body,job),nonce,
     recipient:location.host,accountId:nearOwner},popup);
   if(!proof||proof.accountId!==nearOwner||wallet!==connected)throw Error('Select the NEAR account and Solana wallet named in this order.');
   body.nearProof={accountId:proof.accountId,publicKey:proof.publicKey,signature:proof.signature,nonce:hex(nonce)};
@@ -239,6 +249,7 @@ for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(bu
 });
 
 async function showAvailability(){
+  if(working)return;
   const buttons=[el('pay'),el('refund')];
   for(const b of buttons){b.disabled=true;b.dataset.unavailable='true';}
   try{
@@ -251,3 +262,4 @@ async function showAvailability(){
   }catch{el('payment-availability').textContent='The service is unavailable. Reload to reconnect.';}
 }
 showAvailability();
+setInterval(showAvailability,30000);

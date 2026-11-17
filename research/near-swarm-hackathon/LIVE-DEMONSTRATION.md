@@ -1,6 +1,19 @@
 # Swarm for Hire: two-chain live demonstration
 
-Prepared November 17, 2026. Live demonstration status: **not yet executed**.
+Updated November 17, 2026. **NEAR mainnet deployment finalized; live payout, recovery and finished recording remain pending.**
+
+## Verified live progress
+
+- All three requested accounts were funded: 3.02 NEAR contract balance, 0.11 NEAR operations balance and 0.178857080 SOL in the previously registered authority selected by its owner for this demo.
+- The owner approved deployment and initialization of the dedicated NEAR contract. Transaction: [DMCxAvDeotyH33F4M512BQEShwNgCYYEvNSU1zgQsaWM](https://nearblocks.io/txns/DMCxAvDeotyH33F4M512BQEShwNgCYYEvNSU1zgQsaWM). Final execution and every receipt succeeded.
+- Contract: `9bf2f9014058da04b48e6010929fd3045f5507a452ec9acaa8b0a44c42531a0d`. Deployed executable hash: `2ziwpNEyFnCCLt63hxD8BEgJvFPe5GwcLGk5D2gRvzss`. Initialization and code were independently read at finality. Exact evidence is in `evidence/near-mainnet-deployment-20261117.json`.
+- Deployment receipts report 0.0020152893264648 NEAR burned in fees. The 253,993-byte account uses approximately 2.53993 NEAR of storage reserve. That reserve remains in the account; it is not a network fee. Post-deployment total balance: 3.0179847106735352 NEAR.
+- The isolated Cloudflare workspace authenticates with the Solana API, verifies the registered provider, verifies the deployed NEAR registry and has a valid notification subscription. No existing Solana program was changed or redeployed.
+- A separate receipt-only key was generated inside the Cloudflare configuration operation and stored as a server secret. Its public key is `LVC57vFeTVEYH/pH5qToTj6Y+ufTxHDWmhFavUeekmI=`. It cannot sign as any funded account. The earlier local receipt key was not exported or used to initialize this deployment.
+- The dedicated demo wallet connects through an opt-in loopback approval window. Funded-account keys remain in macOS Keychain. Native confirmations are required for signatures. The ordinary public wallet flow remains available without this local connector.
+- Work order `d2defcee-f7d7-4e14-bd1e-368548549768` was signed and saved with a 0.005 SOL budget and a 0.0025 SOL invoice cap. The receiving demo-agent address is `7HYAMGkNqAdy7TXZvSk5QbacXVKxhG5p2FVXTuBaQHRR`; it has a separate Keychain identity. A signed work order is not evidence of payment.
+
+The last two-route quote plus provider reserve totals 0.180486770 SOL, which exceeds the verified balance by 0.001629690 SOL. The first route is covered. Do not count potential rent recovery as spendable before it is finalized, and do not silently reduce route settings to fit a budget.
 
 ## What is implemented
 
@@ -21,7 +34,7 @@ This is a **bounded starting balance**, not a promise of exact fees. Native NEAR
 
 The retained NEAR storage contributions are not payment principal and are not automatically refunded. NEAR code storage is locked balance, not burned gas. The last Solana quote included 0.019984720 SOL identified by the API as potentially refundable and estimated net agent delivery of 0.002487562 SOL from a gross 0.0025 SOL charge. Reclaimability depends on actual settlement and is not counted as available funding for the second exercise. Refresh the quote and both customer balances before wallet approval. The additional amount to fund is the target minus the customer's existing spendable balance; the owner has now selected the existing Solana service wallet, and two dedicated NEAR implicit identities have been generated and verified locally. The exact public addresses, finalized balance snapshot and additional funding amounts are in the local funding plan; private keys remain in macOS Keychain.
 
-The dedicated NEAR contract and operations identities have separate keys. Neither account has been created on-chain yet; the first native NEAR transfer creates an implicit account. The publisher uses a third, unfunded identity that cannot sign as either account. The existing Solana provider authority is used for this demonstration at its owner's explicit instruction. Retain the provider's minimum reserve and initialize the new dedicated NEAR contract atomically with deployment. No existing account's code is overwritten.
+The dedicated NEAR contract and operations identities have separate keys. Funding created both implicit accounts; the deployment above initialized the contract atomically. The publisher uses a third identity that cannot sign as either account. The existing Solana provider authority is used for this demonstration at its owner's explicit instruction. Retain the provider's minimum reserve. No existing account's code was overwritten.
 
 ## Demonstration sequence
 
@@ -42,10 +55,10 @@ Save the following for each invoice: UTC timestamps, network, contract address a
 - Compiled the dedicated NEAR registry offline using already reviewed dependencies.
 - Real local NEAR contract: 31 transactions; 14 rejected attack/error cases; owner/agent limits, cross-customer separation, duplicate invoices, tampered/domain-mismatched receipts, restarts and finalization.
 - Real local NEAR plus local Solana validator: two invoice reservations, one payout, one interrupted recovery, both receipt publications, restart, duplicate-publication retry and API-driven NEAR closure.
-- All 54 gateway/wallet regression tests pass. The suite includes signed-work-order tampering, duplicate credits, lost responses, wrong-chain/code/publisher configuration, and exact finalized NEAR transaction verification.
+- All 63 gateway, wallet and local signing regression tests pass. The suite includes signed-work-order tampering, duplicate credits, lost responses, wrong-chain/code/publisher configuration, exact finalized NEAR transaction verification, canonical message compatibility, concurrent approval exclusion and persistence before broadcast.
 - Disposable Chromium popup tests pass for success, lost response/window close and rejection. Wallet pages were intercepted synthetic fixtures; no external wallet or blockchain call was made.
 - Meteor web messaging reviewed against `@meteorwallet/sdk` 3.24.1. This adapter loads no SDK scripts. A user's actual funded wallet approval and mainnet lifecycle remain to be verified.
 
 ## Remaining live requirements
 
-Funding of the prepared accounts, a user-approved deployment transaction and subsequent payment approvals, configured receipt publisher and a safely recoverable production route for the refund demonstration. These new local Keychain identities still need the supervised browser signing connection; they are not automatically present in Meteor. The existing production API is consumed unchanged. No core source is included in the public integration release.
+Complete the account-approved NEAR job link, invoice reservation and Solana wallet payment; verify the resulting payout and screening proof; publish and independently verify the NEAR receipt. A live refund additionally needs an actual recoverable route with positive funds, not a fabricated repayment. Then finish the website recording and attach both-chain receipts. These local Keychain identities use the supervised demo connector; they are not imported into Meteor. The existing production API is consumed unchanged. No core source is included in the public integration release.
