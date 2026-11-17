@@ -4,9 +4,16 @@ import {fromBase58} from './orders.mjs';
 export const LOCAL_DEMO_ORIGIN='http://127.0.0.1:18871';
 const encode=bytes=>btoa(String.fromCharCode(...bytes));
 const decode=text=>Uint8Array.from(atob(text),c=>c.charCodeAt(0));
-export function localRequest(kind,inputs={},popup,{host=window,timeout=240000}={}){
-  popup=popup&&!popup.closed?popup:host.open('about:blank','SwarmDemoWallet','popup,width=760,height=800');
+const approvalWindows=new WeakMap();
+export function prepareLocalApproval(popup,{host=window}={}){
+  const saved=approvalWindows.get(host);
+  popup=popup&&!popup.closed?popup:saved&&!saved.closed?saved:host.open('about:blank','SwarmDemoWallet','popup,width=760,height=800');
   if(!popup)throw Error('Allow the local wallet approval window.');
+  approvalWindows.set(host,popup);
+  return popup;
+}
+export function localRequest(kind,inputs={},popup,{host=window,timeout=240000}={}){
+  popup=prepareLocalApproval(popup,{host});
   const uid=crypto.randomUUID();let timer;
   return new Promise((resolve,reject)=>{
     const until=Date.now()+timeout;

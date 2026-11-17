@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {localRequest,LOCAL_DEMO_ORIGIN} from './local-demo-wallet.mjs';
+import {localRequest,prepareLocalApproval,LOCAL_DEMO_ORIGIN} from './local-demo-wallet.mjs';
 function fixture(){let receive;const sent=[];const popup={closed:false,location:{href:''},postMessage:(data,origin)=>sent.push({data,origin})};
   const host={open:()=>popup,addEventListener:(_,fn)=>receive=fn,removeEventListener:()=>receive=undefined};
   return {popup,host,sent,receive:event=>receive?.(event)};}
@@ -18,4 +18,17 @@ test('lost local popup response never creates a replacement signing request',asy
   const f=fixture();let opens=0;f.host.open=()=>{opens++;return f.popup;};
   const p=localRequest('near-sign',{transactions:'synthetic'},undefined,{host:f.host,timeout:1000});
   f.popup.closed=true;await assert.rejects(()=>p,/Resume the same invoice/);assert.equal(opens,1);assert.equal(f.sent.length,0);
+});
+test('one user-opened window handles connect, both link signatures and the NEAR transaction when later popups are blocked',async()=>{
+  const f=fixture();let opens=0;
+  f.host.open=()=>++opens===1?f.popup:null;
+  assert.equal(prepareLocalApproval(undefined,{host:f.host}),f.popup);
+  const ids=[];
+  for(const kind of ['connect','near-sign-message','solana-message','near-sign']){
+    const p=localRequest(kind,{synthetic:true},undefined,{host:f.host,timeout:2000});
+    const uid=new URL(f.popup.location.href).searchParams.get('uid');ids.push(uid);
+    f.receive({source:f.popup,origin:LOCAL_DEMO_ORIGIN,data:{uid,result:{kind}}});
+    assert.deepEqual(await p,{kind});
+  }
+  assert.equal(opens,1);assert.equal(new Set(ids).size,4);
 });

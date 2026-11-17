@@ -15,7 +15,7 @@ if(uid){
     if(received||event.source!==opener||!allowed.has(event.origin)||event.data?.uid!==uid)return;
     received=true;requestOrigin=event.origin;window.removeEventListener('message',listener);
     try{
-      if(event.data.kind==='connect'){const info=await(await fetch('/info')).json();opener.postMessage({uid,result:info},event.origin);window.close();return;}
+      if(event.data.kind==='connect'){const info=await(await fetch('/info')).json();opener.postMessage({uid,result:info},event.origin);$('review').textContent='Connected to the dedicated demo accounts.';$('status').textContent='Continue in the Swarm workspace. This window will show the next operation for review.';return;}
       ready(await post('/request',{origin:event.origin,kind:event.data.kind,inputs:event.data.inputs}));
     }catch(e){$('status').textContent=e.message;opener.postMessage({uid,error:e.message},event.origin);}
   };

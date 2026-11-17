@@ -1,5 +1,5 @@
 import {meteorRequest} from '/near-swarm/near-wallet.mjs';
-import {localDemoWallet,localNearRequest} from '/near-swarm/local-demo-wallet.mjs';
+import {localDemoWallet,localNearRequest,prepareLocalApproval} from '/near-swarm/local-demo-wallet.mjs';
 import {signedMessage,fromBase58} from './orders.mjs';
 import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
@@ -8,6 +8,7 @@ const el = id => document.getElementById(id);
 const providers = [];
 const demoMode=new URL(location.href).searchParams.get('localDemo')==='1';
 const nearWalletRequest=demoMode?localNearRequest:meteorRequest;
+const openNearApproval=()=>demoMode?prepareLocalApproval():window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
 let connected;
 let currentJob;
 let unsubscribe;
@@ -101,7 +102,12 @@ function button(id,output,fn) {
     if(working)return;working=true;
     const buttons=document.querySelectorAll('button');buttons.forEach(b=>b.disabled=true);
     el(output).textContent='Working…';
-    try {el(output).textContent=await fn();} catch(e){el(output).textContent=e.message;}
+    try {
+      // Keep one approval window opened by the user's gesture across asynchronous
+      // NEAR/Solana signature steps. Never open a second popup after an await.
+      if(demoMode&&id!=='verify'&&providers[Number(el('wallet').value)]?.name==='Dedicated demo wallet')prepareLocalApproval();
+      el(output).textContent=await fn();
+    } catch(e){el(output).textContent=e.message;}
     finally{working=false;buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
   };
 }
@@ -109,7 +115,7 @@ button('connect','order-result',async()=>{const w=await connect();return 'Connec
 for(const action of ['create','read','close']) button(action,'order-result',async()=>{
   const wallet=connected||await connect();
   if(action==='close'&&currentJob?.near&&currentJob.owner===wallet.owner&&currentJob.id===el('job-id').value.trim()){
-    const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+    const popup=openNearApproval();
     try{await withNearApproval(await authorize('close-near',{}),popup);currentJob.state='closed';return 'Job closed on NEAR. Existing payments can still be reconciled or recovered.';}
     finally{popup?.close();}
   }
@@ -186,7 +192,7 @@ button('link-job','settlement-result',async()=>{
   const body={owner:connected.owner,id:job.id,action:'link',expires:Date.now()+285000,nearOwner,nearJobId};
   signedMessage(location.origin,body);
   const wallet=connected,nonce=crypto.getRandomValues(new Uint8Array(32));
-  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  const popup=openNearApproval();
   const proof=await nearWalletRequest('sign_message',{message:nearMessage(location.origin,body,job),nonce,
     recipient:location.host,accountId:nearOwner},popup);
   if(!proof||proof.accountId!==nearOwner||wallet!==connected)throw Error('Select the NEAR account and Solana wallet named in this order.');
@@ -203,20 +209,20 @@ function pretty(row){
 }
 button('quote','settlement-result',async()=>{
   activeJob();
-  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  const popup=openNearApproval();
   try{return pretty(await withNearApproval(await authorize('invoice',{invoice:invoiceId(),recipient:activeJob().recipient,amount:lamports('amount'),minimum:lamports('minimum')}),popup));}
   finally{popup?.close();}
 });
 button('publish-near','settlement-result',async()=>{
   activeJob();
-  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  const popup=openNearApproval();
   try{const result=await withNearApproval(await authorize('publish-receipt',{invoice:invoiceId()}),popup);
     return pretty(result)+(result.near?.status==='confirmed'?' · Settlement recorded on NEAR.':'');}
   finally{popup?.close();}
 });
 button('close-near','settlement-result',async()=>{
   activeJob();
-  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  const popup=openNearApproval();
   try{await withNearApproval(await authorize('close-near',{}),popup);currentJob.state='closed';return 'NEAR job closed. Existing payments can still be reconciled or recovered.';}
   finally{popup?.close();}
 });
