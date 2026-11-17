@@ -18,7 +18,26 @@ export class SolanaLiveClient {
   const u=new URL(this.url);u.pathname=this.url.pathname.replace(/\/$/,'')+path;
   const headers={'x-api-key':this.key,accept:'application/json'};
   if(method==='POST'){headers['content-type']='application/json';headers['idempotency-key']=key;}
-  const send=async()=>{const r=await this.fetch(u,{method,headers,...(method==='POST'?{body:JSON.stringify(body??{})}:{}),redirect:'error',signal:AbortSignal.timeout(10000)});const text=await r.text();if(!r.ok||text.length>1000000)throw Error('Solana API request failed');let result;try{result=JSON.parse(text);}catch{throw Error('Invalid Solana API response');}if(rescueBundle){if(!Array.isArray(result?.rescueTxs)||!result.rescueTxs.length||result.rescueTxs.some(x=>typeof x?.base64!=='string')||typeof result.recentBlockhash!=='string'||!Number.isSafeInteger(result.lastValidBlockHeight))throw Error('Invalid rescue bundle');}else{const transfer=result.transfer??result;if(!transfer || transfer.sourceOwner!==this.owner || transfer.isTest!==false)throw Error('Transfer ownership or environment mismatch');}return result;};
+  const expectedId=path.match(/^\/transfers\/(\d+)(?:\/|$)/)?.[1];
+  const send=async()=>{
+    const request={method,headers,redirect:'error',signal:AbortSignal.timeout(10000)};
+    if(method==='POST')request.body=JSON.stringify(body??{});
+    const response=await this.fetch(u,request);
+    if(!response.ok)throw Error('Solana API request failed');
+    const text=await response.text();
+    if(text.length>1000000)throw Error('Solana API response too large');
+    let result;
+    try{result=JSON.parse(text);}catch{throw Error('Invalid Solana API response');}
+    if(rescueBundle){
+      if(!Array.isArray(result?.rescueTxs) || !result.rescueTxs.length || result.rescueTxs.some(x=>typeof x?.base64!=='string') ||
+         typeof result.recentBlockhash!=='string' || !Number.isSafeInteger(result.lastValidBlockHeight))throw Error('Invalid rescue bundle');
+    }else{
+      const transfer=result?.transfer??result;
+      if(!transfer || transfer.sourceOwner!==this.owner || transfer.isTest!==false)throw Error('Transfer ownership or environment mismatch');
+      if(expectedId && String(transfer.id)!==expectedId)throw Error('Transfer ID mismatch');
+    }
+    return result;
+  };
   return method==='POST'?this.journal.run({key,owner:this.owner,method,path:u.pathname,body:body??{}},send):send();
  }
  create(input,key){if(!input || input.sourceOwner!==this.owner)throw Error('Authenticated source wallet required');return this.request('POST','/transfers',input,key);}
