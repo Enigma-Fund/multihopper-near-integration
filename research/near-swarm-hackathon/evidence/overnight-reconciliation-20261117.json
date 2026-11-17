@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-11-17T22:08:51.068Z",
+  "transfer": 264,
+  "readOnly": true,
+  "results": [
+    {
+      "step": 1,
+      "kind": "route",
+      "expiredWithCompleteFinalizedHistory": true,
+      "executionFound": false
+    },
+    {
+      "step": 2,
+      "kind": "route",
+      "expiredWithCompleteFinalizedHistory": true,
+      "executionFound": false
+    },
+    {
+      "step": 3,
+      "kind": "orchestrator",
+      "expiredWithCompleteFinalizedHistory": true,
+      "executionFound": false
+    },
+    {
+      "step": 4,
+      "kind": "session",
+      "expiredWithCompleteFinalizedHistory": true,
+      "executionFound": false
+    },
+    {
+      "step": 5,
+      "kind": "dispersion",
+      "expiredWithCompleteFinalizedHistory": true,
+      "executionFound": false
+    }
+  ]
+}

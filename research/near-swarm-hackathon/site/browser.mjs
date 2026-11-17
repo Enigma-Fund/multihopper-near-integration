@@ -258,18 +258,28 @@ for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(bu
   return 'Wallet transactions submitted. Use Check settlement to verify final delivery or the recovered balance.';
 });
 
+let availabilityKnown=false;
 async function showAvailability(){
   if(working)return;
   const buttons=[el('pay'),el('refund')];
-  for(const b of buttons){b.disabled=true;b.dataset.unavailable='true';}
+  // A background health refresh must not briefly disable a working Pay button.
+  // The server still checks the actual invoice before accepting any payment.
+  if(!availabilityKnown)for(const b of buttons){b.disabled=true;b.dataset.unavailable='true';}
   try{
-    const response=await fetch('/near-swarm/api');if(!response.ok)throw Error();
+    const response=await fetch('/near-swarm/api',{signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error();
     const capabilities=await response.json();
+    if(working)return;
+    availabilityKnown=true;
     for(const [i,available] of [capabilities.fundedPayments,capabilities.refunds].entries()){
       buttons[i].disabled=!available;buttons[i].dataset.unavailable=String(!available);
     }
     el('payment-availability').textContent=capabilities.fundedPayments?'Your Solana wallet reviews each payment before submission.':'Live payments require the registered Solana provider and the deployed NEAR job contract. Work-order signing is available.';
-  }catch{el('payment-availability').textContent='The service is unavailable. Reload to reconnect.';}
+  }catch{
+    if(working)return;
+    availabilityKnown=true;
+    for(const b of buttons){b.disabled=true;b.dataset.unavailable='true';}
+    el('payment-availability').textContent='The connection is temporarily unavailable. Reconnecting automatically; your saved invoice is unchanged.';
+  }
 }
 showAvailability();
 setInterval(showAvailability,30000);

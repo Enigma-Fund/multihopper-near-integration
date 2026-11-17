@@ -12,19 +12,24 @@ import {nearDigest} from '../site/near-job.mjs';
 import {approvalJournal} from './approval-journal.mjs';
 import {checkWorkOrderMessage} from './message-policy.mjs';
 import {inspectSolanaBatch,packSolanaBatch} from './solana-batch.mjs';
+import {solanaRpcEndpoint} from './rpc-endpoint.mjs';
 
 const local='http://127.0.0.1:18871';
 const allowed=new Set(['https://multihopper-swarm-for-hire.pages.dev','https://business.multihopper.com',local]);
 const config=JSON.parse(await readFile(new URL('./wallet.local.json',import.meta.url)));
+let rpcConfig;
+try{rpcConfig=JSON.parse(await readFile(new URL('./build/rpc-config.local.json',import.meta.url)));}
+catch(error){if(error.code!=='ENOENT')throw Error('Invalid local Solana connection configuration');}
+const solanaEndpoint=solanaRpcEndpoint(rpcConfig);
 const journal=new URL('./build/approval-journal/',import.meta.url);
 await mkdir(journal,{recursive:true,mode:0o700});
 const requests=new Map();
 const json=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));};
 async function rpc(network,method,params){
-  const url=network==='near'?'https://rpc.mainnet.near.org':'https://api.mainnet.solana.com';
+  const url=network==='near'?'https://rpc.mainnet.near.org':solanaEndpoint;
   const r=await fetch(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(20000)});
   if(!r.ok)throw Error('Chain connection unavailable ('+r.status+')');const body=await r.json();
-  if(body.error)throw Error('Chain request failed: '+(body.error.message||body.error.name||'unknown'));
+  if(body.error)throw Error('Chain request failed'+(Number.isSafeInteger(body.error.code)?' (RPC '+body.error.code+')':''));
   return body.result;
 }
 async function nearAccess(identity){

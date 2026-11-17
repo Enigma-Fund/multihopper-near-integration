@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-17T22:03:44.577Z",
+  "network": "solana-mainnet",
+  "slot": 470694134,
+  "source": "25XjPUUHLag8bVUcPL9imgfojRMnDkWt5FnG3w9JE3se",
+  "agent": "7HYAMGkNqAdy7TXZvSk5QbacXVKxhG5p2FVXTuBaQHRR",
+  "funding": {
+    "signature": "g2dqRT1T4LLhuQAe8sTXHSC9UJy5gSfex4LFqGUuBKpK9JweVhuG527z62jTW5JPSwK7kSG2XpVWKvEsDSahfjw",
+    "slot": 470688366,
+    "fee": 5000,
+    "sourceDebit": 20479976
+  },
+  "sourceBalance": 158377104,
+  "agentBalance": 0,
+  "sourceTransactionsSincePreparation": [
+    {
+      "signature": "g2dqRT1T4LLhuQAe8sTXHSC9UJy5gSfex4LFqGUuBKpK9JweVhuG527z62jTW5JPSwK7kSG2XpVWKvEsDSahfjw",
+      "slot": 470688366,
+      "err": null
+    }
+  ],
+  "historyContainsPreparationBoundary": true,
+  "note": "Read-only verification. Funding is not an agent payout."
+}

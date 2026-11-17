@@ -59,12 +59,33 @@ export function settlementServices(env,transport=fetch){
     }
     throw new ServiceUnavailable('Solana '+method+' is unavailable ('+[...new Set(failures)].join(', ')+'). Resume the same invoice.');
   }
+  // One request may reconcile several expired messages for the same wallet.
+  // Share its finalized snapshot/history; never cache across HTTP requests or
+  // use this for mutable confirmed state or any transaction submission.
+  const finalizedReads=new Map();
+  async function historyRead(method,params){
+    const key=JSON.stringify([method,params]);
+    if(!finalizedReads.has(key))finalizedReads.set(key,sol(method,params));
+    try{return await finalizedReads.get(key);}catch(error){finalizedReads.delete(key);throw error;}
+  }
   return {configured, expectedTest:false, near:nearContractServices(env,rpc),
     registerNotifications:body=>request('/webhooks',{body,idempotency:'swarm-finality-notifications-v1'}),
     async usage(){
       const result=await request('/usage');
       if(result?.isTestMode!==false)throw new ServiceUnavailable('Mainnet API authentication could not be verified.');
       return true;
+    },
+    async historyState(){
+      // Probe the same history capability needed by safe retry. Account lookup
+      // alone can succeed on a provider that rejects historical requests.
+      const owner=env.SWARM_PROVIDER_AUTHORITY;
+      if(!owner)return 'unconfigured';
+      fromBase58(owner,32);
+      const head=await historyRead('getSlot',[{commitment:'finalized'}]);
+      const first=await historyRead('getFirstAvailableBlock',[]);
+      const history=await historyRead('getSignaturesForAddress',[owner,{limit:1,commitment:'finalized',minContextSlot:head}]);
+      if(!Number.isSafeInteger(head)||!Number.isSafeInteger(first)||first>head||!Array.isArray(history))throw new ServiceUnavailable('Finalized wallet history is unavailable.');
+      return 'available';
     },
     async providerState(){
       const authority=env.SWARM_PROVIDER_AUTHORITY;
@@ -119,16 +140,16 @@ export function settlementServices(env,transport=fetch){
     blockAvailable:async block=>(await sol('isBlockhashValid',[block,{commitment:'confirmed'}])).value,
     async findExpiredMessage(owner,born,digest,blockhash){
       // A confirmed fork or a pruned history cannot rule out a duplicate.
-      const head=await sol('getSlot',[{commitment:'finalized'}]);
-      if(!Number.isSafeInteger(born)||head-born<400||(await sol('isBlockhashValid',[blockhash,{commitment:'finalized',minContextSlot:head}])).value!==false||await sol('getFirstAvailableBlock',[])>born)throw new ServiceUnavailable('Waiting for complete finalized history before renewing this transaction.');
+      const head=await historyRead('getSlot',[{commitment:'finalized'}]);
+      if(!Number.isSafeInteger(born)||head-born<400||(await historyRead('isBlockhashValid',[blockhash,{commitment:'finalized',minContextSlot:head}])).value!==false||await historyRead('getFirstAvailableBlock',[])>born)throw new ServiceUnavailable('Waiting for complete finalized history before renewing this transaction.');
       let before;
       for(let page=0;page<6;page++){
-        const list=await sol('getSignaturesForAddress',[owner,{limit:100,commitment:'finalized',minContextSlot:head,...(before?{before}:{})}]);
+        const list=await historyRead('getSignaturesForAddress',[owner,{limit:100,commitment:'finalized',minContextSlot:head,...(before?{before}:{})}]);
         if(!Array.isArray(list))throw new ServiceUnavailable('Wallet history unavailable');
         for(const entry of list){
           if(entry.slot<born)return null;
           if(entry.err)continue;
-          const receipt=await sol('getTransaction',[entry.signature,{encoding:'base64',commitment:'finalized',maxSupportedTransactionVersion:0}]);
+          const receipt=await historyRead('getTransaction',[entry.signature,{encoding:'base64',commitment:'finalized',maxSupportedTransactionVersion:0}]);
           if(receipt?.transaction?.[1]!=='base64')throw new ServiceUnavailable('Wallet history is incomplete');
           if(await messageHash(receipt.transaction[0])===digest)return {signature:entry.signature,slot:entry.slot};
         }

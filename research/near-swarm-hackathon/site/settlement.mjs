@@ -51,6 +51,7 @@ export async function settleOrder(db,origin,body,services){
   return settleVerifiedOrder(db,origin,body,services);
 }
 async function settleVerifiedOrder(db,origin,body,services){
+  body={...body,batchReview:false};
   const {owner,id}=body;
   let action=body.action;
   if(action==='wallet-run'){

@@ -2,6 +2,20 @@
 
 Updated November 17, 2026. **NEAR mainnet deployment, job creation and first invoice reservation and Solana keeper funding finalized; agent payout, recovery and finished recording remain pending.**
 
+## Overnight readiness check — November 17, 22:09 UTC
+
+The hosted workspace now uses the authenticated Solana connection already configured in the published MultiHopper client. It is stored only as an isolated server secret and ignored local operator configuration, not in the public integration source. Existing API credentials, NEAR publisher configuration and job storage were preserved. Core Solana programs and production API code were not changed.
+
+- Hosted checks pass: API authenticated, provider registered, NEAR contract verified, finalized wallet history available, notification subscription active. Previously, the public providers returned HTTP 403/429 for historical reads from the hosted app. Account lookup alone did not reveal that failure; readiness now checks history as well.
+- The local approval helper uses the same verified connection. Background health refresh no longer temporarily disables a working payment button. Actual payment admission still checks signed terms, current state, transaction contents and cost limits.
+- All **85** integration, wallet and signing regression tests pass; no tests were skipped. The finalized-history snapshot is shared only within one request, never across requests or for mutable state or submissions. Legacy requests cannot enable batch behavior by adding an unsigned flag.
+- Read-only chain reconciliation checked every saved unexecuted transaction: **five expired messages, complete finalized history, zero executions found**. The first keeper funding remains finalized and recorded. No replacement invoice, second funding, signing or payment broadcast was performed during these checks.
+- Source balance at finalized slot 470694134: **0.158377104 SOL**. The agent balance remained **0 SOL**. API transfer **264** remained `deploying`, with gross 0.0025 SOL, quoted net 0.002487562 SOL and `canRescue: false`. Do not describe this as a completed payout or an available refund.
+
+The existing invoice is restored in the browser. Resume with **Approve payment**: one scoped message review and one batch review for the remaining wallet transactions. These real wallet confirmations remain the owner's actions. Transactions are refreshed after authorization, so an overnight pause does not require funding again or keeping an expiring unsigned transaction alive. Initial job setup and later NEAR receipt publication are separate; the two-review count refers to the already-linked invoice's Solana payment.
+
+Evidence: `evidence/overnight-readiness-20261117.json`, `evidence/overnight-api-status-20261117.json` and `evidence/overnight-reconciliation-20261117.json`. The latest isolated Pages release is `0a00ad4d-b157-4dbd-8988-8aba61593467`. Live payout, TRM-linked settlement evidence, NEAR settlement publication, live refund and finished recording still require completion; none is inferred from passing tests.
+
 ## Verified live progress
 
 - All three requested accounts were funded: 3.02 NEAR contract balance, 0.11 NEAR operations balance and 0.178857080 SOL in the previously registered authority selected by its owner for this demo.
@@ -72,7 +86,7 @@ Save the following for each invoice: UTC timestamps, network, contract address a
 - Compiled the dedicated NEAR registry offline using already reviewed dependencies.
 - Real local NEAR contract: 31 transactions; 14 rejected attack/error cases; owner/agent limits, cross-customer separation, duplicate invoices, tampered/domain-mismatched receipts, restarts and finalization.
 - Real local NEAR plus local Solana validator: two invoice reservations, one payout, one interrupted recovery, both receipt publications, restart, duplicate-publication retry and API-driven NEAR closure.
-- All 81 gateway, wallet and local signing regression tests pass. The suite includes signed-work-order tampering, duplicate credits, lost responses, wrong-chain/code/publisher configuration, exact finalized NEAR transaction verification, canonical message compatibility, concurrent approval exclusion, persistence before broadcast, the full link-signing sequence when the browser refuses additional popups, and transaction freshness after message approvals. The tests distinguish an unsigned preflight rejection from an ambiguous signed request and verify that resuming confirmed/pending steps does not request another transaction signature. Synthetic regressions are not proof of a completed mainnet payment.
+- All 85 gateway, wallet and local signing regression tests pass. The suite includes signed-work-order tampering, duplicate credits, lost responses, wrong-chain/code/publisher configuration, exact finalized NEAR transaction verification, canonical message compatibility, concurrent approval exclusion, persistence before broadcast, the full link-signing sequence when the browser refuses additional popups, and transaction freshness after message approvals. The tests distinguish an unsigned preflight rejection from an ambiguous signed request and verify that resuming confirmed/pending steps does not request another transaction signature. Synthetic regressions are not proof of a completed mainnet payment.
 - Disposable Chromium popup tests pass for success, lost response/window close and rejection. Wallet pages were intercepted synthetic fixtures; no external wallet or blockchain call was made.
 - Meteor web messaging reviewed against `@meteorwallet/sdk` 3.24.1. This adapter loads no SDK scripts. A user's actual funded wallet approval and mainnet lifecycle remain to be verified.
 

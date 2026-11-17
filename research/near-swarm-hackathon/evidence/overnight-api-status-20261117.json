@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-17T22:05:19.364Z",
+  "transferId": 264,
+  "phase": "deploying",
+  "externalId": "9f5207d8ffc9d287a244be6ae39af53e212f8b0b951fa21172c0e88bbdd251b8",
+  "grossLamports": "2500000",
+  "netLamports": "2487562",
+  "isTest": false,
+  "recovery": {
+    "canRescue": false
+  },
+  "note": "Read-only status of the existing invoice. No replacement or payment submitted."
+}
