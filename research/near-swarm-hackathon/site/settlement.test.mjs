@@ -84,6 +84,12 @@ test('two-wallet job binding, budget race, signed wallet funding, lost broadcast
  await assert.rejects(()=>verifyPayout(services.transaction,payout,agent.owner,'1'));
  await assert.rejects(()=>verifyPaymentScreen(tx,identity().owner,agent.owner,screener.pub));
  await assert.rejects(()=>verifyPaymentScreen(tx,owner,agent.owner,identity().pub));
+ const linkRecord=db.prepare("SELECT statement FROM swarm_approvals WHERE kind='link' AND owner=? AND id=?").bind(owner,id).first();
+ const changedLink=JSON.parse(linkRecord.statement);changedLink.nearProof.signature=Buffer.alloc(64).toString('base64');
+ const editLink=value=>db.prepare("UPDATE swarm_approvals SET statement=? WHERE kind='link' AND owner=? AND id=?").bind(value,owner,id).run();
+ editLink(JSON.stringify(changedLink));
+ assert.match((await send('refresh',{invoice:'one'})).error,/NEAR signature/);
+ editLink(linkRecord.statement);
  const otherQ=race.find(r=>r.code===200),refund=wire(customer,agent,1);
  const tr=transfers.get(otherQ.reference);tr.phase='recoverable';tr.recovery={canRescue:true};
  services.prepareRefund=async()=>({rescueTxs:[{base64:refund.unsigned}]});

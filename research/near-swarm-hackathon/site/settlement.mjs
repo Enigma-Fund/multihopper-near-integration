@@ -1,5 +1,5 @@
 import {signedMessage,verifyOrderSignature,JOB_MINT,approvalRecord} from './orders.mjs';
-import {hashHex,verifyNearJob} from './near-job.mjs';
+import {hashHex,verifyNearJob,verifyNearSignature} from './near-job.mjs';
 import {messageHash,verifyPayout,verifyRecovery,verifyPaymentScreen,screeningSigner} from './settlement-evidence.mjs';
 import {walletBatch} from './wallet-bundle.mjs';
 import {ServiceUnavailable} from './settlement-client.mjs';
@@ -37,7 +37,11 @@ async function verifyStoredTerms(db,job,link,row){
     const body={id:row.id,owner:row.owner,action,expires,...fields,signature:proof.signature};
     if(signedMessage(origin,body,then)!==proof.message)throw Error('Stored payment terms differ from the signed work order');
     await verifyOrderSignature(origin,body,then);
+    if(action==='link')await verifyNearSignature(origin,{...body,nearProof:proof.nearProof},job);
   }
+  const jobKey=await hashHex(JSON.stringify(['swarm-job-v1',link.near_owner,link.near_job]));
+  const invoiceKey=await hashHex(JSON.stringify(['swarm-invoice-v1',origin,row.owner,row.id,jobKey,row.invoice,job.recipient,row.amount,row.minimum]));
+  if(link.job_key!==jobKey||row.external_id!==invoiceKey)throw Error('The stored references differ from the signed job and invoice');
 }
 
 export async function settleOrder(db,origin,body,services){

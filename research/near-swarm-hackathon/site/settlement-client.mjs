@@ -1,7 +1,7 @@
 import {fromBase58} from './orders.mjs';
 import {messageHash} from './settlement-evidence.mjs';
 import {hashHex} from './near-job.mjs';
-import {MAINNET_GENESIS} from './receipt.mjs';
+import {MAINNET_GENESIS,ROUTER_PROGRAM} from './receipt.mjs';
 export class ServiceUnavailable extends Error {}
 const apiRoot='https://multihopper.com/api/v1';
 export function settlementServices(env,transport=fetch){
@@ -54,9 +54,40 @@ export function settlementServices(env,transport=fetch){
       const authority=env.SWARM_PROVIDER_AUTHORITY;
       if(!authority)return 'unconfigured';
       const pub=fromBase58(authority,32);
-      const result=await sol('getProgramAccounts',['3jLoS2wbNgtKzieUUxwg6Xhdv6gbZkHDtPWA9ZAgspFh',{encoding:'base64',commitment:'finalized',filters:[{dataSize:96},{memcmp:{offset:56,bytes:authority}}]}]);
+      // The registration service returns the provider account address. An exact lookup also
+      // works on RPCs that disable program-wide scans. Never infer registration from funding.
+      let records;
+      async function readProvider(address){
+        fromBase58(address,32);
+        const {value}=await sol('getAccountInfo',[address,{encoding:'base64',commitment:'finalized'}]);
+        return value?[{account:value}]:[];
+      }
+      if(env.SWARM_PROVIDER_PDA){
+        records=await readProvider(env.SWARM_PROVIDER_PDA);
+      }else{
+        try{
+          records=await sol('getProgramAccounts',[ROUTER_PROGRAM,{encoding:'base64',commitment:'finalized',filters:[{dataSize:96},{memcmp:{offset:56,bytes:authority}}]}]);
+        }catch(error){
+          if(!(error instanceof ServiceUnavailable))throw error;
+          const history=await sol('getSignaturesForAddress',[authority,{limit:8,commitment:'finalized'}]);
+          if(!Array.isArray(history))throw error;
+          const register=(await hashHex('global:register_provider')).slice(0,16);
+          records=[];
+          for(const entry of history.filter(item=>item.err===null)){
+            const tx=await sol('getTransaction',[entry.signature,{encoding:'jsonParsed',commitment:'finalized',maxSupportedTransactionVersion:0}]);
+            for(const ix of tx.transaction.message.instructions){
+              if(ix.programId!==ROUTER_PROGRAM||ix.accounts?.[0]!==authority)continue;
+              let data;try{data=fromBase58(ix.data,56);}catch{continue;}
+              if(Array.from(data.slice(0,8),v=>v.toString(16).padStart(2,'0')).join('')!==register)continue;
+              records.push(...await readProvider(ix.accounts[1]));
+            }
+          }
+          if(!records.length)return history.length===8?'unknown':'no-registration-observed';
+        }
+      }
       const expected=(await hashHex('account:ProviderConfig')).slice(0,16);
-      for(const {account} of result){
+      for(const {account} of records){
+        if(account.owner!==ROUTER_PROGRAM||account.executable!==false||account.data?.[1]!=='base64')continue;
         const bytes=Uint8Array.from(atob(account.data[0]),c=>c.charCodeAt(0));
         if(bytes.length!==96||Array.from(bytes.slice(0,8),v=>v.toString(16).padStart(2,'0')).join('')!==expected||!pub.every((v,i)=>v===bytes[56+i]))continue;
         return 'registered';

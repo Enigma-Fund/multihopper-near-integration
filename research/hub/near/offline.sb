@@ -1,0 +1,4 @@
+(version 1)
+(allow default)
+(deny network*)
+(deny file-read* (regex #"^/Users/[^/]+/[.](config|aws|ssh|near|near-credentials)(/|$)"))

@@ -17,7 +17,7 @@ export async function nearDigest(message,nonce,recipient,callbackUrl){
   let at=0;for(const p of parts){bytes.set(p,at);at+=p.length;}
   return crypto.subtle.digest('SHA-256',bytes);
 }
-export async function verifyNearJob(origin,body,job,accessKey){
+export async function verifyNearSignature(origin,body,job){
   const proof=body.nearProof;
   if(!proof || proof.accountId!==body.nearOwner || !/^ed25519:[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(proof.publicKey) ||
      !/^[0-9a-f]{64}$/.test(proof.nonce) || typeof proof.signature!=='string'||!/^[A-Za-z0-9+/]{86}==$/.test(proof.signature))throw Error('Invalid NEAR wallet proof');
@@ -26,7 +26,10 @@ export async function verifyNearJob(origin,body,job,accessKey){
   const digest=await nearDigest(nearMessage(origin,body,job),nonce,new URL(origin).host,proof.callbackUrl);
   const key=await crypto.subtle.importKey('raw',fromBase58(proof.publicKey.slice(8),32),'Ed25519',false,['verify']);
   if(!await crypto.subtle.verify('Ed25519',key,Uint8Array.from(atob(proof.signature),x=>x.charCodeAt(0)),digest))throw Error('NEAR signature does not bind these work-order terms');
-  const access=await accessKey(body.nearOwner,proof.publicKey);
+}
+export async function verifyNearJob(origin,body,job,accessKey){
+  await verifyNearSignature(origin,body,job);
+  const access=await accessKey(body.nearOwner,body.nearProof.publicKey);
   if(access?.permission!=='FullAccess' || typeof access.block_hash!=='string')throw Error('A finalized full-access NEAR signing key is required');
   fromBase58(access.block_hash,32);
   return {block:access.block_hash,key:await hashHex(JSON.stringify(['swarm-job-v1',body.nearOwner,body.nearJobId]))};
