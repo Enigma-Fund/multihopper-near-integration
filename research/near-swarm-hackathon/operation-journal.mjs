@@ -15,7 +15,7 @@ export class OperationJournal {
  constructor(path){this.db=new DatabaseSync(path);this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS operations (operation_key TEXT PRIMARY KEY, owner TEXT NOT NULL, digest TEXT NOT NULL, state TEXT NOT NULL, response TEXT);');}
  close(){this.db.close();}
  async run({key,owner,method,path,body},send){
-  if(typeof key!=='string'||!/^[A-Za-z0-9_-]{8,100}$/.test(key)||typeof owner!=='string'||owner.length<1||owner.length>128)throw Error('Invalid operation identity');
+  if(typeof key!=='string'||!/^[A-Za-z0-9._-]{8,100}$/.test(key)||typeof owner!=='string'||owner.length<1||owner.length>128)throw Error('Invalid operation identity');
   const digest=createHash('sha256').update(canonical({owner,method,path,body})).digest('hex');
   let entry;
   this.db.exec('BEGIN IMMEDIATE');

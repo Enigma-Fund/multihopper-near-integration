@@ -1,7 +1,7 @@
 // Isolated integration adapter. No server route or live credentials are wired here.
 // Wallet signing, transaction verification and custody reconciliation remain separate gates.
 const ID=/^[0-9]{1,20}$/;
-const KEY=/^[A-Za-z0-9_-]{8,100}$/;
+const KEY=/^[A-Za-z0-9._-]{8,64}$/;
 const WALLET=/^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 export class SolanaLiveClient {
  constructor({baseUrl,expectedOrigin,apiKey,owner,journal,fetchImpl=fetch}) {
@@ -25,6 +25,6 @@ export class SolanaLiveClient {
  async prepare(id,key){id=this.id(id);await this.status(id);return this.request('POST',`/transfers/${id}/prepare`,{},key);}
  status(id){return this.request('GET',`/transfers/${this.id(id)}`);}
  async confirm(id,signatures,key){id=this.id(id);await this.status(id);return this.request('POST',`/transfers/${id}/confirm-broadcast`,signatures,key);}
- async prepareRescue(id,key){id=this.id(id);const transfer=await this.status(id);if(transfer.status!=='failed')throw Error('Failed transfer required for rescue');return this.request('POST',`/transfers/${id}/rescue/prepare`,{},key,{rescueBundle:true});}
- async confirmRescue(id,signatures,key){id=this.id(id);const transfer=await this.status(id);if(transfer.status!=='failed')throw Error('Failed transfer required for rescue');if(!Array.isArray(signatures)||!signatures.length||signatures.some(x=>typeof x!=='string'||!/^[1-9A-HJ-NP-Za-km-z]{64,90}$/.test(x)))throw Error('Valid rescue signatures required');return this.request('POST',`/transfers/${id}/rescue/confirm`,{rescueSignatures:signatures},key);}
+ async prepareRescue(id,key){id=this.id(id);const transfer=await this.status(id);if(!['failed','recoverable'].includes(transfer.phase)||transfer.recovery?.canRescue!==true)throw Error('Failed transfer with rescuable funds required');return this.request('POST',`/transfers/${id}/rescue/prepare`,{},key,{rescueBundle:true});}
+ async confirmRescue(id,signatures,key){id=this.id(id);const transfer=await this.status(id);if(!['failed','recoverable','rescued'].includes(transfer.phase))throw Error('Failed transfer required for rescue confirmation');if(!Array.isArray(signatures)||!signatures.length||signatures.some(x=>typeof x!=='string'||!/^[1-9A-HJ-NP-Za-km-z]{64,90}$/.test(x)))throw Error('Valid rescue signatures required');return this.request('POST',`/transfers/${id}/rescue/confirm`,{rescueSignatures:signatures},key);}
 }

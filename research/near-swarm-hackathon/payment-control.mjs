@@ -65,7 +65,7 @@ export class PaymentControl {
   if(old)return {transferId:old.transfer_id,status:'quoted'};
   const client=this.clientForOwner(owner);
   const input={sourceOwner:owner,recipientWallet:plan.recipient,tokenMint:plan.tokenMint,tokenDecimals:plan.tokenDecimals,amountRaw,amountTokens:tokenAmount(amountRaw,plan.tokenDecimals),externalId:id};
-  const result=await client.create(input,'job_'+id);
+  const result=await client.create(input,id);
   if(!result||result.sourceOwner!==owner||result.recipientWallet!==plan.recipient||result.tokenMint!==plan.tokenMint||String(result.amountRaw)!==amountRaw||result.externalId!==id||result.status!=='quote'||result.isTest!==false||!/^\d+$/.test(String(result.id)))throw Error('Transfer quote does not match job; reconciliation required');
   const transferId=String(result.id);this.db.prepare("UPDATE reservations SET status='quoted',transfer_id=? WHERE id=? AND status='uncertain'").run(transferId,id);
   return {transferId,status:'quoted'};
