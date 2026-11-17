@@ -11,7 +11,9 @@ async function publicReadiness(services,env){
   if(!services.configured)return {solanaApi:'unconfigured',provider:'unconfigured'};
   if(readinessCache && readinessCache.until>Date.now())return readinessCache.promise;
   const promise=Promise.all([services.usage().then(()=>'authenticated').catch(()=>'unavailable'),
-    services.providerState().catch(()=>'unknown')]).then(([solanaApi,provider])=>({solanaApi,provider}));
+    services.providerState().catch(()=>'unknown'),
+    services.near?services.near.readiness().then(()=>'verified').catch(()=>'unavailable'):Promise.resolve('unconfigured')
+  ]).then(([solanaApi,provider,nearContract])=>({solanaApi,provider,nearContract}));
   readinessCache={until:Date.now()+30000,promise};return promise;
 }
 const security={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',
@@ -43,8 +45,8 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
         const notifications=url.origin===notificationOrigin && readiness.solanaApi==='authenticated' ? await notificationKey(env,services).then(()=>true).catch(()=>false) : false;
         return json({...readiness,notifications},readiness.solanaApi==='authenticated'?200:503);
       }
-      const ready=readiness.solanaApi==='authenticated'&&readiness.provider==='registered';
-      return json({name:'MultiHopper Swarm for Hire',version:2,nearJobLinks:true,productionApiConfigured:services.configured,readiness,invoiceVerification:true,chain:'solana:mainnet',signedJobs:true,fundedPayments:ready,refunds:ready,
+      const ready=readiness.solanaApi==='authenticated'&&readiness.provider==='registered'&&readiness.nearContract==='verified';
+      return json({name:'MultiHopper Swarm for Hire',version:2,nearJobLinks:true,productionApiConfigured:services.configured,readiness,invoiceVerification:true,chain:'solana:mainnet',signedJobs:true,nearContract:services.near?.contract??null,fundedPayments:ready,refunds:ready,
       methods:{'POST /near-swarm/api/settlement':'Dual-signed NEAR job linkage, signed invoice quotes, payout and recovery reconciliation. Refer to the integration source for the signed fields.', 'POST /near-swarm/api/orders':'Sign the canonical message for create, read or close with the owner’s Solana wallet. See the public integration for the message format.',
       'POST /near-swarm/api/screening':{signature:'finalized Solana transaction signature',routeId:'32-byte on-chain route ID in hex'}}});
     }

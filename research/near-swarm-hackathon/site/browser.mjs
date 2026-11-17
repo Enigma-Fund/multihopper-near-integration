@@ -1,4 +1,5 @@
-import {signedMessage} from './orders.mjs';
+import {meteorRequest} from '/near-swarm/near-wallet.mjs';
+import {signedMessage,fromBase58} from './orders.mjs';
 import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
 
@@ -97,6 +98,11 @@ function button(id,output,fn) {
 button('connect','order-result',async()=>{const w=await connect();return 'Connected '+w.owner;});
 for(const action of ['create','read','close']) button(action,'order-result',async()=>{
   const wallet=connected||await connect();
+  if(action==='close'&&currentJob?.near&&currentJob.owner===wallet.owner&&currentJob.id===el('job-id').value.trim()){
+    const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+    try{await withNearApproval(await authorize('close-near',{}),popup);currentJob.state='closed';return 'Job closed on NEAR. Existing payments can still be reconciled or recovered.';}
+    finally{popup?.close();}
+  }
   let id=el('job-id').value.trim();
   if (!id && action==='create') id=crypto.randomUUID();
   if (!id) throw Error('Enter the job ID or create a job first.');
@@ -141,27 +147,42 @@ async function authorize(action,fields){
   if(connected!==wallet)throw Error('Your wallet account changed.');
   return body;
 }
+async function approveNearOperation(plan,popup) {
+  const result=await meteorRequest('sign',{transactions:plan.transaction},popup);
+  const outcomes=result?.executionOutcomes;
+  if(!Array.isArray(outcomes)||outcomes.length!==1)throw Error('The NEAR wallet did not return one transaction. Resume this invoice to reconcile it.');
+  const hash=outcomes[0]?.transaction?.hash;
+  fromBase58(hash,32);
+  return hash;
+}
+async function withNearApproval(body,popup){
+  let result=await post('settlement',body);
+  if(result.status!=='near-approval-required'){popup?.close();return result;}
+  const hash=await approveNearOperation(result,popup);
+  for(let attempt=0;attempt<12;attempt++){
+    result=await post('settlement',{...body,nearTransactionHash:hash});
+    if(result.status!=='near-approval-required'){
+      const link=document.createElement('a');link.href='https://nearblocks.io/txns/'+hash;
+      link.target='_blank';link.rel='noopener noreferrer';link.textContent='View the confirmed NEAR operation';
+      el('chain-evidence').append(link,document.createElement('br'));
+      return result;
+    }
+    await new Promise(resolve=>setTimeout(resolve,2000));
+  }
+  throw Error('NEAR finality is still pending. Resume this job or invoice to check again.');
+}
 button('link-job','settlement-result',async()=>{
   const job=activeJob(), nearOwner=el('near-owner').value.trim(), nearJobId=el('near-id').value.trim();
   const body={owner:connected.owner,id:job.id,action:'link',expires:Date.now()+285000,nearOwner,nearJobId};
   signedMessage(location.origin,body);
-  const wallet=connected,nonce=crypto.getRandomValues(new Uint8Array(32)),callbackUrl=location.origin+'/near-swarm';
-  const address=new URL('https://app.mynearwallet.com/sign-message');
-  address.search=new URLSearchParams({message:nearMessage(location.origin,body,job),nonce:b64(nonce),recipient:location.host,callbackUrl}).toString();
-  const popup=window.open(address.href,'SwarmNEAR','popup,width=480,height=720');
-  if(!popup)throw Error('Allow the NEAR wallet window and try again.');
-  const proof=await new Promise((resolve,reject)=>{
-    function done(fn,value){clearInterval(timer);window.removeEventListener('message',receive);popup.close();fn(value);}
-    function receive(event){if(event.source!==popup||event.origin!==address.origin)return;
-      if(event.data?.status==='success')done(resolve,event.data.signedRequest);
-      else if(event.data?.status==='failure')done(reject,Error('The NEAR wallet declined the signature.'));}
-    window.addEventListener('message',receive);
-    const timer=setInterval(()=>{if(popup.closed||Date.now()>=body.expires)done(reject,Error('NEAR approval closed or expired.'));},500);
-  });
+  const wallet=connected,nonce=crypto.getRandomValues(new Uint8Array(32));
+  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  const proof=await meteorRequest('sign_message',{message:nearMessage(location.origin,body,job),nonce,
+    recipient:location.host,accountId:nearOwner},popup);
   if(!proof||proof.accountId!==nearOwner||wallet!==connected)throw Error('Select the NEAR account and Solana wallet named in this order.');
-  body.nearProof={accountId:proof.accountId,publicKey:proof.publicKey,signature:proof.signature,nonce:hex(nonce),callbackUrl};
+  body.nearProof={accountId:proof.accountId,publicKey:proof.publicKey,signature:proof.signature,nonce:hex(nonce)};
   body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
-  const result=await post('settlement',body);return 'Linked '+result.nearAccount+' / '+result.nearJobId+' to this work order.';
+  try{const result=await withNearApproval(body,popup);currentJob.near={account:result.nearAccount,jobId:result.nearJobId,jobKey:result.jobKey};return 'Linked '+result.nearAccount+' / '+result.nearJobId+' to this work order.';}finally{popup?.close();}
 });
 function invoiceId(){const id=el('invoice').value.trim();if(!id)throw Error('Enter an invoice ID.');return id;}
 function pretty(row){
@@ -170,7 +191,25 @@ function pretty(row){
   if(row.quotedNetLamports)return base+' · gross '+row.grossLamports+' lamports · agent receives '+row.quotedNetLamports+' lamports'+(row.phase?' · '+row.phase:'');
   return base;
 }
-button('quote','settlement-result',async()=>pretty(await post('settlement',await authorize('invoice',{invoice:invoiceId(),recipient:activeJob().recipient,amount:lamports('amount'),minimum:lamports('minimum')}))));
+button('quote','settlement-result',async()=>{
+  activeJob();
+  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  try{return pretty(await withNearApproval(await authorize('invoice',{invoice:invoiceId(),recipient:activeJob().recipient,amount:lamports('amount'),minimum:lamports('minimum')}),popup));}
+  finally{popup?.close();}
+});
+button('publish-near','settlement-result',async()=>{
+  activeJob();
+  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  try{const result=await withNearApproval(await authorize('publish-receipt',{invoice:invoiceId()}),popup);
+    return pretty(result)+(result.near?.status==='confirmed'?' · Settlement recorded on NEAR.':'');}
+  finally{popup?.close();}
+});
+button('close-near','settlement-result',async()=>{
+  activeJob();
+  const popup=window.open('about:blank','SwarmNEAR','popup,width=480,height=720');
+  try{await withNearApproval(await authorize('close-near',{}),popup);currentJob.state='closed';return 'NEAR job closed. Existing payments can still be reconciled or recovered.';}
+  finally{popup?.close();}
+});
 button('refresh','settlement-result',async()=>pretty(await post('settlement',await authorize('refresh',{invoice:invoiceId()}))));
 for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(buttonId,'settlement-result',async()=>{
   const wallet=connected,job=activeJob();if(!wallet.signTx)throw Error('Connect a Solana Wallet Standard wallet with transaction signing.');
@@ -208,7 +247,7 @@ async function showAvailability(){
     for(const [i,available] of [capabilities.fundedPayments,capabilities.refunds].entries()){
       buttons[i].disabled=!available;buttons[i].dataset.unavailable=String(!available);
     }
-    el('payment-availability').textContent=capabilities.fundedPayments?'Your Solana wallet reviews each payment before submission.':'Work orders, NEAR linking and invoice quotes are open. Mainnet payments and recovery open after provider registration.';
+    el('payment-availability').textContent=capabilities.fundedPayments?'Your Solana wallet reviews each payment before submission.':'Live payments require the registered Solana provider and the deployed NEAR job contract. Work-order signing is available.';
   }catch{el('payment-availability').textContent='The service is unavailable. Reload to reconnect.';}
 }
 showAvailability();

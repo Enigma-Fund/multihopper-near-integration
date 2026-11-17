@@ -18,7 +18,7 @@ export function fromBase58(value, length) {
 }
 
 export const JOB_MINT = 'So11111111111111111111111111111111111111112';
-const actions = ['create','close','read','link','invoice','refresh','prepare-refund','prepare-wallet','wallet-step'];
+const actions = ['create','close','close-near','read','link','invoice','refresh','prepare-refund','prepare-wallet','wallet-step','publish-receipt'];
 export function signedMessage(origin, request, now = Date.now()) {
   const {action, owner, id, expires} = request;
   if (!actions.includes(action) || typeof id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f-]{27}$/.test(id)) throw Error('Invalid job action or ID');
@@ -37,7 +37,7 @@ export function signedMessage(origin, request, now = Date.now()) {
        typeof request.nearJobId!=='string' || !/^[A-Za-z0-9_-]{1,48}$/.test(request.nearJobId))throw Error('Invalid NEAR account or job ID');
     fields.push('NEAR account: '+request.nearOwner,'NEAR job: '+request.nearJobId);
   }
-  if(['invoice','refresh','prepare-refund','prepare-wallet','wallet-step'].includes(action)){
+  if(['invoice','refresh','prepare-refund','prepare-wallet','wallet-step','publish-receipt'].includes(action)){
     if(typeof request.invoice!=='string' || !/^[A-Za-z0-9_-]{1,48}$/.test(request.invoice))throw Error('Enter an invoice ID of up to 48 letters, numbers, underscores or hyphens');
     fields.push('Invoice: '+request.invoice);
     if(action==='invoice'){

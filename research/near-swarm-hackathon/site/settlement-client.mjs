@@ -1,3 +1,4 @@
+import {nearContractServices} from './near-contract.mjs';
 import {fromBase58} from './orders.mjs';
 import {messageHash} from './settlement-evidence.mjs';
 import {hashHex} from './near-job.mjs';
@@ -43,7 +44,7 @@ export function settlementServices(env,transport=fetch){
     }
     throw new ServiceUnavailable('Solana could not confirm this operation. Resume the same invoice.');
   }
-  return {configured, expectedTest:false,
+  return {configured, expectedTest:false, near:nearContractServices(env,rpc),
     registerNotifications:body=>request('/webhooks',{body,idempotency:'swarm-finality-notifications-v1'}),
     async usage(){
       const result=await request('/usage');

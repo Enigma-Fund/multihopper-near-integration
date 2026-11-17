@@ -1,0 +1,270 @@
+{
+  "scope": "LOCAL SYNTHETIC TESTS ONLY; no live payout, refund or stress test",
+  "wasmSha256": "1da538750e92f2134f25cc967b75fe2cc974ca1f74a0377406ab4c084bd591f2",
+  "wasmBytes": 253723,
+  "near": {
+    "completed": true,
+    "transactions": 31,
+    "rejectedCases": 14,
+    "scenarios": [
+      "two customers",
+      "job-key squatting",
+      "agent spending limits",
+      "budget exhaustion",
+      "duplicate invoices",
+      "tampered receipt",
+      "wrong-chain domain",
+      "node restart after payout",
+      "job closure",
+      "node restart after refund",
+      "duplicate publication"
+    ]
+  },
+  "paired": {
+    "nearInvoicesFinalized": 2,
+    "network": "local validators",
+    "job": "fb246ff09d0a4e00915b1deac8a0f5e7a64601d8bd390cc1716395182f71d89c",
+    "payout": {
+      "status": "payout-confirmed",
+      "credit": "4999990",
+      "slot": 72
+    },
+    "recovery": {
+      "status": "recovery-credit-confirmed",
+      "credit": "7999990",
+      "slot": 104
+    },
+    "nearContract": "jobs.synthetic",
+    "scope": "Synthetic assets and API/screening fixtures. Real local NEAR job authorization, authenticated settlement publication, Solana orchestrator and finality."
+  },
+  "nearReceipts": [
+    {
+      "signer": "synthetic",
+      "receiver": "alice.synthetic",
+      "hash": "2xfaC9Wh4rsvKbM1bptzgVAAGEPanGqjEoCHGpHBLQcG",
+      "status": {
+        "SuccessValue": ""
+      },
+      "receipts": [
+        {
+          "id": "25FdP6vaGvHM3H83pooS5G67KeNYG6c4ws9zCLpMgejx",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 7524947687500,
+          "tokensBurnt": "7032494768750000000000"
+        },
+        {
+          "id": "DWr9wu1fvZoBsWLvQDutcbuB1qBcbB9b6DR55HwYieUh",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "3JENb1HotoTXFkhZRHa2xD21CmDiuY51kXk57euad53c",
+      "status": {
+        "SuccessValue": ""
+      },
+      "receipts": [
+        {
+          "id": "CXVQDRt1ZhidSSEPRAnNCM3C3fzDgZGCKwSuK9ius8o2",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 25323099991103,
+          "tokensBurnt": "8812309999110300000000"
+        },
+        {
+          "id": "6iWBpSyHZRUdU62y6eWA9GosQgJuhEJz4KrfbAtKzsau",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "alice.synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "Dk9mAfZKGSwFMAYyLdRYqh5BUWjqNeutrmk45dqt7T9L",
+      "status": {
+        "SuccessValue": "eyJvd25lciI6ImFsaWNlLnN5bnRoZXRpYyIsImFnZW50IjoiYWxpY2Uuc3ludGhldGljIiwidGVybXNfaGFzaCI6ImFiMjRlZWQxYjc3YWIzYTVkY2IxNTUwYWUyZjcwMGQ1YTEzOWYzNGM4NTEwNGI4MThlM2VmOTE5ZTViODZlNzQiLCJidWRnZXQiOiIxMTAwMDAwMCIsInBlcl9wYXltZW50IjoiNTAwMDAwMCIsInJlc2VydmVkIjoiMCIsInNwZW50IjoiMCIsImNsb3NlZCI6ZmFsc2V9"
+      },
+      "receipts": [
+        {
+          "id": "8GJdwyRE6y6y4zAzSo5qCvsCCimdNhKsqvZu8ZU5UsvZ",
+          "status": {
+            "SuccessValue": "eyJvd25lciI6ImFsaWNlLnN5bnRoZXRpYyIsImFnZW50IjoiYWxpY2Uuc3ludGhldGljIiwidGVybXNfaGFzaCI6ImFiMjRlZWQxYjc3YWIzYTVkY2IxNTUwYWUyZjcwMGQ1YTEzOWYzNGM4NTEwNGI4MThlM2VmOTE5ZTViODZlNzQiLCJidWRnZXQiOiIxMTAwMDAwMCIsInBlcl9wYXltZW50IjoiNTAwMDAwMCIsInJlc2VydmVkIjoiMCIsInNwZW50IjoiMCIsImNsb3NlZCI6ZmFsc2V9"
+          },
+          "gasBurnt": 1672498646890,
+          "tokensBurnt": "167249864689000000000"
+        },
+        {
+          "id": "DV7bSY9WkSppwG2YpuXX6sy9CLiKKGavs35gDJCRSEiY",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "alice.synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "3AQJLt38sZwvm1ZN9DDVx28C7XRQXNRwkbiPv5Z6hgSj",
+      "status": {
+        "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InJlc2VydmVkIiwiY3JlZGl0ZWQiOiIwIiwiZXZpZGVuY2VfaGFzaCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ=="
+      },
+      "receipts": [
+        {
+          "id": "9ziuBYXfDxQEUMJLTsXHs7Y9tCuA16uNvVadV59zirjN",
+          "status": {
+            "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InJlc2VydmVkIiwiY3JlZGl0ZWQiOiIwIiwiZXZpZGVuY2VfaGFzaCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ=="
+          },
+          "gasBurnt": 1869041969268,
+          "tokensBurnt": "186904196926800000000"
+        },
+        {
+          "id": "3EZFU3ey3KgDf23nb264FgbT41h6WuWru4TN1zMbD9Sp",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "alice.synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "4a3Xs6nNajfDUMBQCk1tGKMfauCJ4bJYuaERMxa49KEr",
+      "status": {
+        "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InJlc2VydmVkIiwiY3JlZGl0ZWQiOiIwIiwiZXZpZGVuY2VfaGFzaCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ=="
+      },
+      "receipts": [
+        {
+          "id": "BByQyDTPferG5D4D1ecXanudSvWgD8KzH5njhdRApHYr",
+          "status": {
+            "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InJlc2VydmVkIiwiY3JlZGl0ZWQiOiIwIiwiZXZpZGVuY2VfaGFzaCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ=="
+          },
+          "gasBurnt": 1874669483202,
+          "tokensBurnt": "187466948320200000000"
+        },
+        {
+          "id": "BgZKw49PktEafc2idhbv4Vu3TZWiPbRELH3y5Yx9Y5e6",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "alice.synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "CzAjjtNX3YPy8pobjHJDF2q3Nk8you7poYsv1C8rPYx2",
+      "status": {
+        "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InBhaWQiLCJjcmVkaXRlZCI6IjQ5OTk5OTAiLCJldmlkZW5jZV9oYXNoIjoiZGUzMGZiZjk0N2QwNzdmNTg1ODZhYWFiNDU3Yjg4MTk2NGU1MmIyNWU3MmU4MGRhMmY5ZDUyNjljZDU5ZjAwYiJ9"
+      },
+      "receipts": [
+        {
+          "id": "2HUCNwzQdFiFeSzxeH1ngvgkTap6jK8aXXU51RiPyqxT",
+          "status": {
+            "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InBhaWQiLCJjcmVkaXRlZCI6IjQ5OTk5OTAiLCJldmlkZW5jZV9oYXNoIjoiZGUzMGZiZjk0N2QwNzdmNTg1ODZhYWFiNDU3Yjg4MTk2NGU1MmIyNWU3MmU4MGRhMmY5ZDUyNjljZDU5ZjAwYiJ9"
+          },
+          "gasBurnt": 2156517949172,
+          "tokensBurnt": "215651794917200000000"
+        },
+        {
+          "id": "BgECCSfm1EM13HP6SQ1ajmv47ucNj7oDdqJwJsrufG8X",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "alice.synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "2hnPp3qj73539Bq1P1ZmjmZ6kJo8gkHKxZDG5mUfy4Fh",
+      "status": {
+        "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InJlZnVuZGVkIiwiY3JlZGl0ZWQiOiI3OTk5OTkwIiwiZXZpZGVuY2VfaGFzaCI6IjUyOGEwMTA0MTcyYjVmOWM2NWFmMTZhNDQ3ZWQ1YzZhNGUxYzk3ZjU4ZDE5MTI5ZDZkZmZlMTNjOGUzNTdkNDcifQ=="
+      },
+      "receipts": [
+        {
+          "id": "A5R7vitP8ucc4v2wPZEHMJWf9aH2kfjzW1Zzgkbcjs1R",
+          "status": {
+            "SuccessValue": "eyJqb2Jfa2V5IjoiZmIyNDZmZjA5ZDBhNGUwMDkxNWIxZGVhYzhhMGY1ZTdhNjQ2MDFkOGJkMzkwY2MxNzE2Mzk1MTgyZjcxZDg5YyIsImFtb3VudCI6IjUwMDAwMDAiLCJtaW5pbXVtIjoiNDkwMDAwMCIsInN0YXR1cyI6InJlZnVuZGVkIiwiY3JlZGl0ZWQiOiI3OTk5OTkwIiwiZXZpZGVuY2VfaGFzaCI6IjUyOGEwMTA0MTcyYjVmOWM2NWFmMTZhNDQ3ZWQ1YzZhNGUxYzk3ZjU4ZDE5MTI5ZDZkZmZlMTNjOGUzNTdkNDcifQ=="
+          },
+          "gasBurnt": 2157515643793,
+          "tokensBurnt": "215751564379300000000"
+        },
+        {
+          "id": "2cnYJugjwhyxoDtterNssCxrrfJSNAArQYZsJeyCzU3c",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    },
+    {
+      "signer": "alice.synthetic",
+      "receiver": "jobs.synthetic",
+      "hash": "4XDMTWc1BnMybwJ97KSyY4Pc8cdisPKo9vLRfdWpvC33",
+      "status": {
+        "SuccessValue": "eyJvd25lciI6ImFsaWNlLnN5bnRoZXRpYyIsImFnZW50IjoiYWxpY2Uuc3ludGhldGljIiwidGVybXNfaGFzaCI6ImFiMjRlZWQxYjc3YWIzYTVkY2IxNTUwYWUyZjcwMGQ1YTEzOWYzNGM4NTEwNGI4MThlM2VmOTE5ZTViODZlNzQiLCJidWRnZXQiOiIxMTAwMDAwMCIsInBlcl9wYXltZW50IjoiNTAwMDAwMCIsInJlc2VydmVkIjoiMCIsInNwZW50IjoiMTAwMDAwMDAiLCJjbG9zZWQiOnRydWV9"
+      },
+      "receipts": [
+        {
+          "id": "8nxiej2T84uW7hQcJqnnSzo4SnudTEWAyW4uafQwoi6u",
+          "status": {
+            "SuccessValue": "eyJvd25lciI6ImFsaWNlLnN5bnRoZXRpYyIsImFnZW50IjoiYWxpY2Uuc3ludGhldGljIiwidGVybXNfaGFzaCI6ImFiMjRlZWQxYjc3YWIzYTVkY2IxNTUwYWUyZjcwMGQ1YTEzOWYzNGM4NTEwNGI4MThlM2VmOTE5ZTViODZlNzQiLCJidWRnZXQiOiIxMTAwMDAwMCIsInBlcl9wYXltZW50IjoiNTAwMDAwMCIsInJlc2VydmVkIjoiMCIsInNwZW50IjoiMTAwMDAwMDAiLCJjbG9zZWQiOnRydWV9"
+          },
+          "gasBurnt": 1662570913074,
+          "tokensBurnt": "166257091307400000000"
+        },
+        {
+          "id": "4YNDi8ArnpKnLqJVJiUEKQTp3X6CarvozbGoEWmgM2ac",
+          "status": {
+            "SuccessValue": ""
+          },
+          "gasBurnt": 223182562500,
+          "tokensBurnt": "0"
+        }
+      ]
+    }
+  ],
+  "regression": [
+    "\u2139 tests 54",
+    "\u2139 suites 0",
+    "\u2139 pass 54",
+    "\u2139 fail 0",
+    "\u2139 cancelled 0",
+    "\u2139 skipped 0",
+    "\u2139 todo 0",
+    "\u2139 duration_ms 1162.536792"
+  ],
+  "browser": {
+    "passed": true,
+    "cases": [
+      "popup success",
+      "lost response/window close",
+      "wallet rejection"
+    ],
+    "walletPages": "intercepted synthetic fixtures",
+    "externalWalletOrChainCalls": 0
+  }
+}
