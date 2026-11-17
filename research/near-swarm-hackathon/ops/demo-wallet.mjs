@@ -145,5 +145,5 @@ http.createServer(async(req,res)=>{
       if(!row)throw Error('No signature recorded for this request');return json(res,200,{result:await resolveSigned(row)});
     }
     return json(res,404,{error:'Not found'});
-  }catch(e){json(res,400,{error:e.message,retryable:e.retryable===true});}
+  }catch(e){json(res,400,{error:e.message,retryable:e.retryable===true,notSigned:e.notSigned===true});}
 }).listen(18871,'127.0.0.1',()=>console.log('Approval window ready: '+local+' (no transaction signed or broadcast)'));

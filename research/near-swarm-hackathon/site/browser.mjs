@@ -1,5 +1,6 @@
 import {meteorRequest} from '/near-swarm/near-wallet.mjs';
 import {localDemoWallet,localNearRequest,prepareLocalApproval} from '/near-swarm/local-demo-wallet.mjs';
+import {runPayment} from '/near-swarm/payment-runner.mjs';
 import {signedMessage,fromBase58} from './orders.mjs';
 import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
@@ -230,27 +231,17 @@ button('refresh','settlement-result',async()=>pretty(await post('settlement',awa
 for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(buttonId,'settlement-result',async()=>{
   const wallet=connected,job=activeJob();if(!wallet.signTx)throw Error('Connect a Solana Wallet Standard wallet with transaction signing.');
   const fields={mode,invoice:invoiceId(),extra:lamports('extra')};
-  const prepared=await post('settlement',await authorize('prepare-wallet',fields));
-  if(prepared.status==='submitted')return 'Already submitted. Choose Check settlement for the finalized receipt.';
-  if(!prepared.items) return pretty(prepared);
-  let permission=await authorize('wallet-step',fields);
-  async function step(index,signedTx){
+  function unchanged(){
     if(wallet!==connected||job.id!==el('job-id').value.trim())throw Error('Work order or wallet changed.');
-    if(permission.expires<Date.now()+4000)permission=await authorize('wallet-step',fields);
-    return post('settlement',{...permission,step:index,...(signedTx?{signedTx}:{})});
   }
-  for(const [i,item] of prepared.items.entries()){
-    if(item.confirmed)continue;
-    el('settlement-result').textContent='Reviewing '+mode+' transaction '+(i+1)+' of '+prepared.items.length+'.';
-    const signed=item.pending?undefined:b64(await wallet.signTx(Uint8Array.from(atob(item.bytes),c=>c.charCodeAt(0))));
-    let result=await step(i,signed);
-    while(result.status==='confirming'){
-      await new Promise(resolve=>setTimeout(resolve,1500));
-      result=await step(i);
-    }
-    if(result.status!=='step-confirmed')throw Error('Unexpected transaction status. Check this invoice again.');
-  }
-  await step(prepared.items.length);
+  const result=await runPayment({
+    authorize:async action=>{unchanged();return authorize(action,fields);},
+    prepare:async authorization=>{unchanged();return post('settlement',authorization);},
+    submit:async(permission,index,signedTx)=>{unchanged();return post('settlement',{...permission,step:index,...(signedTx?{signedTx}:{})});},
+    sign:async bytes=>{unchanged();return b64(await wallet.signTx(Uint8Array.from(atob(bytes),c=>c.charCodeAt(0))));},
+    onReview:(i,count)=>{el('settlement-result').textContent='Reviewing '+mode+' transaction '+(i+1)+' of '+count+'.';}
+  });
+  if(result.status!=='submitted')return pretty(result);
   return 'Wallet transactions submitted. Use Check settlement to verify final delivery or the recovered balance.';
 });
 

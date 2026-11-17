@@ -8,7 +8,9 @@ export function approvalJournal({load,save,prepare,sign,pack,broadcast,resolve})
     try{
       const existing=await load(key);
       if(existing)return resolve(existing);
-      const plan=await prepare(request),signature=await sign(plan);
+      let plan;
+      try{plan=await prepare(request);}catch(error){error.notSigned=true;throw error;}
+      const signature=await sign(plan);
       const row=await pack(key,request,plan,signature);
       await save(key,row);
       if(row.kind==='near-sign')await broadcast(row);

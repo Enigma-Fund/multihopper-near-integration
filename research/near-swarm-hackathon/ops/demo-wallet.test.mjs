@@ -46,3 +46,12 @@ test('wallet rejection never persists or broadcasts and an explicit retry remain
   const run=approvalJournal({load:async()=>null,save:async()=>{saves++;},prepare:async()=>({}),sign:async()=>{calls++;throw Error('declined');},pack:async()=>{},broadcast:async()=>assert.fail('must not broadcast'),resolve:async()=>{}});
   await assert.rejects(()=>run('one',{}),/declined/);await assert.rejects(()=>run('one',{}),/declined/);assert.equal(saves,0);assert.equal(calls,2);
 });
+test('an unsigned preflight error is distinguished from an uncertain already-signed request',async()=>{
+  let saved;
+  const deps={load:async()=>saved,save:async()=>assert.fail('no persistence'),prepare:async()=>{throw Error('BlockhashNotFound');},
+    sign:async()=>assert.fail('no signing'),pack:async()=>assert.fail('no packing'),broadcast:async()=>assert.fail('no broadcasting'),
+    resolve:async()=>{throw Error('Chain provider unavailable');}};
+  await assert.rejects(()=>approvalJournal(deps)('one',{}),e=>e.notSigned===true&&/Blockhash/.test(e.message));
+  saved={kind:'near-sign',hash:'already-signed'};
+  await assert.rejects(()=>approvalJournal(deps)('one',{}),e=>e.notSigned===undefined&&/unavailable/.test(e.message));
+});

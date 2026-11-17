@@ -1,12 +1,12 @@
 const $=id=>document.getElementById(id),allowed=new Set(['https://multihopper-swarm-for-hire.pages.dev','https://business.multihopper.com']);
 const uid=new URL(location.href).searchParams.get('uid');let id,requestOrigin,received=false;
-async function post(path,data={}){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const b=await r.json();if(!r.ok){const e=Error(b.error);e.retryable=b.retryable;throw e;}return b;}
+async function post(path,data={}){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const b=await r.json();if(!r.ok){const e=Error(b.error);e.retryable=b.retryable;e.notSigned=b.notSigned;throw e;}return b;}
 function ready(row){id=row.id;$('review').textContent=row.review;$('approve').disabled=false;}
 function success(result){$('status').textContent='Confirmed. '+(result.executionOutcomes?.[0]?.transaction?.hash||'Signature returned to the website.');$('approve').disabled=true;
   if(uid&&opener)opener.postMessage({uid,result},requestOrigin);}
 $('approve').onclick=async()=>{
   $('approve').disabled=true;$('status').textContent='Review the native macOS approval window.';
-  try{success((await post('/approve',{id})).result);}catch(e){$('status').textContent=e.message;if(e.retryable)$('approve').disabled=false;else $('check').hidden=false;}
+  try{success((await post('/approve',{id})).result);}catch(e){$('status').textContent=e.message;if(e.notSigned){$('status').textContent+=' Nothing signed or sent. Resume the same invoice.';if(uid&&opener)opener.postMessage({uid,error:$('status').textContent},requestOrigin);}else if(e.retryable)$('approve').disabled=false;else $('check').hidden=false;}
 };
 $('check').onclick=async()=>{try{success((await post('/status',{id})).result);}catch(e){$('status').textContent=e.message;}};
 if(uid){
