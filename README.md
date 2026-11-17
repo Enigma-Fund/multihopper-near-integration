@@ -1,11 +1,7 @@
-# MultiHopper NEAR integration research
+# MultiHopper Swarm for Hire
 
-[Open Swarm for Hire](https://business.multihopper.com/near-swarm/) · [Public API](https://enigma-near-swarm.multihopper-business.pages.dev/near-swarm/api)
+Connect a Solana wallet, sign a work order and link it to a NEAR job. Our workspace verifies invoices, finalized payouts and recovery credits against the signed terms. Mainnet payment execution requires the Swarm integration’s on-chain provider registration.
 
-The hosted workspace supports wallet-signed work orders and route screening receipt lookup. The NEAR job-payment and recovery tests use synthetic funds. Funded settlement from the public workspace is unavailable.
+[Open Swarm for Hire](https://business.multihopper.com/near-swarm/) · [Read the integration guide](research/near-swarm-hackathon/README.md) · [Check the public API](https://multihopper-swarm-for-hire.pages.dev/near-swarm/api)
 
-This repository contains an isolated NEAR Swarm for Hire research prototype and synthetic test fixtures. It excludes the MultiHopper production codebase, live services, and private Git history. See [the demo instructions](research/near-swarm-hackathon/README.md).
-
-This is research software for synthetic assets only. The live Solana integration, cross-chain settlement, production key management and compliance integration are not complete. Do not use real funds.
-
-The original macOS-specific sandbox profiles have been omitted from this release because they reference the developer’s local environment. The NEAR sandbox gate requires equivalent reviewed local-only profiles before use.
+This public release contains the NEAR integration and its synthetic tests. Operators supply a reviewed local orchestrator binary for the two-chain test. Apply an appropriate loopback-only network profile when testing.

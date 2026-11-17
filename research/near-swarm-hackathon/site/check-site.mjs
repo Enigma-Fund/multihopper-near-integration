@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {generateKeyPairSync,randomUUID,sign} from 'node:crypto';
 import {signedMessage} from './orders.mjs';
 const origin=process.argv[2];
-if(!/^https:\/\/(?:business\.multihopper\.com|(?:[a-f0-9]{8}|enigma-near-swarm)\.multihopper-business\.pages\.dev)$/.test(origin)) throw Error('Expected a MultiHopper website origin');
+if(!/^https:\/\/(?:business\.multihopper\.com|multihopper-swarm-for-hire\.pages\.dev|(?:[a-f0-9]{8}|enigma-near-swarm)\.multihopper-business\.pages\.dev)$/.test(origin)) throw Error('Expected a MultiHopper website origin');
 const base=origin+'/near-swarm';
 const key=generateKeyPairSync('ed25519');
 const pub=key.publicKey.export({format:'der',type:'spki'}).subarray(-32);
@@ -26,7 +26,7 @@ async function send(data) {
 }
 const page=await fetch(base);assert.equal(page.status,200);assert.match(await page.text(),/Sign a work order/);
 const api=await (await fetch(base+'/api')).json();assert.equal(api.signedJobs,true);
-assert.equal(api.fundedPayments,false);assert.equal(api.refunds,false);
+assert.equal(typeof api.fundedPayments,'boolean');assert.equal(typeof api.refunds,'boolean');
 for(const name of ['orders','browser','receipt']){const r=await fetch(base+'/'+name+'.mjs');assert.equal(r.status,200);assert.match(r.headers.get('content-type'),/javascript/);}
 const create=await signed('create');
 assert.equal((await send({...create,limit:'999'}))[0],400);

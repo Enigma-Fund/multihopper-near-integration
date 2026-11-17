@@ -1,9 +1,11 @@
 import {signedMessage} from './orders.mjs';
+import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
 
 const el = id => document.getElementById(id);
 const providers = [];
 let connected;
+let currentJob;
 let unsubscribe;
 function forgetWallet() {
   unsubscribe?.();
@@ -12,6 +14,7 @@ function forgetWallet() {
   el('connect').textContent='Connect wallet';
   el('job-id').value='';
   el('order-result').textContent='';
+  currentJob=undefined;el('settlement-result').textContent='';
 }
 function renderProviders() {
   const select=el('wallet');
@@ -44,7 +47,10 @@ async function connect() {
     const account=accounts.find(a=>a.chains.includes('solana:mainnet') && a.features.includes('solana:signMessage'));
     if (!account) throw Error('Select an account that supports Solana message signing.');
     unsubscribe?.();
-    connected={owner:account.address,provider:selected,sign:async message=>{
+    connected={owner:account.address,provider:selected,signTx:selected.features['solana:signTransaction']?async transaction=>{
+      const [result]=await selected.features['solana:signTransaction'].signTransaction({account,chain:'solana:mainnet',transaction});
+      return result.signedTransaction;
+    }:undefined,sign:async message=>{
       const [result]=await selected.features['solana:signMessage'].signMessage({account,message});
       if (!result || result.signedMessage.length!==message.length || !message.every((x,i)=>x===result.signedMessage[i])) throw Error('Wallet returned a different message.');
       return result.signature;
@@ -85,7 +91,7 @@ function button(id,output,fn) {
     const buttons=document.querySelectorAll('button');buttons.forEach(b=>b.disabled=true);
     el(output).textContent='Working…';
     try {el(output).textContent=await fn();} catch(e){el(output).textContent=e.message;}
-    finally{buttons.forEach(b=>b.disabled=false);}
+    finally{buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
   };
 }
 button('connect','order-result',async()=>{const w=await connect();return 'Connected '+w.owner;});
@@ -105,7 +111,11 @@ for(const action of ['create','read','close']) button(action,'order-result',asyn
   const {job}=await post('orders',body);
   try {localStorage.setItem('near-swarm-job:'+wallet.owner,id);} catch { /* The signed order is already saved by the service. */ }
   if(wallet!==connected)return 'Order saved for the wallet that signed it.';
-  return 'Job '+job.id+' · '+job.state+' · budget '+job.budget+' lamports · per payment '+job.cap+' lamports.';
+  currentJob={...job,owner:wallet.owner};
+  const recent=job.recentInvoices?.[0];
+  if(job.near){el('near-owner').value=job.near.account;el('near-id').value=job.near.jobId;}
+  if(recent&&!el('invoice').value)el('invoice').value=recent.invoice;
+  return 'Job '+job.id+' · '+job.state+' · budget '+job.budget+' lamports · per payment '+job.cap+' lamports.'+(job.near?' Linked NEAR job '+job.near.jobId+'.':'')+(recent?' Latest invoice '+recent.invoice+' · '+(recent.outcome||'awaiting settlement')+'.':'');
 });
 button('verify','receipt-result',async()=>{
   const signature=el('signature').value.trim(),routeId=el('route').value.trim().toLowerCase();
@@ -117,3 +127,88 @@ button('verify','receipt-result',async()=>{
   }
   return v.screening+' at finalized slot '+v.slot+'. Covers the '+v.coverage.toLowerCase()+'.';
 });
+
+const hex=bytes=>Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+const b64=bytes=>btoa(String.fromCharCode(...bytes));
+function activeJob(){
+  if(!connected||currentJob?.owner!==connected.owner||currentJob.id!==el('job-id').value.trim())throw Error('Create or view the work order first with the wallet that owns it.');
+  return currentJob;
+}
+async function authorize(action,fields){
+  const job=activeJob(),wallet=connected;
+  const body={owner:wallet.owner,id:job.id,action,expires:Date.now()+285000,...fields};
+  body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
+  if(connected!==wallet)throw Error('Your wallet account changed.');
+  return body;
+}
+button('link-job','settlement-result',async()=>{
+  const job=activeJob(), nearOwner=el('near-owner').value.trim(), nearJobId=el('near-id').value.trim();
+  const body={owner:connected.owner,id:job.id,action:'link',expires:Date.now()+285000,nearOwner,nearJobId};
+  signedMessage(location.origin,body);
+  const wallet=connected,nonce=crypto.getRandomValues(new Uint8Array(32)),callbackUrl=location.origin+'/near-swarm';
+  const address=new URL('https://app.mynearwallet.com/sign-message');
+  address.search=new URLSearchParams({message:nearMessage(location.origin,body,job),nonce:b64(nonce),recipient:location.host,callbackUrl}).toString();
+  const popup=window.open(address.href,'SwarmNEAR','popup,width=480,height=720');
+  if(!popup)throw Error('Allow the NEAR wallet window and try again.');
+  const proof=await new Promise((resolve,reject)=>{
+    function done(fn,value){clearInterval(timer);window.removeEventListener('message',receive);popup.close();fn(value);}
+    function receive(event){if(event.source!==popup||event.origin!==address.origin)return;
+      if(event.data?.status==='success')done(resolve,event.data.signedRequest);
+      else if(event.data?.status==='failure')done(reject,Error('The NEAR wallet declined the signature.'));}
+    window.addEventListener('message',receive);
+    const timer=setInterval(()=>{if(popup.closed||Date.now()>=body.expires)done(reject,Error('NEAR approval closed or expired.'));},500);
+  });
+  if(!proof||proof.accountId!==nearOwner||wallet!==connected)throw Error('Select the NEAR account and Solana wallet named in this order.');
+  body.nearProof={accountId:proof.accountId,publicKey:proof.publicKey,signature:proof.signature,nonce:hex(nonce),callbackUrl};
+  body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
+  const result=await post('settlement',body);return 'Linked '+result.nearAccount+' / '+result.nearJobId+' to this work order.';
+});
+function invoiceId(){const id=el('invoice').value.trim();if(!id)throw Error('Enter an invoice ID.');return id;}
+function pretty(row){
+  const base='Invoice '+row.invoice+' · '+row.status;
+  if(row.creditedLamports)return base+' · '+row.creditedLamports+' lamports credited · '+row.transactions.map(t=>t.signature).join(', ');
+  if(row.quotedNetLamports)return base+' · gross '+row.grossLamports+' lamports · agent receives '+row.quotedNetLamports+' lamports'+(row.phase?' · '+row.phase:'');
+  return base;
+}
+button('quote','settlement-result',async()=>pretty(await post('settlement',await authorize('invoice',{invoice:invoiceId(),recipient:activeJob().recipient,amount:lamports('amount'),minimum:lamports('minimum')}))));
+button('refresh','settlement-result',async()=>pretty(await post('settlement',await authorize('refresh',{invoice:invoiceId()}))));
+for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(buttonId,'settlement-result',async()=>{
+  const wallet=connected,job=activeJob();if(!wallet.signTx)throw Error('Connect a Solana Wallet Standard wallet with transaction signing.');
+  const fields={mode,invoice:invoiceId(),extra:lamports('extra')};
+  const prepared=await post('settlement',await authorize('prepare-wallet',fields));
+  if(prepared.status==='submitted')return 'Already submitted. Choose Check settlement for the finalized receipt.';
+  if(!prepared.items) return pretty(prepared);
+  let permission=await authorize('wallet-step',fields);
+  async function step(index,signedTx){
+    if(wallet!==connected||job.id!==el('job-id').value.trim())throw Error('Work order or wallet changed.');
+    if(permission.expires<Date.now()+4000)permission=await authorize('wallet-step',fields);
+    return post('settlement',{...permission,step:index,...(signedTx?{signedTx}:{})});
+  }
+  for(const [i,item] of prepared.items.entries()){
+    if(item.confirmed)continue;
+    el('settlement-result').textContent='Reviewing '+mode+' transaction '+(i+1)+' of '+prepared.items.length+'.';
+    const signed=item.pending?undefined:b64(await wallet.signTx(Uint8Array.from(atob(item.bytes),c=>c.charCodeAt(0))));
+    let result=await step(i,signed);
+    while(result.status==='confirming'){
+      await new Promise(resolve=>setTimeout(resolve,1500));
+      result=await step(i);
+    }
+    if(result.status!=='step-confirmed')throw Error('Unexpected transaction status. Check this invoice again.');
+  }
+  await step(prepared.items.length);
+  return 'Wallet transactions submitted. Use Check settlement to verify final delivery or the recovered balance.';
+});
+
+async function showAvailability(){
+  const buttons=[el('pay'),el('refund')];
+  for(const b of buttons){b.disabled=true;b.dataset.unavailable='true';}
+  try{
+    const response=await fetch('/near-swarm/api');if(!response.ok)throw Error();
+    const capabilities=await response.json();
+    for(const [i,available] of [capabilities.fundedPayments,capabilities.refunds].entries()){
+      buttons[i].disabled=!available;buttons[i].dataset.unavailable=String(!available);
+    }
+    el('payment-availability').textContent=capabilities.fundedPayments?'Your Solana wallet reviews each payment before submission.':'Work orders, NEAR linking and invoice quotes are open. Mainnet payments and recovery open after provider registration.';
+  }catch{el('payment-availability').textContent='The service is unavailable. Reload to reconnect.';}
+}
+showAvailability();

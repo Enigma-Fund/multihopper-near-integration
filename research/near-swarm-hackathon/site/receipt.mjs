@@ -12,7 +12,7 @@ export async function lookupReceipt(signature, routeId, endpoints = publicReceip
         const response = await transport(endpoint, {
           method:'POST', headers:{'content-type':'application/json'},
           body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),
-          credentials:'omit', referrerPolicy:'no-referrer', redirect:'error', signal:AbortSignal.timeout(5000)
+          credentials:'omit', referrerPolicy:'no-referrer', redirect:'manual', signal:AbortSignal.timeout(5000)
         });
         if (!response.ok) throw Error();
         const data = await response.json();

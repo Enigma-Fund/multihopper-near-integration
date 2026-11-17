@@ -7,3 +7,8 @@ CREATE TABLE IF NOT EXISTS swarm_orders (
   state TEXT NOT NULL DEFAULT 'open' CHECK(state IN ('open','closed')),
   PRIMARY KEY(owner,id)
 );
+
+CREATE TABLE IF NOT EXISTS swarm_approvals (
+  owner TEXT NOT NULL, id TEXT NOT NULL, kind TEXT NOT NULL, item TEXT NOT NULL,
+  statement TEXT NOT NULL, PRIMARY KEY(owner,id,kind,item)
+);
