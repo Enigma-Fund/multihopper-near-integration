@@ -48,6 +48,8 @@ The production API adapter can prepare and confirm rescue for a failed, owner-ch
 
 `screening-proof.mjs` verifies a signed `MHC:v1:hops` proof against a supplied trusted signer, program, route, creator and ordered recipient set. The caller must independently verify that the signer came from the correct on-chain compliance configuration and that the proof covers the full route. This validates a MultiHopper screener signature, not a TRM-authenticated attestation; extra screening addresses are not bound by this proof. It is not wired to live screening or settlement.
 
+`screening-from-chain.mjs` combines the proof verifier with a finalized RPC read of the compliance signer and rejects disabled screening, wrong network, wrong owner and malformed configuration data. The program, configuration PDA and network genesis must be independently pinned by the operator; the module does not derive or establish those values. Tests use synthetic keys and an RPC mock, not a live screener or production RPC.
+
 When explicitly enabled with `MH_LIVE_ENABLED=1` and all four `MH_LIVE_DB_PATH`, `MH_LIVE_API_URL`, `MH_LIVE_API_ORIGIN` and `MH_LIVE_API_KEY` settings, the loopback server exposes wallet-authenticated `/api/live/jobs`, `/api/live/quote`, and `/api/live/freeze` endpoints. These are manual owner-initiated plans and quotes, not funded NEAR jobs or autonomous agent grants. The live configuration is off by default; no real API calls have been made. Transaction preparation is deliberately not exposed until independent transaction validation and safe recovery are implemented. The adapter cannot prove TRM is enabled; do not treat a quote as a screening result or use this research service with real funds.
 
 
