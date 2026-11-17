@@ -40,4 +40,8 @@ The optional Solana status reader is exposed through the UI and the local API wh
 
 There is no NEAR-to-Solana custody or settlement integration. Do not expose this app to the internet or use it with real funds. A real product requires durable authenticated sessions, an independently secured grant-bound key provider, an integrated Solana execution and screening API, a cross-chain settlement and custody design, crash-safe persistent state and independent audit.
 
+`solana-live-client.mjs` is an isolated, mock-tested production API adapter. It requires a configured HTTPS origin, live API key, authenticated wallet owner and operation journal; it rejects responses belonging to a different source or test mode. It is not wired into the browser or job lifecycle, and it cannot independently verify unsigned transaction contents, TRM enforcement or on-chain settlement. Do not use it for live funds until those gates are implemented and reviewed.
+
+`payment-control.mjs` is a local research coordinator for binding an owner-approved job plan to an agent, recipient, mint, budget and per-payment limit. It reserves budget before requesting a quote, rejects duplicate invoices across the customer's jobs, blocks ambiguous requests, verifies returned quote fields, and freezes a job before recovery. Its SQLite state is single-host and its agent and owner inputs must be authenticated by a future caller. It does not hold funds, verify on-chain grants or finality, execute payments or recover principal; frozen reservations require reconciliation. `job-solana-integration.test.mjs` tests the coordinator and production API adapter together using a mock transport only.
+
 
