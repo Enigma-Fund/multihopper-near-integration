@@ -4,6 +4,9 @@ import {messageHash} from './settlement-evidence.mjs';
 import {hashHex} from './near-job.mjs';
 import {MAINNET_GENESIS,ROUTER_PROGRAM} from './receipt.mjs';
 export class ServiceUnavailable extends Error {}
+class ChainReadUnavailable extends ServiceUnavailable {
+  constructor(code,retryable=false){super('The chain provider could not return finalized evidence.');this.code=code;this.retryable=retryable;}
+}
 const apiRoot='https://multihopper.com/api/v1';
 export function settlementServices(env,transport=fetch){
   const key=env.SWARM_SOLANA_API_KEY;
@@ -27,22 +30,34 @@ export function settlementServices(env,transport=fetch){
   async function rpc(endpoint,method,params){
     try{
       const res=await transport(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),redirect:'manual',signal:AbortSignal.timeout(6500)});
-      if(!res.ok)throw Error();
+      if(!res.ok)throw new ChainReadUnavailable('HTTP '+res.status,res.status===429||res.status>=500);
       const data=await res.json();
-      if(data.id!==1||data.error||data.result==null)throw Error();
+      if(data.error){
+        const code=Number.isSafeInteger(data.error.code)?data.error.code:null;
+        throw new ChainReadUnavailable(code===null?'invalid RPC response':'RPC '+code,[-32004,-32005,-32007,-32016].includes(code));
+      }
+      if(data.id!==1||data.result==null)throw new ChainReadUnavailable('missing RPC result');
       return data.result;
-    }catch{throw new ServiceUnavailable('The chain provider could not return finalized evidence.');}
+    }catch(error){if(error instanceof ChainReadUnavailable)throw error;throw new ChainReadUnavailable('connection failed',true);}
   }
   const endpoints=[...new Set([env.SWARM_ARCHIVE_RPC,'https://api.mainnet.solana.com','https://solana-rpc.publicnode.com'].filter(Boolean))];
   const checked=new Set();
   async function sol(method,params){
-    for(const endpoint of endpoints){
-      try{
-        if(!checked.has(endpoint)){if(await rpc(endpoint,'getGenesisHash',[])!==MAINNET_GENESIS)continue;checked.add(endpoint);}
-        return await rpc(endpoint,method,params);
-      }catch(e){if(!(e instanceof ServiceUnavailable))throw e;}
+    let failures=[];
+    for(let attempt=0;attempt<2;attempt++){
+      let retryable=false;failures=[];
+      for(const endpoint of endpoints){
+        try{
+          if(!checked.has(endpoint)){if(await rpc(endpoint,'getGenesisHash',[])!==MAINNET_GENESIS){failures.push('wrong network');continue;}checked.add(endpoint);}
+          return await rpc(endpoint,method,params);
+        }catch(e){if(!(e instanceof ChainReadUnavailable))throw e;failures.push(e.code);retryable ||= e.retryable;}
+      }
+      // Retry only reads. Never renew a payment or relax finalized-history checks
+      // because a provider is throttled or has not reached minContextSlot yet.
+      if(method==='sendTransaction'||!retryable||attempt===1)break;
+      await new Promise(resolve=>setTimeout(resolve,200));
     }
-    throw new ServiceUnavailable('Solana could not confirm this operation. Resume the same invoice.');
+    throw new ServiceUnavailable('Solana '+method+' is unavailable ('+[...new Set(failures)].join(', ')+'). Resume the same invoice.');
   }
   return {configured, expectedTest:false, near:nearContractServices(env,rpc),
     registerNotifications:body=>request('/webhooks',{body,idempotency:'swarm-finality-notifications-v1'}),

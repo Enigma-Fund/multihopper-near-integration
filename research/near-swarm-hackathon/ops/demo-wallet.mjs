@@ -11,6 +11,7 @@ import {fromBase58} from '../site/orders.mjs';
 import {nearDigest} from '../site/near-job.mjs';
 import {approvalJournal} from './approval-journal.mjs';
 import {checkWorkOrderMessage} from './message-policy.mjs';
+import {inspectSolanaBatch,packSolanaBatch} from './solana-batch.mjs';
 
 const local='http://127.0.0.1:18871';
 const allowed=new Set(['https://multihopper-swarm-for-hire.pages.dev','https://business.multihopper.com',local]);
@@ -82,6 +83,17 @@ async function validate(request){
     return {tx,role:'solana',bytes:Buffer.from(tx.wire.slice(tx.start)),publicKeyHex:Buffer.from(tx.keys[0]).toString('hex'),
       review:'SOLANA MAINNET\n\nApprove one prepared MultiHopper transaction.\nAccount: '+config.solana+'\nSimulated debit: '+(debit/1e9)+' SOL\nMessage SHA-256: '+sha(tx.wire.slice(tx.start)).toString('hex')+'\nPrograms: '+tx.programs.join(', ')};
   }
+  if(kind==='solana-batch'){
+    const transactions=inspectSolanaBatch(inputs.transactions,config.solana);
+    if((await rpc('solana','getGenesisHash',[]))!=='5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d')throw Error('Wrong Solana network');
+    for(const hash of new Set(transactions.map(tx=>tx.blockhash)))if((await rpc('solana','isBlockhashValid',[hash,{commitment:'confirmed'}])).value!==true)throw Error('Batch expired before signing. Resume the same invoice.');
+    const sim=await rpc('solana','simulateTransaction',[inputs.transactions[0],{encoding:'base64',sigVerify:false,commitment:'confirmed',accounts:{encoding:'base64',addresses:[config.solana]}}]);
+    if(sim.value.err)throw Error('First remaining transaction failed simulation: '+JSON.stringify(sim.value.err));
+    const balance=(await rpc('solana','getBalance',[config.solana,{commitment:'confirmed'}])).value,after=sim.value.accounts?.[0]?.lamports;
+    if(!Number.isSafeInteger(after)||balance-after>100000000||after<650240)throw Error('Demo budget/provider reserve would be exceeded');
+    return {transactions,role:'solana',batch:transactions.map(tx=>Buffer.from(tx.wire.slice(tx.start))),publicKeyHex:Buffer.from(transactions[0].keys[0]).toString('hex'),
+      review:'SOLANA MAINNET\n\nApprove '+transactions.length+' remaining MultiHopper transactions together.\nAccount: '+config.solana+'\nFirst step simulated debit: '+(Math.max(balance-after,0)/1e9)+' SOL\n\nThe website stores the signed batch, then simulates and submits each step in order under the signed invoice cost limit. Later dependent steps are checked after earlier steps confirm.\n\n'+transactions.map((tx,i)=>(i+1)+'. '+tx.programs.join(', ')+'\nMessage: '+sha(tx.wire.slice(tx.start)).toString('hex')).join('\n\n')};
+  }
   throw Error('Unsupported request');
 }
 async function save(key,row){const file=new URL(key+'.json',journal),tmp=new URL(key+'.tmp',journal);await writeFile(tmp,JSON.stringify(row),{mode:0o600});await rename(tmp,file);}
@@ -89,10 +101,10 @@ async function load(key){try{return JSON.parse(await readFile(new URL(key+'.json
 function nativeApprove(v){return new Promise((resolve,reject)=>{
   const child=spawn(fileURLToPath(new URL('./build/approve-demo',import.meta.url)),[],{stdio:['pipe','pipe','pipe']});let out='',err='';
   child.stdout.on('data',b=>{out+=b;});child.stderr.on('data',b=>{err+=b;});child.on('error',reject);
-  child.on('close',code=>{if(code!==0){const error=Error(err.trim()||'Signature declined');error.retryable=code===2;return reject(error);}const sig=Buffer.from(out.trim(),'base64');
+  child.on('close',code=>{if(code!==0){const error=Error(err.trim()||'Signature declined');error.retryable=code===2;return reject(error);}if(v.batch){try{const signatures=JSON.parse(out.trim()).map(s=>Buffer.from(s,'base64'));packSolanaBatch(v.transactions,signatures);return resolve(signatures);}catch{return reject(Error('Native batch signature verification failed'));}}const sig=Buffer.from(out.trim(),'base64');
     const pub=createPublicKey({key:Buffer.concat([Buffer.from('302a300506032b6570032100','hex'),Buffer.from(v.publicKeyHex,'hex')]),format:'der',type:'spki'});
     if(sig.length!==64||!verify(null,v.bytes,pub,sig))return reject(Error('Signature verification failed'));resolve(sig);});
-  child.stdin.end(JSON.stringify({role:v.role,bytes:v.bytes.toString('base64'),review:v.review,publicKeyHex:v.publicKeyHex}));
+  child.stdin.end(JSON.stringify({role:v.role,...(v.batch?{batch:v.batch.map(bytes=>bytes.toString('base64'))}:{bytes:v.bytes.toString('base64')}),review:v.review,publicKeyHex:v.publicKeyHex}));
 });}
 async function resolveSigned(row){
   if(row.kind!=='near-sign')return row.result;
@@ -108,7 +120,8 @@ const performApproval=approvalJournal({load,save,prepare:validate,sign:nativeApp
       return {key,kind:request.kind,hash:v.tx.hash,signer:v.tx.signer,signed:Buffer.concat([v.tx.bytes,Buffer.from([0]),sig]).toString('base64'),status:'signed',createdAt:new Date().toISOString()};
     }
     let result;
-    if(request.kind==='solana-transaction'){const wire=Buffer.from(v.tx.wire);sig.copy(wire,1);result={signedTransaction:wire.toString('base64')};}
+    if(request.kind==='solana-batch')result={signedTransactions:packSolanaBatch(v.transactions,sig)};
+    else if(request.kind==='solana-transaction'){const wire=Buffer.from(v.tx.wire);sig.copy(wire,1);result={signedTransaction:wire.toString('base64')};}
     else if(request.kind==='near-sign-message')result={signature:sig.toString('base64'),accountId:config.operator.accountId,publicKey:config.operator.publicKey};
     else result={signature:sig.toString('base64')};
     return {key,kind:request.kind,result,status:'signed',createdAt:new Date().toISOString()};

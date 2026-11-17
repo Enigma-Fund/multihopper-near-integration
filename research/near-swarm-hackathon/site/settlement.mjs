@@ -51,7 +51,13 @@ export async function settleOrder(db,origin,body,services){
   return settleVerifiedOrder(db,origin,body,services);
 }
 async function settleVerifiedOrder(db,origin,body,services){
-  const {owner,id,action}=body;
+  const {owner,id}=body;
+  let action=body.action;
+  if(action==='wallet-run'){
+    if(!['prepare','stage','step'].includes(body.operation))throw Error('Invalid invoice operation');
+    action=body.operation==='prepare'?'prepare-wallet':body.operation==='stage'?'stage-wallet':'wallet-step';
+    body={...body,action,batchReview:true};
+  }
   const job=await db.prepare('SELECT recipient,budget,cap,state FROM swarm_orders WHERE owner=? AND id=?').bind(owner,id).first();
   if(!job)throw Error('Work order not found for this wallet');
   const binding=()=>db.prepare('SELECT * FROM swarm_near_links WHERE owner=? AND id=?').bind(owner,id).first();
@@ -76,7 +82,7 @@ async function settleVerifiedOrder(db,origin,body,services){
     if(link?.job_key!==verified.key)throw Error('This NEAR job or work order already has another binding, or the order closed');
     return {jobKey:link.job_key,nearAccount:link.near_owner,nearJobId:link.near_job,accessBlock:link.access_block};
   }
-  if(!['invoice','refresh','prepare-refund','prepare-wallet','wallet-step','publish-receipt','close-near'].includes(action))throw Error('Invalid settlement action');
+  if(!['invoice','refresh','prepare-refund','prepare-wallet','stage-wallet','wallet-step','publish-receipt','close-near'].includes(action))throw Error('Invalid settlement action');
   const link=await binding();
   if(!link)throw Error('Link the NEAR job to this work order first');
   if(action==='close-near'){
@@ -110,6 +116,16 @@ async function settleVerifiedOrder(db,origin,body,services){
   }
   if(!row||row.id!==id)throw Error('Invoice not found for this work order');
   const stored=await verifyStoredTerms(db,job,link,row);
+  if(body.batchReview&&action==='wallet-step'){
+    if(!Number.isSafeInteger(body.step)||body.step<0||body.step>100||body.signedTx!==undefined)throw Error('Execute the stored signed batch only');
+    const saved=await db.prepare('SELECT * FROM swarm_wallet_batches WHERE reference=? AND mode=?').bind(row.external_id,body.mode).first();
+    if(!saved)throw Error('Store the reviewed transaction batch first');
+    const items=JSON.parse(saved.items),progress=JSON.parse(saved.progress||'[]');
+    if(body.step<items.length&&!progress[body.step])throw Error('Store the entire reviewed batch before execution');
+    // Admission and NEAR reservation were verified before these exact signatures
+    // were stored. Progress checks need Solana finality, not repeated NEAR reads.
+    return walletBatch(db,services,row,body,job);
+  }
   if(!services.expectedTest&&!services.near)throw new ServiceUnavailable('The NEAR job contract is awaiting activation.');
   if(services.near){
     const nearBody={owner,id,nearOwner:link.near_owner,nearJobId:link.near_job};
@@ -168,10 +184,11 @@ async function settleVerifiedOrder(db,origin,body,services){
       .bind(String(transfer.id),transfer.recipientReceivesRaw,row.external_id).run();
     row=await load();matchesQuote(transfer,row,job,services.expectedTest);
   }
-  if(action==='prepare-wallet'||action==='wallet-step'){
+  if(action==='prepare-wallet'||action==='stage-wallet'||action==='wallet-step'){
     if(action==='wallet-step' && (!Number.isSafeInteger(body.step)||body.step<0||body.step>100))throw Error('Invalid wallet step');
     if(action==='prepare-wallet'&&body.mode==='payment')await screeningSigner(services.account);
-    return walletBatch(db,services,row,{...body,canRescue:transfer.recovery?.canRescue===true},job);
+    const result=await walletBatch(db,services,row,{...body,canRescue:transfer.recovery?.canRescue===true},job);
+    return {...result,...(body.batchReview&&action==='prepare-wallet'?{summary:{job,invoice:row.invoice,amount:row.amount,net:row.quoted_net}}:{})};
   }
   if(action==='prepare-refund'){
     if(!['recoverable','failed'].includes(transfer.phase)||transfer.recovery?.canRescue!==true)throw Error('The route has no recoverable funds');

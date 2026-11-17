@@ -35,8 +35,11 @@ export function localDemoWallet(onInfo){
       account={address:info.solana,publicKey:fromBase58(info.solana,32),chains:['solana:mainnet'],features:['solana:signMessage','solana:signTransaction']};onInfo?.(info);return {accounts:[account]};}},
     'solana:signMessage':{version:'1.0.0',async signMessage(...requests){const outputs=[];for(const r of requests){if(r.account!==account)throw Error('Wrong demo account');
       const signed=await localRequest('solana-message',{message:encode(r.message)});outputs.push({signedMessage:r.message,signature:decode(signed.signature)});}return outputs;}},
-    'solana:signTransaction':{version:'1.0.0',supportedTransactionVersions:['legacy',0],async signTransaction(...requests){const outputs=[];for(const r of requests){if(r.account!==account||r.chain!=='solana:mainnet')throw Error('Wrong account or chain');
-      const signed=await localRequest('solana-transaction',{transaction:encode(r.transaction)});outputs.push({signedTransaction:decode(signed.signedTransaction)});}return outputs;}}
+    'solana:signTransaction':{version:'1.0.0',supportedTransactionVersions:['legacy',0],async signTransaction(...requests){
+      if(!requests.length||requests.length>12||requests.some(r=>r.account!==account||r.chain!=='solana:mainnet'))throw Error('Wrong account, chain or batch size');
+      const result=await localRequest('solana-batch',{transactions:requests.map(r=>encode(r.transaction))});
+      if(!Array.isArray(result.signedTransactions)||result.signedTransactions.length!==requests.length)throw Error('Incomplete wallet batch');
+      return result.signedTransactions.map(bytes=>({signedTransaction:decode(bytes)}));}}
   }};
 }
 export function localNearRequest(action,inputs,popup){

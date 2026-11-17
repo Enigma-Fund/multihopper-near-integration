@@ -10,10 +10,11 @@ let readinessCache;
 async function publicReadiness(services,env){
   if(!services.configured)return {solanaApi:'unconfigured',provider:'unconfigured'};
   if(readinessCache && readinessCache.until>Date.now())return readinessCache.promise;
+  let providerDiagnostic;
   const promise=Promise.all([services.usage().then(()=>'authenticated').catch(()=>'unavailable'),
-    services.providerState().catch(()=>'unknown'),
+    services.providerState().catch(error=>{if(error instanceof ServiceUnavailable&&/^Solana \w+ is unavailable \([\w ,+-]+\)\. Resume the same invoice\.$/.test(error.message))providerDiagnostic=error.message;return 'unknown';}),
     services.near?services.near.readiness().then(()=>'verified').catch(()=>'unavailable'):Promise.resolve('unconfigured')
-  ]).then(([solanaApi,provider,nearContract])=>({solanaApi,provider,nearContract}));
+  ]).then(([solanaApi,provider,nearContract])=>({solanaApi,provider,nearContract,...(providerDiagnostic?{providerDiagnostic}:{})}));
   readinessCache={until:Date.now()+30000,promise};return promise;
 }
 const security={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',
@@ -26,7 +27,7 @@ async function input(request,asText=false) {
   let size=0, text='';
   for (;;) {
     const {value,done}=await reader.read();if(done)break;
-    size+=value.length;if(size>4096){await reader.cancel();throw Error('Request too large');}
+    size+=value.length;if(size>32768){await reader.cancel();throw Error('Request too large');}
     text+=decoder.decode(value,{stream:true});
   }
   text+=decoder.decode();if(asText)return text;

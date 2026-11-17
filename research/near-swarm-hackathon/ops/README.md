@@ -19,3 +19,5 @@ The approval journal is stored locally before NEAR broadcast. A lost response or
 Run `node --test research/near-swarm-hackathon/ops/*.test.mjs research/near-swarm-hackathon/site/local-demo-wallet.test.mjs` for the synthetic signing tests. They do not access Keychain, sign with funded keys or contact a live blockchain. The exact mainnet deployment receipt is separately saved in `../evidence/`.
 
 This local demonstration connector is deliberately narrower than a general-purpose wallet and has not had an independent security audit. The publicly hosted receipt publisher is also an explicit trust dependency, not a cross-chain light client.
+
+The demo Solana connector now accepts up to 12 transactions in one explicit native approval. It verifies all API co-signatures and preserves them. The whole signed batch is journaled before it is returned to the website. Startup, preparation and status checks still cannot sign or broadcast. Only the user’s native confirmation releases signatures.

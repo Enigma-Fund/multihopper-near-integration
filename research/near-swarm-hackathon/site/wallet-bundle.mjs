@@ -1,6 +1,7 @@
 import {fromBase58} from './orders.mjs';
 import {messageHash} from './settlement-evidence.mjs';
 import {hashHex} from './near-job.mjs';
+import {ServiceUnavailable} from './settlement-client.mjs';
 
 const permittedPrograms=new Set([
   '11111111111111111111111111111111','ComputeBudget111111111111111111111111111111','AddressLookupTab1e1111111111111111111111111',
@@ -45,6 +46,20 @@ export function bundleItems(b,recovery){
   return items;
 }
 const packetQuery='SELECT * FROM swarm_wallet_batches WHERE reference=? AND mode=?';
+function checkPrepared(result,row,services,job){
+  const t=result?.transfer;
+  if(!t||String(t.id)!==row.transfer_id||t.externalId!==row.external_id||t.sourceOwner!==row.owner||t.tokenMint!=='So11111111111111111111111111111111111111112'||t.isTest!==services.expectedTest||String(t.amountRaw)!==row.amount||String(t.recipientReceivesRaw)!==row.quoted_net||t.destinationCount!==1)throw Error('Prepared payment differs from the signed invoice');
+  if(t.recipientWallet!=null&&t.recipientWallet!==job.recipient||t.destinations!=null&&(t.destinations.length!==1||t.destinations[0].wallet!==job.recipient||String(t.destinations[0].amountRaw)!==row.quoted_net))throw Error('Prepared payout destination changed');
+}
+async function checkedSignature(bytes,item,owner){
+  const tx=inspectWire(bytes||'',owner);
+  if(await messageHash(bytes)!==item.digest)throw Error('Wallet returned a different transaction');
+  for(let i=0;i<tx.count;i++){
+    const key=await crypto.subtle.importKey('raw',tx.keys[i],'Ed25519',false,['verify']);
+    if(!await crypto.subtle.verify('Ed25519',key,tx.wire.slice(1+i*64,65+i*64),tx.wire.slice(tx.start)))throw Error('Incomplete wallet signatures');
+  }
+  return tx;
+}
 export async function walletBatch(db,services,row,body,job){
   const mode=body.mode, rescue=mode==='recovery', load=()=>db.prepare(packetQuery).bind(row.external_id,mode).first();
   let batch=await load();
@@ -69,10 +84,56 @@ export async function walletBatch(db,services,row,body,job){
   }
   if(batch.extra!==body.extra)throw Error('Use the network and account cost limit signed for this batch');
   const items=JSON.parse(batch.items),state=JSON.parse(batch.progress||'[]');
+  if(body.action==='stage-wallet'){
+    if(!rescue&&job.state!=='open')throw Error('Work order closed before signing');
+    const supplied=body.signedTransactions;
+    const missing=items.map((_,i)=>i).filter(i=>!state[i]);
+    if(!Array.isArray(supplied)||supplied.length>12||new Set(supplied.map(s=>s.step)).size!==supplied.length)throw Error('Invalid signed transaction batch');
+    const changed=[...state];
+    for(const signed of supplied){
+      if(!Number.isSafeInteger(signed.step)||!items[signed.step])throw Error('Invalid batch step');
+      const tx=await checkedSignature(signed.bytes,items[signed.step],row.owner);
+      if(state[signed.step]){if(state[signed.step].signature!==tx.signature)throw Error('An existing signature cannot be replaced');continue;}
+      changed[signed.step]={signature:tx.signature,bytes:signed.bytes,debit:null,landed:false};
+    }
+    if(missing.some(i=>!changed[i]))throw Error('Store the entire remaining signed batch before execution');
+    const saved=await db.prepare("UPDATE swarm_wallet_batches SET progress=? WHERE reference=? AND mode=? AND progress=? AND items=? AND done=0 AND EXISTS(SELECT 1 FROM swarm_orders WHERE owner=? AND id=? AND (state='open' OR ?='recovery'))")
+      .bind(JSON.stringify(changed),row.external_id,mode,batch.progress,batch.items,row.owner,row.id,mode).run();
+    if(!saved.meta.changes)throw Error('Wallet state changed. Resume the same invoice.');
+    return {status:'batch-stored'};
+  }
   if(body.action==='prepare-wallet'){
     if(!rescue && job.state!=='open')throw Error('The work order is closed');
     const next=items.findIndex((_,i)=>!state[i]?.landed);
-    if(!batch.done&&next>=0&&items[next].born!=null&&services.blockAvailable){
+    if(body.batchReview&&!batch.done&&next>=0&&items[next].born!=null&&services.blockAvailable){
+      const remaining=items.slice(next),availability=await Promise.all(remaining.map(item=>services.blockAvailable(inspectWire(item.bytes,row.owner).blockhash)));
+      if(availability.some(valid=>!valid)){
+        // /prepare may legitimately generate a new ephemeral mint and rebase an
+        // uninitialized route's schedule. Replace the whole unexecuted suffix,
+        // only after EVERY old message has expired with complete finalized history.
+        if(availability.some(Boolean))throw new ServiceUnavailable('Waiting for all previous unsigned requests to expire. Resume the same invoice.');
+        for(const [offset,item] of remaining.entries()){
+          const seen=await services.findExpiredMessage(row.owner,item.born,item.digest,inspectWire(item.bytes,row.owner).blockhash);
+          if(seen){
+            if(offset===0&&state[next]?.signature===seen.signature)return {status:'wallet-review',mode,items:items.map(({kind,bytes},i)=>({kind,bytes,confirmed:!!state[i]?.landed,pending:!!state[i]&&!state[i].landed})),costLimit:batch.extra};
+            throw Error('An earlier transaction landed outside the workspace. Reconcile it first.');
+          }
+        }
+        const key=await hashHex('batch-renew:'+row.external_id+':'+mode+':'+remaining.map(x=>x.digest).join(','));
+        const result=await (rescue?services.prepareRefund:services.preparePayment)(row.transfer_id,key);
+        if(!rescue)checkPrepared(result,row,services,job);
+        const fresh=bundleItems(rescue?result:result.preparedTxs,rescue),born=await services.finalizedSlot();
+        if(state.slice(0,next).some((s,i)=>s.landed&&items[i].kind==='keeper')&&fresh.some(x=>x.kind==='keeper'))throw Error('The API repeated confirmed keeper funding');
+        for(const item of fresh){const tx=inspectWire(item.bytes,row.owner);if(!await services.blockAvailable(tx.blockhash))throw new ServiceUnavailable('The refreshed batch already expired. Resume the same invoice.');item.digest=await messageHash(item.bytes);item.born=born;}
+        const changed=[...items.slice(0,next),...fresh];
+        if(new Set(changed.map(x=>x.digest)).size!==changed.length)throw Error('The refreshed batch repeated an existing transaction');
+        const saved=await db.prepare('UPDATE swarm_wallet_batches SET items=?,progress=? WHERE reference=? AND mode=? AND items=? AND progress=? AND done=0')
+          .bind(JSON.stringify(changed),JSON.stringify(state.slice(0,next)),row.external_id,mode,batch.items,batch.progress).run();
+        if(!saved.meta.changes)throw Error('Wallet state changed. Resume the same invoice.');
+        return {status:'wallet-review',mode,items:changed.map(({kind,bytes},i)=>({kind,bytes,confirmed:!!state[i]?.landed,pending:false})),costLimit:batch.extra};
+      }
+    }
+    if(!body.batchReview&&!batch.done&&next>=0&&items[next].born!=null&&services.blockAvailable){
       const item=items[next],current=inspectWire(item.bytes,row.owner);
       // Keep pending transactions intact until the finalized history covers their entire lifetime.
       // The same authority may sign locally and broadcast from another client.
@@ -118,12 +179,7 @@ export async function walletBatch(db,services,row,body,job){
     const item=items[next],saved=state[next];let pending=saved;
     if(!pending){
       if(!rescue && job.state!=='open')throw Error('Work order closed before signing');
-      const tx=inspectWire(body.signedTx||'',row.owner);
-      if(await messageHash(body.signedTx)!==item.digest)throw Error('Wallet returned a different transaction');
-      for(let i=0;i<tx.count;i++){
-        const key=await crypto.subtle.importKey('raw',tx.keys[i],'Ed25519',false,['verify']);
-        if(!await crypto.subtle.verify('Ed25519',key,tx.wire.slice(1+i*64,65+i*64),tx.wire.slice(tx.start)))throw Error('Incomplete wallet signatures');
-      }
+      const tx=await checkedSignature(body.signedTx,item,row.owner);
       const used=state.reduce((n,s)=>n+BigInt(s.debit),0n);
       const debit=await services.simulatedDebit(body.signedTx,row.owner);
       const cap=BigInt(batch.extra)+(rescue?0n:BigInt(row.amount));
@@ -134,6 +190,15 @@ export async function walletBatch(db,services,row,body,job){
       if(!changed.meta.changes)throw Error('Payment state changed. Resume this invoice.');
     }
     let status=await services.signatureState(pending.signature);
+    if(!status&&pending.debit==null){
+      const debit=await services.simulatedDebit(pending.bytes,row.owner),used=state.reduce((n,s)=>n+BigInt(s?.debit??0),0n);
+      if(used+BigInt(debit)>BigInt(batch.extra)+(rescue?0n:BigInt(row.amount)))throw Error('Wallet debit exceeds the approved payment and cost limit');
+      const changed=[...state];pending={...pending,debit:String(debit)};changed[next]=pending;
+      const saved=await db.prepare('UPDATE swarm_wallet_batches SET progress=? WHERE reference=? AND mode=? AND progress=? AND items=? AND done=0')
+        .bind(JSON.stringify(changed),row.external_id,mode,batch.progress,batch.items).run();
+      if(!saved.meta.changes)throw Error('Wallet state changed. Resume the same invoice.');
+    }
+    if(status&&pending.debit==null)throw Error('A staged transaction landed outside the workspace. Reconcile its costs first.');
     if(!status){const sent=await services.broadcast(pending.bytes);if(sent!==pending.signature)throw Error('Broadcast signature does not match the wallet');return {status:'confirming',step:next,signature:sent};}
     if(status.err)throw Error('This wallet transaction failed on Solana');
     if(!['confirmed','finalized'].includes(status.confirmationStatus))return {status:'confirming',step:next,signature:pending.signature};

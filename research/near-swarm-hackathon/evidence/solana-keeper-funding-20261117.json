@@ -1,0 +1,82 @@
+{
+  "chain": "solana:mainnet",
+  "purpose": "keeper funding only; not agent payout",
+  "signature": "g2dqRT1T4LLhuQAe8sTXHSC9UJy5gSfex4LFqGUuBKpK9JweVhuG527z62jTW5JPSwK7kSG2XpVWKvEsDSahfjw",
+  "transaction": {
+    "blockTime": 1794951780,
+    "meta": {
+      "computeUnitsConsumed": 150,
+      "costUnits": 1481,
+      "err": null,
+      "fee": 5000,
+      "innerInstructions": [],
+      "logMessages": [
+        "Program 11111111111111111111111111111111 invoke [1]",
+        "Program 11111111111111111111111111111111 success"
+      ],
+      "postBalances": [
+        158377104,
+        774384011,
+        1
+      ],
+      "postTokenBalances": [],
+      "preBalances": [
+        178857080,
+        753909035,
+        1
+      ],
+      "preTokenBalances": [],
+      "rewards": [],
+      "status": {
+        "Ok": null
+      }
+    },
+    "slot": 470688366,
+    "transaction": {
+      "message": {
+        "accountKeys": [
+          {
+            "pubkey": "25XjPUUHLag8bVUcPL9imgfojRMnDkWt5FnG3w9JE3se",
+            "signer": true,
+            "source": "transaction",
+            "writable": true
+          },
+          {
+            "pubkey": "HTu4ZCM7ehoRWqitAPmoQuGm7Pcib6dhrMRnWschcMen",
+            "signer": false,
+            "source": "transaction",
+            "writable": true
+          },
+          {
+            "pubkey": "11111111111111111111111111111111",
+            "signer": false,
+            "source": "transaction",
+            "writable": false
+          }
+        ],
+        "addressTableLookups": [],
+        "instructions": [
+          {
+            "parsed": {
+              "info": {
+                "destination": "HTu4ZCM7ehoRWqitAPmoQuGm7Pcib6dhrMRnWschcMen",
+                "lamports": 20474976,
+                "source": "25XjPUUHLag8bVUcPL9imgfojRMnDkWt5FnG3w9JE3se"
+              },
+              "type": "transfer"
+            },
+            "program": "system",
+            "programId": "11111111111111111111111111111111",
+            "stackHeight": 1
+          }
+        ],
+        "recentBlockhash": "FgqoSzT4u8Ns6hYExcEi7qyEcwyiadc5w8qJEFfBfhuu"
+      },
+      "signatures": [
+        "g2dqRT1T4LLhuQAe8sTXHSC9UJy5gSfex4LFqGUuBKpK9JweVhuG527z62jTW5JPSwK7kSG2XpVWKvEsDSahfjw"
+      ]
+    },
+    "transactionIndex": 272,
+    "version": 0
+  }
+}

@@ -1,6 +1,7 @@
 import {meteorRequest} from '/near-swarm/near-wallet.mjs';
 import {localDemoWallet,localNearRequest,prepareLocalApproval} from '/near-swarm/local-demo-wallet.mjs';
 import {runPayment} from '/near-swarm/payment-runner.mjs';
+import {runBatchPayment} from '/near-swarm/batch-payment.mjs';
 import {signedMessage,fromBase58} from './orders.mjs';
 import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
@@ -59,7 +60,11 @@ async function connect() {
     const account=accounts.find(a=>a.chains.includes('solana:mainnet') && a.features.includes('solana:signMessage'));
     if (!account) throw Error('Select an account that supports Solana message signing.');
     unsubscribe?.();
-    connected={owner:account.address,provider:selected,signTx:selected.features['solana:signTransaction']?async transaction=>{
+    connected={owner:account.address,provider:selected,signAll:selected.features['solana:signTransaction']?async transactions=>{
+      const results=await selected.features['solana:signTransaction'].signTransaction(...transactions.map(transaction=>({account,chain:'solana:mainnet',transaction})));
+      if(results.length!==transactions.length)throw Error('Wallet returned an incomplete transaction batch.');
+      return results.map(result=>result.signedTransaction);
+    }:undefined,signTx:selected.features['solana:signTransaction']?async transaction=>{
       const [result]=await selected.features['solana:signTransaction'].signTransaction({account,chain:'solana:mainnet',transaction});
       return result.signedTransaction;
     }:undefined,sign:async message=>{
@@ -158,7 +163,9 @@ function activeJob(){
   return currentJob;
 }
 async function authorize(action,fields){
-  const job=activeJob(),wallet=connected;
+  const wallet=connected;
+  const job=action==='wallet-run'?{id:el('job-id').value.trim()}:activeJob();
+  if(!wallet)throw Error('Connect the wallet that owns this work order.');
   const body={owner:wallet.owner,id:job.id,action,expires:Date.now()+285000,...fields};
   body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
   if(connected!==wallet)throw Error('Your wallet account changed.');
@@ -229,12 +236,18 @@ button('close-near','settlement-result',async()=>{
 });
 button('refresh','settlement-result',async()=>pretty(await post('settlement',await authorize('refresh',{invoice:invoiceId()}))));
 for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(buttonId,'settlement-result',async()=>{
-  const wallet=connected,job=activeJob();if(!wallet.signTx)throw Error('Connect a Solana Wallet Standard wallet with transaction signing.');
+  const wallet=connected||await connect(),job=wallet.signAll?{id:el('job-id').value.trim()}:activeJob();if(!wallet.signTx)throw Error('Connect a Solana Wallet Standard wallet with transaction signing.');
   const fields={mode,invoice:invoiceId(),extra:lamports('extra')};
   function unchanged(){
     if(wallet!==connected||job.id!==el('job-id').value.trim())throw Error('Work order or wallet changed.');
   }
-  const result=await runPayment({
+  const result=wallet.signAll?await runBatchPayment({
+    authorize:async action=>{unchanged();return authorize(action,fields);},
+    request:async body=>{unchanged();return post('settlement',body);},
+    signAll:async transactions=>{unchanged();return (await wallet.signAll(transactions.map(bytes=>Uint8Array.from(atob(bytes),c=>c.charCodeAt(0))))).map(b64);},
+    onProgress:text=>{el('settlement-result').textContent=text;},
+    onSummary:summary=>{currentJob={...summary.job,id:job.id,owner:wallet.owner};el('recipient').value=summary.job.recipient;}
+  }):await runPayment({
     authorize:async action=>{unchanged();return authorize(action,fields);},
     prepare:async authorization=>{unchanged();return post('settlement',authorization);},
     submit:async(permission,index,signedTx)=>{unchanged();return post('settlement',{...permission,step:index,...(signedTx?{signedTx}:{})});},
