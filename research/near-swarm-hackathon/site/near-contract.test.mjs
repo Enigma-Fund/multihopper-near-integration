@@ -71,3 +71,14 @@ test('explorer links require the exact successful finalized NEAR operation',asyn
     change();await assert.rejects(()=>client.verifyOperation(hash,'alice.near','reserve_invoice',args),/not a finalized/);
   }
 });
+
+test('dedicated implicit NEAR accounts are supported and remain bound to their exact deployment',async()=>{
+  const f=fixture();f.env.SWARM_NEAR_CONTRACT=f.pub.toString('hex');
+  const client=nearContractServices(f.env,f.rpc);
+  const plan=await client.prepare(f.pub.toString('hex'),'ed25519:'+base58(f.pub),'create_job',{job_key:'d'.repeat(64)},NEAR_JOB_STORAGE);
+  assert.equal(plan.contract,f.pub.toString('hex'));
+  const wire=Buffer.from(plan.transaction,'base64');assert.equal(wire.readUInt32LE(0),64);assert.equal(wire.subarray(4,68).toString(),f.pub.toString('hex'));
+  for(const invalid of ['abc.testnet','0x'+f.pub.toString('hex'),f.pub.toString('hex').toUpperCase(),'bad account.near']){
+    assert.throws(()=>nearContractServices({...f.env,SWARM_NEAR_CONTRACT:invalid},f.rpc),/configuration/);
+  }
+});

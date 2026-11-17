@@ -45,7 +45,7 @@ export function unsignedNearCall({signer, publicKey, nonce, blockHash, contract,
 export function nearContractServices(env, rpc) {
   const contract = env.SWARM_NEAR_CONTRACT;
   if (!contract) return undefined;
-  if (!/^(?=.{2,64}$)[a-z0-9]+(?:[-_.][a-z0-9]+)*\.near$/.test(contract)) throw Error('Invalid NEAR contract configuration');
+  if (!/^[0-9a-f]{64}$/.test(contract) && !/^(?=.{2,64}$)[a-z0-9]+(?:[-_.][a-z0-9]+)*\.near$/.test(contract)) throw Error('Invalid NEAR contract configuration');
   fromBase58(env.SWARM_NEAR_CODE_HASH, 32);
   const endpoint = 'https://rpc.mainnet.near.org';
   let verified;
