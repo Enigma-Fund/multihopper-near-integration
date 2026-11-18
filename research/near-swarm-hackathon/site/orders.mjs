@@ -18,7 +18,7 @@ export function fromBase58(value, length) {
 }
 
 export const JOB_MINT = 'So11111111111111111111111111111111111111112';
-const actions = ['create','close','close-near','read','link','invoice','refresh','prepare-refund','prepare-wallet','wallet-step','wallet-run','publish-receipt'];
+const actions = ['create','close','close-near','read','link','invoice','refresh','prepare-refund','prepare-wallet','wallet-step','wallet-run','publish-receipt','share-receipt','revoke-receipt','cancel-job'];
 export function signedMessage(origin, request, now = Date.now()) {
   const {action, owner, id, expires} = request;
   if (!actions.includes(action) || typeof id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f-]{27}$/.test(id)) throw Error('Invalid job action or ID');
@@ -32,12 +32,14 @@ export function signedMessage(origin, request, now = Date.now()) {
         BigInt(request.limit) > BigInt(request.budget)) throw Error('Enter a positive budget and a per-payment limit within the budget');
     fields.push('Agent payout address: '+request.recipient, 'Asset: native SOL', 'Budget (lamports): '+request.budget, 'Per payment (lamports): '+request.limit);
   }
+  if(action==='cancel-job')fields.push('Stop new workspace payments for this job. Already submitted chain transactions may complete. Recover only API-eligible funds.');
+  if(action==='share-receipt')fields.push('Publish this invoice’s verified outcome, credited amount and transaction signatures to anyone with the share link.');
   if(action==='link'){
     if(typeof request.nearOwner!=='string' || !/^(?=.{2,64}$)[a-z0-9]+(?:[-_.][a-z0-9]+)*$/.test(request.nearOwner) ||
        typeof request.nearJobId!=='string' || !/^[A-Za-z0-9_-]{1,48}$/.test(request.nearJobId))throw Error('Invalid NEAR account or job ID');
     fields.push('NEAR account: '+request.nearOwner,'NEAR job: '+request.nearJobId);
   }
-  if(['invoice','refresh','prepare-refund','prepare-wallet','wallet-step','wallet-run','publish-receipt'].includes(action)){
+  if(['invoice','refresh','prepare-refund','prepare-wallet','wallet-step','wallet-run','publish-receipt','share-receipt','revoke-receipt'].includes(action)){
     if(typeof request.invoice!=='string' || !/^[A-Za-z0-9_-]{1,48}$/.test(request.invoice))throw Error('Enter an invoice ID of up to 48 letters, numbers, underscores or hyphens');
     fields.push('Invoice: '+request.invoice);
     if(action==='invoice'){

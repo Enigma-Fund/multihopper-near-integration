@@ -1,3 +1,4 @@
+import {shareReceipt,publicSharedReceipt,sharedReceiptHtml} from './shared-receipt.mjs';
 import {order} from './orders.mjs';
 import {screeningReceipt,lookupReceipt,ReceiptUnavailable,publicReceiptEndpoints} from './receipt.mjs';
 
@@ -40,6 +41,12 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
   const url=new URL(request.url);
   if(url.pathname!==base && !url.pathname.startsWith(base+'/'))return env.ASSETS.fetch(request);
   const path=url.pathname.slice(base.length);
+  if((request.method==='GET'||request.method==='HEAD')&&path.startsWith('/receipts/')){
+    if(!env.SWARM_JOBS)return json({error:'Unavailable'},503);
+    const receipt=await publicSharedReceipt(env.SWARM_JOBS,path.slice('/receipts/'.length));
+    if(!receipt)return json({error:'Receipt unavailable'},404);
+    return new Response(request.method==='HEAD'?null:sharedReceiptHtml(receipt),{headers:{...security,'Content-Type':'text/html; charset=utf-8','X-Robots-Tag':'noindex, nofollow'}});
+  }
   if(request.method==='GET'||request.method==='HEAD'){
     if(path==='/api/health'||path==='/api'||path==='/api/'){
       const readiness=await publicReadiness(services,env);
@@ -48,7 +55,7 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
         return json({...readiness,notifications},readiness.solanaApi==='authenticated'&&readiness.provider==='registered'&&readiness.nearContract==='verified'&&readiness.history==='available'?200:503);
       }
       const ready=readiness.solanaApi==='authenticated'&&readiness.provider==='registered'&&readiness.nearContract==='verified'&&readiness.history==='available';
-      return json({name:'MultiHopper Swarm for Hire',version:2,nearJobLinks:true,productionApiConfigured:services.configured,readiness,invoiceVerification:true,chain:'solana:mainnet',signedJobs:true,nearContract:services.near?.contract??null,fundedPayments:ready,refunds:ready,
+      return json({name:'MultiHopper Swarm for Hire',version:3,documentation:url.origin+base+'/api/docs',workspaceStop:true,healthyRouteCancellation:false,shareableReceipts:true,nearJobLinks:true,productionApiConfigured:services.configured,readiness,invoiceVerification:true,chain:'solana:mainnet',signedJobs:true,nearContract:services.near?.contract??null,fundedPayments:ready,refunds:ready,
       methods:{'POST /near-swarm/api/settlement':'Dual-signed NEAR job linkage, signed invoice quotes, payout and recovery reconciliation. Refer to the integration source for the signed fields.', 'POST /near-swarm/api/orders':'Sign the canonical message for create, read or close with the owner’s Solana wallet. See the public integration for the message format.',
       'POST /near-swarm/api/screening':{signature:'finalized Solana transaction signature',routeId:'32-byte on-chain route ID in hex'}}});
     }
@@ -67,7 +74,7 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
       return json({received:true});
     }catch{return json({error:'Settlement reconciliation pending'},503);}
   }
-  if(request.method!=='POST'|| !['/api/orders','/api/screening','/api/settlement'].includes(path))return json({error:'Not found'},404);
+  if(request.method!=='POST'|| !['/api/orders','/api/screening','/api/settlement','/api/receipt-share'].includes(path))return json({error:'Not found'},404);
   if(request.headers.has('origin')&&request.headers.get('origin')!==url.origin)return json({error:'Origin mismatch'},403);
   try{
     const data=await input(request);
@@ -77,6 +84,7 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
       return json(readRpc ? await screeningReceipt(readRpc,data.signature,data.routeId) : await lookupReceipt(data.signature,data.routeId,endpoints));
     }
     if(!env.SWARM_JOBS)return json({error:'Job storage unavailable'},503);
+    if(path==='/api/receipt-share')return json(await shareReceipt(env.SWARM_JOBS,url.origin,data));
     if(path==='/api/settlement')return json(await settleOrder(env.SWARM_JOBS,url.origin,data,services));
     const job=await order(env.SWARM_JOBS,url.origin,data);
     if(data.action==='read'){

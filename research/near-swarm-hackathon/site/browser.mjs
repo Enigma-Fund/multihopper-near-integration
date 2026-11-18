@@ -208,7 +208,9 @@ for(const action of ['create','read','close']) button(action,'order-result',asyn
   try {localStorage.setItem('near-swarm-job:'+wallet.owner,id);} catch { /* The signed order is already saved by the service. */ }
   if(wallet!==connected)return 'Order saved for the wallet that signed it.';
   currentJob={...job,owner:wallet.owner};milestoneDone=-1;milestone(0,job.near?'NEAR job linked. Resume your existing invoice.':'Next: create and link the NEAR job.');
-  const recent=job.recentInvoices?.[0];
+  const recent=job.recentInvoices?.find(i=>i.invoice===el('invoice').value)||job.recentInvoices?.[0];
+  if(recent?.outcome==='payout-confirmed'){milestone(3,'Saved payout verified. Check or record the NEAR receipt; do not fund again.');guide('publish-near','Your saved payout is confirmed. Reconcile its NEAR receipt.');}
+  if(recent?.outcome==='recovery-credit-confirmed'){milestone(3,'Saved refund verified. Check or record its NEAR receipt.');guide('publish-near','Your saved refund is confirmed. Reconcile its NEAR receipt.');}
   if(job.near){el('near-owner').value=job.near.account;el('near-id').value=job.near.jobId;}
   if(recent&&!el('invoice').value)el('invoice').value=recent.invoice;
   return 'Job '+job.id+' · '+job.state+' · budget '+job.budget+' lamports · per payment '+job.cap+' lamports.'+(job.near?' Linked NEAR job '+job.near.jobId+'.':'')+(recent?' Latest invoice '+recent.invoice+' · '+(recent.outcome||'awaiting settlement')+'.':'');
@@ -298,6 +300,17 @@ button('publish-near','settlement-result',async()=>{
   try{const result=await withNearApproval(await authorize('publish-receipt',{invoice:invoiceId()}),popup);
     return pretty(result)+(result.near?.status==='confirmed'?' · Settlement recorded on NEAR.':'');}
   finally{popup?.close();}
+});
+button('cancel-job','settlement-result',async()=>{
+ activeJob();const result=await post('settlement',await authorize('cancel-job',{}));currentJob.state='closed';
+ const eligible=result.recovery.filter(r=>r.canRecover);
+ guide(eligible.length?'refund':null,eligible.length?'Recovery is available for invoice '+eligible.map(r=>r.invoice).join(', ')+'. Select that invoice and recover its remaining funds.':result.note);
+ return result.note+' '+result.recovery.map(r=>r.invoice+': '+r.status).join('; ');
+});
+for(const action of ['share-receipt','revoke-receipt'])button(action,'settlement-result',async()=>{
+ activeJob();const result=await post('receipt-share',await authorize(action,{invoice:invoiceId()}));
+ if(result.url){const a=document.createElement('a');a.href=result.url;a.textContent='Open shareable settlement receipt';a.target='_blank';a.rel='noopener';el('chain-evidence').replaceChildren(a);}
+ return result.url?'Receipt shared: '+result.url:'Share link revoked. Existing copies and blockchain history remain public.';
 });
 button('close-near','settlement-result',async()=>{
   activeJob();

@@ -22,3 +22,7 @@ CREATE TABLE IF NOT EXISTS swarm_wallet_batches (
 CREATE TABLE IF NOT EXISTS swarm_notification_key (
   id INTEGER PRIMARY KEY CHECK(id=1), nonce TEXT NOT NULL, ciphertext TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS swarm_shared_receipts (
+ reference TEXT PRIMARY KEY REFERENCES swarm_invoices(external_id),
+ token TEXT NOT NULL UNIQUE, payload TEXT NOT NULL
+);

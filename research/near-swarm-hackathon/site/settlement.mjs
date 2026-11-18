@@ -61,6 +61,17 @@ async function settleVerifiedOrder(db,origin,body,services){
   }
   const job=await db.prepare('SELECT recipient,budget,cap,state FROM swarm_orders WHERE owner=? AND id=?').bind(owner,id).first();
   if(!job)throw Error('Work order not found for this wallet');
+  if(action==='cancel-job'){
+    await db.prepare("UPDATE swarm_orders SET state='closed' WHERE owner=? AND id=?").bind(owner,id).run();
+    const invoices=(await db.prepare('SELECT invoice,transfer_id,outcome FROM swarm_invoices WHERE owner=? AND id=?').bind(owner,id).all()).results;
+    const recovery=[];
+    for(const invoice of invoices){
+      if(invoice.outcome||!invoice.transfer_id){recovery.push({invoice:invoice.invoice,status:invoice.outcome||'unfunded',canRecover:false});continue;}
+      try{const t=await services.status(invoice.transfer_id);recovery.push({invoice:invoice.invoice,status:t.phase,canRecover:t.recovery?.canRescue===true,availableLamports:String(t.recovery?.rescuableLamports??0)});}
+      catch{recovery.push({invoice:invoice.invoice,status:'verification-pending',canRecover:false});}
+    }
+    return {status:'job-stopped',recovery,note:'Workspace payment initiation stopped. Already signed or submitted transactions may still execute. This does not cancel a healthy on-chain route or refund funds.'};
+  }
   const binding=()=>db.prepare('SELECT * FROM swarm_near_links WHERE owner=? AND id=?').bind(owner,id).first();
   if(action==='link'){
     if(job.state!=='open')throw Error('Work order is closed');
@@ -125,7 +136,9 @@ async function settleVerifiedOrder(db,origin,body,services){
     if(body.step<items.length&&!progress[body.step])throw Error('Store the entire reviewed batch before execution');
     // Admission and NEAR reservation were verified before these exact signatures
     // were stored. Progress checks need Solana finality, not repeated NEAR reads.
-    return walletBatch(db,services,row,body,job);
+    const result=await walletBatch(db,services,row,body,job);
+    if(body.mode==='recovery' && result.status==='submitted')return settleVerifiedOrder(db,origin,{...body,action:'refresh'},services);
+    return result;
   }
   if(!services.expectedTest&&!services.near)throw new ServiceUnavailable('The NEAR job contract is awaiting activation.');
   if(services.near){
@@ -150,7 +163,7 @@ async function settleVerifiedOrder(db,origin,body,services){
       matchesQuote(transfer,row,job,services.expectedTest);
       const saved=JSON.parse(row.evidence);
       if(row.outcome==='payout-confirmed'){
-        if(transfer.phase!=='settled'||transfer.destinations?.[0]?.payoutSignature!==saved[0]?.signature||row.received!==row.quoted_net)throw Error('Payout evidence requires reconciliation');
+        if(transfer.destinations?.[0]?.status!=='paid'||transfer.destinations?.[0]?.payoutSignature!==saved[0]?.signature||row.received!==row.quoted_net)throw Error('Payout evidence requires reconciliation');
         await verifyPayout(services.transaction,saved[0].signature,job.recipient,row.quoted_net,services.program);
         await verifyPaymentScreen(await services.transaction(saved[0].signature,'jsonParsed'),owner,job.recipient,await screeningSigner(services.account),services.program);
       }else{
@@ -189,6 +202,11 @@ async function settleVerifiedOrder(db,origin,body,services){
     if(action==='wallet-step' && (!Number.isSafeInteger(body.step)||body.step<0||body.step>100))throw Error('Invalid wallet step');
     if(action==='prepare-wallet'&&body.mode==='payment')await screeningSigner(services.account);
     const result=await walletBatch(db,services,row,{...body,canRescue:transfer.recovery?.canRescue===true},job);
+    // The same invoice authorization covers checking the batch just submitted.
+    // Never prepare another payment or infer a refund from the API label alone.
+    if(body.mode==='recovery' && result.status==='submitted'){
+      return settleVerifiedOrder(db,origin,{...body,action:'refresh'},services);
+    }
     return {...result,...(body.batchReview&&action==='prepare-wallet'?{summary:{job,invoice:row.invoice,amount:row.amount,net:row.quoted_net}}:{})};
   }
   if(action==='prepare-refund'){
@@ -208,7 +226,9 @@ async function settleVerifiedOrder(db,origin,body,services){
     if(transfer.phase!=='rescued'||!row.rescue_messages)throw Error('A route-specific prepared and confirmed rescue is required');
     const verified=await verifyRecovery(services.transaction,refundSignatures,JSON.parse(row.rescue_messages),owner,services.program);
     receipts=verified.receipts;received=verified.received;outcome='recovery-credit-confirmed';
-  }else if(transfer.phase==='settled'&&transfer.destinations?.[0].status==='paid'){
+  }else if(transfer.destinations?.[0]?.status==='paid'){
+    // Aggregate route phase may advance to reclaimed after payout. Verify the
+    // finalized recipient credit and screening proof rather than that label.
     const signature=transfer.destinations[0].payoutSignature;
     if(!signature)return {...displayInvoice(row,link.job_key),status:'awaiting-payout-evidence'};
     receipts=[await verifyPayout(services.transaction,signature,job.recipient,row.quoted_net,services.program)];

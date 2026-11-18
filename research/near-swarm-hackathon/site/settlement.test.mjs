@@ -17,7 +17,7 @@ function wire(owner,recipient,units){
  const msg=Buffer.concat([Buffer.from([1,0,1,3]),owner.pub,recipient.pub,program,block,Buffer.from([1,2,2,0,1,12]),data]);
  const sig=sign(null,msg,owner.privateKey);return {unsigned:Buffer.concat([Buffer.from([1]),Buffer.alloc(64),msg]).toString('base64'),signed:Buffer.concat([Buffer.from([1]),sig,msg]).toString('base64'),signature:base58(sig)};
 }
-test('two-wallet job binding, budget race, signed wallet funding, lost broadcast, recovery and receipt replay',async()=>{
+for (const payoutPhase of ['settled','deploying','reclaimed']) test('verified payout survives route phase '+payoutPhase+' with funding and recovery replay protection',async()=>{
  const db=store(),customer=identity(),agent=identity(),near=identity(),screener=identity(),owner=customer.owner,id=randomUUID(),job={recipient:agent.owner,budget:'10000000',cap:'6000000'};
  const cfg={owner:'3jLoS2wbNgtKzieUUxwg6Xhdv6gbZkHDtPWA9ZAgspFh',executable:false,data:[Buffer.concat([sha('account:ComplianceConfig').subarray(0,8),screener.pub]).toString('base64'),'base64']};
  const transfers=new Map(),known=new Map(),receipts=new Map(),batches=new Map();let loss=true,broadcasts=0,fee='10';
@@ -31,7 +31,7 @@ test('two-wallet job binding, budget race, signed wallet funding, lost broadcast
  async function send(action,data={},who=customer,jobId=id,change={}){
  const body={expires:Date.now()+240000,owner:who.owner,id:jobId,action,...data};
  body.signature=sign(null,Buffer.from(signedMessage(origin,body)),who.privateKey).toString('hex');
- const req=new Request(origin+'/near-swarm/api/'+(['create','close','read'].includes(action)?'orders':'settlement'),{method:'POST',headers:{'content-type':'application/json',origin},body:JSON.stringify({...body,...change})});
+ const req=new Request(origin+'/near-swarm/api/'+(['create','close','read'].includes(action)?'orders':['share-receipt','revoke-receipt'].includes(action)?'receipt-share':'settlement'),{method:'POST',headers:{'content-type':'application/json',origin},body:JSON.stringify({...body,...change})});
  const r=await serve(req,{SWARM_JOBS:db}, {},undefined,services);return {code:r.status,...await r.json()};}
  assert.equal((await send('create',{recipient:job.recipient,budget:job.budget,limit:job.cap})).code,200);
  const expires=Date.now()+230000,link={expires,nearOwner:'alice.near',nearJobId:'work-42'},nonce=randomBytes(32);
@@ -75,9 +75,18 @@ test('two-wallet job binding, budget race, signed wallet funding, lost broadcast
  const ix={programId:program,data:base58(ixdata),accounts:[owner,identity().owner,stepAccount,agent.owner,'11111111111111111111111111111111',screeningConfigAddress]};
  const tx={slot:4,blockTime:1000,meta:{err:null,fee:5,preBalances:[50,7000000,10],postBalances:[45,1000010,6000000],innerInstructions:[]},
  transaction:{signatures:[payout],message:{accountKeys:[owner,stepAccount,agent.owner].map(pubkey=>({pubkey})),instructions:[proof,ix]}}};
- receipts.set(payout,{jsonParsed:tx});t.phase='settled';t.destinations=[{wallet:agent.owner,amountRaw:'5999990',status:'paid',payoutSignature:payout}];
+ t.phase=payoutPhase;t.destinations=[{wallet:agent.owner,amountRaw:'5999990',status:'paid',payoutSignature:payout}];
+ assert.notEqual((await send('refresh',{invoice:'one'})).code,200,'Paid API status alone must not confirm a payout');
+ receipts.set(payout,{jsonParsed:tx});
  const final=await send('refresh',{invoice:'one'});assert.equal(final.status,'payout-confirmed',JSON.stringify(final));assert.equal(final.transactions[0].screening.coverage,'Payment creator and destination');
  assert.deepEqual(await send('refresh',{invoice:'one'}),final);
+ const shared=await send('share-receipt',{invoice:'one'});assert.equal(shared.code,200,JSON.stringify(shared));
+ const publicResponse=await serve(new Request(shared.url),{SWARM_JOBS:db},{},undefined,services);
+ const publicText=await publicResponse.text();assert.equal(publicResponse.status,200);assert(publicText.includes(payout));assert(!publicText.includes(owner));assert(!publicText.includes(id));
+ assert.equal((await send('share-receipt',{invoice:'one'},identity())).code,400);
+ assert.equal((await send('share-receipt',{invoice:'one'})).url,shared.url);
+ assert.equal((await send('revoke-receipt',{invoice:'one'})).status,'revoked');
+ assert.equal((await serve(new Request(shared.url),{SWARM_JOBS:db},{},undefined,services)).status,404);
  db.prepare('UPDATE swarm_orders SET cap=? WHERE owner=? AND id=?').bind('5999999',owner,id).run();
  assert.match((await send('refresh',{invoice:'one'})).error,/signed work order/);
  db.prepare('UPDATE swarm_orders SET cap=? WHERE owner=? AND id=?').bind(job.cap,owner,id).run();
@@ -94,12 +103,14 @@ test('two-wallet job binding, budget race, signed wallet funding, lost broadcast
  const tr=transfers.get(otherQ.reference);tr.phase='recoverable';tr.recovery={canRescue:true};
  services.prepareRefund=async()=>({rescueTxs:[{base64:refund.unsigned}]});
  assert.equal((await send('prepare-refund',{invoice:otherQ.invoice})).status,'recovery-prepared');
+ assert.equal((await send('prepare-wallet',{invoice:otherQ.invoice,mode:'recovery',extra:'10'})).items.length,1);
  tr.phase='rescued';
  const recoveryIx={programId:program,accounts:[owner,owner],data:base58(Buffer.concat([sha('global:refund_failed_step').subarray(0,8),randomBytes(33)]))};
  const rtx={slot:12,meta:{err:null,fee:5,preBalances:[500],postBalances:[515]},transaction:{signatures:[refund.signature],message:{accountKeys:[{pubkey:owner}],instructions:[recoveryIx]}}};
  receipts.set(refund.signature,{base64:{slot:12,meta:{err:null},transaction:[refund.signed,'base64']},jsonParsed:rtx});
  await assert.rejects(()=>verifyRecovery(services.transaction,[refund.signature,refund.signature],['duplicate','duplicate'],owner));
  assert.equal((await send('refresh',{invoice:otherQ.invoice,refundSignatures:[payout]})).code,400);
- const refundResult=await send('refresh',{invoice:otherQ.invoice,refundSignatures:[refund.signature]});assert.equal(refundResult.status,'recovery-credit-confirmed',JSON.stringify(refundResult));assert.equal(refundResult.creditedLamports,'20');
- const history=(await send('read')).job;assert.equal(history.near.jobKey,binding.jobKey);assert.deepEqual(new Set(history.recentInvoices.map(i=>i.outcome)),new Set(['payout-confirmed','recovery-credit-confirmed']));assert.equal((await send('close')).job.state,'closed');assert.equal((await send('invoice',{...invoice,invoice:'closed'})).code,400);
+ db.prepare('UPDATE swarm_wallet_batches SET done=1,progress=? WHERE reference=? AND mode=?').bind(JSON.stringify([{signature:refund.signature,landed:true,debit:'0'}]),otherQ.reference,'recovery').run();
+ const refundResult=await send('wallet-run',{invoice:otherQ.invoice,mode:'recovery',extra:'10',operation:'step',step:1});assert.equal(refundResult.status,'recovery-credit-confirmed',JSON.stringify(refundResult));assert.equal(refundResult.creditedLamports,'20');
+ const history=(await send('read')).job;assert.equal(history.near.jobKey,binding.jobKey);assert.deepEqual(new Set(history.recentInvoices.map(i=>i.outcome)),new Set(['payout-confirmed','recovery-credit-confirmed']));assert.equal((await send('cancel-job')).status,'job-stopped');assert.equal((await send('cancel-job')).status,'job-stopped');assert.equal((await send('close')).job.state,'closed');assert.equal((await send('invoice',{...invoice,invoice:'closed'})).code,400);
 });
