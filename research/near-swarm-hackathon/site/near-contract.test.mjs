@@ -14,7 +14,7 @@ function fixture(){
   let chain='mainnet',hash=env.SWARM_NEAR_CODE_HASH,permission='FullAccess';
   const calls=[];
   async function rpc(endpoint,method,args){
-    assert.equal(endpoint,'https://rpc.mainnet.near.org');calls.push({method,args});
+    assert.ok(['https://rpc.mainnet.near.org','https://rpc.mainnet.fastnear.com'].includes(endpoint));calls.push({method,args});
     if(method==='status')return {chain_id:chain};
     if(args.request_type==='view_account')return {code_hash:hash};
     if(args.request_type==='view_access_key')return {permission,nonce:42,block_hash:base58(randomBytes(32))};
@@ -81,4 +81,16 @@ test('dedicated implicit NEAR accounts are supported and remain bound to their e
   for(const invalid of ['abc.testnet','0x'+f.pub.toString('hex'),f.pub.toString('hex').toUpperCase(),'bad account.near']){
     assert.throws(()=>nearContractServices({...f.env,SWARM_NEAR_CONTRACT:invalid},f.rpc),/configuration/);
   }
+});
+
+test('NEAR read fallback verifies network and pinned configuration without submitting transactions',async()=>{
+ const f=fixture();let fallback=0;
+ const client=nearContractServices(f.env,async(endpoint,method,args)=>{
+  if(endpoint==='https://rpc.mainnet.near.org')throw Error('Throttled');
+  fallback++;assert.ok(['status','query'].includes(method));return f.rpc(endpoint,method,args);
+ });
+ await client.readiness();assert.ok(fallback>=3);
+ f.changeChain('testnet');await assert.rejects(()=>nearContractServices(f.env,async(endpoint,method,args)=>{
+  if(endpoint==='https://rpc.mainnet.near.org')throw Error('Throttled');return f.rpc(endpoint,method,args);
+ }).readiness(),/network/);
 });

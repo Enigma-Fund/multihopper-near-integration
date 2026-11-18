@@ -93,3 +93,27 @@ Save the following for each invoice: UTC timestamps, network, contract address a
 ## Remaining live requirements
 
 Complete the Solana wallet payment for the already-finalized NEAR invoice; verify the resulting payout and screening proof; publish and independently verify the NEAR receipt. A live refund additionally needs an actual recoverable route with positive funds, not a fabricated repayment. Then finish the website recording and attach both-chain receipts. These local Keychain identities use the supervised demo connector; they are not imported into Meteor. The existing production API is consumed unchanged. No core source is included in the public integration release.
+
+### 18 November — guided actions and approval reduction
+
+The page now explains the next action, highlights its button with a subtle ripple,
+and offers an arrow that scrolls to and focuses that control. Reduced-motion
+preferences disable animation. Disabled controls do not ripple.
+
+Within the current page session, an unexpired wallet-run authorization is reused
+only for the exact owner, job, invoice, payment/recovery mode and cost cap.
+Disconnect clears it; signatures are not persisted or renewed automatically.
+Compatible Solana transactions remain bundled. NEAR receipt publication remains
+a separate wallet approval after verified payout/refund; this is not a promise of
+one cross-chain signature.
+
+Validation: 43 site tests passed, including exact-scope reuse, expiry, changed
+budget/identity/recovery mode, stored-batch recovery and duplicate-funding checks.
+Browser verified that the guide focuses the intended button and its ripple runs.
+NEAR read fallback checks mainnet and retains pinned contract/configuration checks;
+it does not submit transactions. Provider reference: https://docs.fastnear.com/rpc.
+
+Live read at finalized Solana slot 470855712: transfer 264 was executing; agent
+balance remained zero. Saved progress contained three landed steps and only one
+original keeper-funding entry. This is not yet evidence of completed payout,
+refund or final NEAR settlement. Do not create a second invoice to resume it.

@@ -42,12 +42,30 @@ export function unsignedNearCall({signer, publicKey, nonce, blockHash, contract,
     nearInteger(nonce, 8), nearString(contract), fromBase58(blockHash, 32), nearInteger(1, 4), call]));
 }
 
-export function nearContractServices(env, rpc) {
+export function nearContractServices(env, transportRpc) {
   const contract = env.SWARM_NEAR_CONTRACT;
   if (!contract) return undefined;
   if (!/^[0-9a-f]{64}$/.test(contract) && !/^(?=.{2,64}$)[a-z0-9]+(?:[-_.][a-z0-9]+)*\.near$/.test(contract)) throw Error('Invalid NEAR contract configuration');
   fromBase58(env.SWARM_NEAR_CODE_HASH, 32);
   const endpoint = 'https://rpc.mainnet.near.org';
+  const alternatives=[endpoint,'https://rpc.mainnet.fastnear.com'];
+  const checkedNetworks=new Set();
+  async function rpc(_endpoint,method,params){
+    let failure;
+    // These calls only read chain state; wallet submission is separate.
+    for(const candidate of alternatives){
+      try{
+        if(!checkedNetworks.has(candidate)){
+          const status=await transportRpc(candidate,'status',[]);
+          if(status.chain_id!=='mainnet')throw Error('Unexpected NEAR network');
+          checkedNetworks.add(candidate);
+          if(method==='status')return status;
+        }
+        return await transportRpc(candidate,method,params);
+      }catch(error){failure=error;}
+    }
+    throw failure;
+  }
   let verified;
   async function check() {
     if (!verified) verified = (async () => {

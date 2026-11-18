@@ -1,3 +1,4 @@
+import {authorizationCache} from '/near-swarm/authorization-cache.mjs';
 import {meteorRequest} from '/near-swarm/near-wallet.mjs';
 import {localDemoWallet,localNearRequest,prepareLocalApproval} from '/near-swarm/local-demo-wallet.mjs';
 import {runPayment} from '/near-swarm/payment-runner.mjs';
@@ -7,6 +8,19 @@ import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
 
 const el = id => document.getElementById(id);
+const permissions=authorizationCache();
+function guide(target,why){
+  document.querySelectorAll('.guided-target').forEach(node=>node.classList.remove('guided-target'));
+  const action=el('guide-action');
+  action.hidden=!target;
+  el('guide-why').textContent=why;
+  if(!target)return;
+  const control=el(target);
+  control.classList.add('guided-target');
+  action.textContent='↓ Show me: '+control.textContent;
+  action.onclick=()=>{control.closest('details')?.setAttribute('open','');control.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});control.focus({preventScroll:true});};
+}
+
 const milestoneNames=['Work order','NEAR job & invoice','Wallet approval','Solana payout','NEAR receipt'];
 let milestoneDone=-1;
 function milestone(done,next){
@@ -17,6 +31,9 @@ function milestone(done,next){
     item.dataset.state=i<=milestoneDone?'done':'pending';if(i===milestoneDone+1)item.setAttribute('aria-current','step');item.append(title,state);return item;
   }));
   el('payment-next').textContent=next;
+  const targets=['connect','link-job','pay','refresh','publish-near'];
+  guide(targets[milestoneDone+1],next);
+
 }
 milestone(-1,'Connect your wallet, then create or resume your existing work order.');
 const providers = [];
@@ -29,6 +46,7 @@ let unsubscribe;
 let working=false;
 for(const field of ['job-id','invoice'])el(field).addEventListener('input',()=>{milestoneDone=-1;milestone(-1,'Resume this invoice to verify its saved progress.');});
 function forgetWallet() {
+  permissions.clear();
   unsubscribe?.();
   unsubscribe=undefined;
   connected=undefined;
@@ -104,6 +122,7 @@ async function connect() {
   if(!el('job-id').value){
     try {el('job-id').value=localStorage.getItem('near-swarm-job:'+connected.owner)||'';} catch { /* Optional browser storage. */ }
   }
+  guide(el('job-id').value?'read':'create',el('job-id').value?'Resume your saved work order so we can verify what is already complete.':'Sign the work order to set the agent, budget and spending limit. This message does not move funds.');
   return connected;
 }
 function lamports(id) {
@@ -126,7 +145,7 @@ function button(id,output,fn) {
       // NEAR/Solana signature steps. Never open a second popup after an await.
       if(demoMode&&id!=='verify'&&providers[Number(el('wallet').value)]?.name==='Dedicated demo wallet')prepareLocalApproval();
       el(output).textContent=await fn();
-    } catch(e){el(output).textContent=e.message;if(output==='settlement-result')el('payment-next').textContent='Paused: '+e.message+' Your saved invoice remains unchanged; do not create another payment.';}
+    } catch(e){el(output).textContent=e.message;if(output==='settlement-result'){el('payment-next').textContent='Paused: '+e.message+' Your saved invoice remains unchanged; do not create another payment.';guide('refresh','Check the saved invoice before taking any further payment action. No new funding is needed to check its status.');}}
     finally{working=false;buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
   };
 }
@@ -180,9 +199,12 @@ async function authorize(action,fields){
   const job=action==='wallet-run'?{id:el('job-id').value.trim()}:activeJob();
   if(!wallet)throw Error('Connect the wallet that owns this work order.');
   const body={owner:wallet.owner,id:job.id,action,expires:Date.now()+285000,...fields};
-  body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
-  if(connected!==wallet)throw Error('Your wallet account changed.');
-  return body;
+  return permissions.get(body,async()=>{
+    guide(null,'Review the scoped authorization in your wallet. It allows only this invoice and budget; it does not transfer funds.');
+    body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
+    if(connected!==wallet)throw Error('Your wallet account changed.');
+    return body;
+  });
 }
 async function approveNearOperation(plan,popup) {
   const result=await nearWalletRequest('sign',{transactions:plan.transaction},popup);
@@ -219,7 +241,7 @@ button('link-job','settlement-result',async()=>{
   if(!proof||proof.accountId!==nearOwner||wallet!==connected)throw Error('Select the NEAR account and Solana wallet named in this order.');
   body.nearProof={accountId:proof.accountId,publicKey:proof.publicKey,signature:proof.signature,nonce:hex(nonce)};
   body.signature=hex(await wallet.sign(new TextEncoder().encode(signedMessage(location.origin,body))));
-  try{const result=await withNearApproval(body,popup);currentJob.near={account:result.nearAccount,jobId:result.nearJobId,jobKey:result.jobKey};return 'Linked '+result.nearAccount+' / '+result.nearJobId+' to this work order.';}finally{popup?.close();}
+  try{const result=await withNearApproval(body,popup);currentJob.near={account:result.nearAccount,jobId:result.nearJobId,jobKey:result.jobKey};guide('quote','Reserve this invoice against the NEAR job budget before paying the agent.');return 'Linked '+result.nearAccount+' / '+result.nearJobId+' to this work order.';}finally{popup?.close();}
 });
 function invoiceId(){const id=el('invoice').value.trim();if(!id)throw Error('Enter an invoice ID.');return id;}
 function pretty(row){
@@ -231,7 +253,7 @@ function pretty(row){
 button('quote','settlement-result',async()=>{
   activeJob();
   const popup=openNearApproval();
-  try{return pretty(await withNearApproval(await authorize('invoice',{invoice:invoiceId(),recipient:activeJob().recipient,amount:lamports('amount'),minimum:lamports('minimum')}),popup));}
+  try{const result=await withNearApproval(await authorize('invoice',{invoice:invoiceId(),recipient:activeJob().recipient,amount:lamports('amount'),minimum:lamports('minimum')}),popup);guide('pay','Approve the invoice payment. The app reconciles previous funding before requesting any remaining signatures.');return pretty(result);}
   finally{popup?.close();}
 });
 button('publish-near','settlement-result',async()=>{
@@ -258,7 +280,7 @@ for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(bu
     authorize:async action=>{unchanged();return authorize(action,fields);},
     request:async body=>{unchanged();return post('settlement',body);},
     signAll:async transactions=>{unchanged();return (await wallet.signAll(transactions.map(bytes=>Uint8Array.from(atob(bytes),c=>c.charCodeAt(0))))).map(b64);},
-    onProgress:text=>{el('settlement-result').textContent=text;el('payment-next').textContent=text;},
+    onProgress:text=>{el('settlement-result').textContent=text;el('payment-next').textContent=text;guide(null,text+' Keep this page open. Previously confirmed funding will not be repeated.');},
     onSummary:summary=>{currentJob={...summary.job,id:job.id,owner:wallet.owner};el('recipient').value=summary.job.recipient;}
   }):await runPayment({
     authorize:async action=>{unchanged();return authorize(action,fields);},
