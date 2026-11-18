@@ -84,7 +84,7 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
       return json(readRpc ? await screeningReceipt(readRpc,data.signature,data.routeId) : await lookupReceipt(data.signature,data.routeId,endpoints));
     }
     if(!env.SWARM_JOBS)return json({error:'Job storage unavailable'},503);
-    if(path==='/api/receipt-share')return json(await shareReceipt(env.SWARM_JOBS,url.origin,data));
+    if(path==='/api/receipt-share')return json(await shareReceipt(env.SWARM_JOBS,url.origin,data,services));
     if(path==='/api/settlement')return json(await settleOrder(env.SWARM_JOBS,url.origin,data,services));
     const job=await order(env.SWARM_JOBS,url.origin,data);
     if(data.action==='read'){

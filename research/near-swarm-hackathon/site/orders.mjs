@@ -33,7 +33,7 @@ export function signedMessage(origin, request, now = Date.now()) {
     fields.push('Agent payout address: '+request.recipient, 'Asset: native SOL', 'Budget (lamports): '+request.budget, 'Per payment (lamports): '+request.limit);
   }
   if(action==='cancel-job')fields.push('Stop new workspace payments for this job. Already submitted chain transactions may complete. Recover only API-eligible funds.');
-  if(action==='share-receipt')fields.push('Publish this invoice’s verified outcome, credited amount and transaction signatures to anyone with the share link.');
+  if(action==='share-receipt')fields.push('Publish this invoice’s verified outcome, credited amount, transaction signatures and matching NEAR settlement commitments to anyone with the share link.');
   if(action==='link'){
     if(typeof request.nearOwner!=='string' || !/^(?=.{2,64}$)[a-z0-9]+(?:[-_.][a-z0-9]+)*$/.test(request.nearOwner) ||
        typeof request.nearJobId!=='string' || !/^[A-Za-z0-9_-]{1,48}$/.test(request.nearJobId))throw Error('Invalid NEAR account or job ID');

@@ -26,3 +26,8 @@ CREATE TABLE IF NOT EXISTS swarm_shared_receipts (
  reference TEXT PRIMARY KEY REFERENCES swarm_invoices(external_id),
  token TEXT NOT NULL UNIQUE, payload TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS swarm_reconcile (
+ reference TEXT PRIMARY KEY REFERENCES swarm_invoices(external_id),
+ due INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0,
+ lease TEXT, until INTEGER, status TEXT
+);

@@ -71,3 +71,7 @@ The production API adapter can prepare and confirm rescue for a failed, owner-ch
 When explicitly enabled with `MH_LIVE_ENABLED=1` and all four `MH_LIVE_DB_PATH`, `MH_LIVE_API_URL`, `MH_LIVE_API_ORIGIN` and `MH_LIVE_API_KEY` settings, the loopback server exposes wallet-authenticated `/api/live/jobs`, `/api/live/quote`, and `/api/live/freeze` endpoints. These are manual owner-initiated plans and quotes, not funded NEAR jobs or autonomous agent grants. The live configuration is off by default; no real API calls have been made. Transaction preparation is deliberately not exposed until independent transaction validation and safe recovery are implemented. The adapter cannot prove TRM is enabled; do not treat a quote as a screening result or use this research service with real funds.
 
 
+
+## Next isolated release: durable reconciliation and cancellation research
+
+The integration includes a leased scheduled reconciler and unified Solana/NEAR shareable receipts. See API.md for configuration and capability limits. The scheduled worker is not yet activated live. The separate cancellation-contract directory is a synthetic native-NEAR escrow experiment, not deployed Solana cancellation. It passed 11 real local-chain checks; the integration suite passed 96 tests. Core MultiHopper programs are not included or modified.
