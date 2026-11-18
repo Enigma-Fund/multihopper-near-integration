@@ -7,6 +7,18 @@ import {nearMessage} from '/near-swarm/near-job.mjs';
 import {lookupReceipt} from '/near-swarm/receipt.mjs';
 
 const el = id => document.getElementById(id);
+const milestoneNames=['Work order','NEAR job & invoice','Wallet approval','Solana payout','NEAR receipt'];
+let milestoneDone=-1;
+function milestone(done,next){
+  milestoneDone=Math.max(milestoneDone,done);
+  el('payment-milestones').replaceChildren(...milestoneNames.map((name,i)=>{
+    const item=document.createElement('li'),title=document.createElement('strong'),state=document.createElement('small');
+    title.textContent=(i+1)+'. '+name;state.textContent=i<=milestoneDone?'Confirmed':i===milestoneDone+1?'Current step':'Not yet confirmed';
+    item.dataset.state=i<=milestoneDone?'done':'pending';if(i===milestoneDone+1)item.setAttribute('aria-current','step');item.append(title,state);return item;
+  }));
+  el('payment-next').textContent=next;
+}
+milestone(-1,'Connect your wallet, then create or resume your existing work order.');
 const providers = [];
 const demoMode=new URL(location.href).searchParams.get('localDemo')==='1';
 const nearWalletRequest=demoMode?localNearRequest:meteorRequest;
@@ -15,6 +27,7 @@ let connected;
 let currentJob;
 let unsubscribe;
 let working=false;
+for(const field of ['job-id','invoice'])el(field).addEventListener('input',()=>{milestoneDone=-1;milestone(-1,'Resume this invoice to verify its saved progress.');});
 function forgetWallet() {
   unsubscribe?.();
   unsubscribe=undefined;
@@ -22,7 +35,7 @@ function forgetWallet() {
   el('connect').textContent='Connect wallet';
   el('job-id').value='';
   el('order-result').textContent='';
-  currentJob=undefined;el('settlement-result').textContent='';
+  currentJob=undefined;el('settlement-result').textContent='';milestoneDone=-1;milestone(-1,'Connect the wallet that owns this work order.');
 }
 function renderProviders() {
   const select=el('wallet');
@@ -101,7 +114,7 @@ function lamports(id) {
 }
 async function post(path,body) {
   const r=await fetch('/near-swarm/api/'+path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
-  const json=await r.json(); if(!r.ok){const error=new Error(json.error || 'Service unavailable.');error.status=r.status;throw error;}return json;
+  const json=await r.json(); if(r.ok&&path==='settlement'){if(json.summary)milestone(1,'Review the remaining transactions in your wallet. Confirmed funding is retained.');if(json.status==='batch-stored')milestone(2,'Your signed batch is saved. Transactions are being submitted in order.');if(json.status==='submitted')milestone(2,'Transactions submitted. Choose Check settlement to verify final delivery.');if(json.status==='payout-confirmed')milestone(3,'Payout verified. Choose Record settlement on NEAR.');if(json.near?.status==='confirmed'&&json.status==='payout-confirmed')milestone(4,'Payout and NEAR settlement receipt are verified.');if(json.status==='recovery-credit-confirmed')el('payment-next').textContent='Refund verified. Choose Record settlement on NEAR to record the refund.';} if(!r.ok){const error=new Error(json.error || 'Service unavailable.');error.status=r.status;throw error;}return json;
 }
 function button(id,output,fn) {
   el(id).onclick=async()=>{
@@ -113,7 +126,7 @@ function button(id,output,fn) {
       // NEAR/Solana signature steps. Never open a second popup after an await.
       if(demoMode&&id!=='verify'&&providers[Number(el('wallet').value)]?.name==='Dedicated demo wallet')prepareLocalApproval();
       el(output).textContent=await fn();
-    } catch(e){el(output).textContent=e.message;}
+    } catch(e){el(output).textContent=e.message;if(output==='settlement-result')el('payment-next').textContent='Paused: '+e.message+' Your saved invoice remains unchanged; do not create another payment.';}
     finally{working=false;buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
   };
 }
@@ -139,7 +152,7 @@ for(const action of ['create','read','close']) button(action,'order-result',asyn
   const {job}=await post('orders',body);
   try {localStorage.setItem('near-swarm-job:'+wallet.owner,id);} catch { /* The signed order is already saved by the service. */ }
   if(wallet!==connected)return 'Order saved for the wallet that signed it.';
-  currentJob={...job,owner:wallet.owner};
+  currentJob={...job,owner:wallet.owner};milestoneDone=-1;milestone(0,job.near?'NEAR job linked. Resume your existing invoice.':'Next: create and link the NEAR job.');
   const recent=job.recentInvoices?.[0];
   if(job.near){el('near-owner').value=job.near.account;el('near-id').value=job.near.jobId;}
   if(recent&&!el('invoice').value)el('invoice').value=recent.invoice;
@@ -245,7 +258,7 @@ for(const [buttonId,mode] of [['pay','payment'],['refund','recovery']])button(bu
     authorize:async action=>{unchanged();return authorize(action,fields);},
     request:async body=>{unchanged();return post('settlement',body);},
     signAll:async transactions=>{unchanged();return (await wallet.signAll(transactions.map(bytes=>Uint8Array.from(atob(bytes),c=>c.charCodeAt(0))))).map(b64);},
-    onProgress:text=>{el('settlement-result').textContent=text;},
+    onProgress:text=>{el('settlement-result').textContent=text;el('payment-next').textContent=text;},
     onSummary:summary=>{currentJob={...summary.job,id:job.id,owner:wallet.owner};el('recipient').value=summary.job.recipient;}
   }):await runPayment({
     authorize:async action=>{unchanged();return authorize(action,fields);},
