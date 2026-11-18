@@ -72,6 +72,6 @@ When explicitly enabled with `MH_LIVE_ENABLED=1` and all four `MH_LIVE_DB_PATH`,
 
 
 
-## Next isolated release: durable reconciliation and cancellation research
+## Live isolated reconciliation and cancellation research
 
-The integration includes a leased scheduled reconciler and unified Solana/NEAR shareable receipts. See API.md for configuration and capability limits. The scheduled worker is not yet activated live. The separate cancellation-contract directory is a synthetic native-NEAR escrow experiment, not deployed Solana cancellation. It passed 11 real local-chain checks; the integration suite passed 96 tests. Core MultiHopper programs are not included or modified.
+The integration includes a leased scheduled reconciler and unified Solana/NEAR shareable receipts. See API.md for configuration and capability limits. The verification-only scheduler is activated once per minute on the isolated Swarm service; unified receipt version 2 is live. The separate cancellation-contract directory is a synthetic native-NEAR escrow experiment, not deployed Solana cancellation. It passed 11 real local-chain checks; the integration suite passed 96 tests. Core MultiHopper programs are not included or modified.

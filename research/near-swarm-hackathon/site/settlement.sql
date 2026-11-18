@@ -31,3 +31,7 @@ CREATE TABLE IF NOT EXISTS swarm_reconcile (
  due INTEGER NOT NULL, attempts INTEGER NOT NULL DEFAULT 0,
  lease TEXT, until INTEGER, status TEXT
 );
+CREATE TABLE IF NOT EXISTS swarm_reconcile_control (
+ id INTEGER PRIMARY KEY CHECK(id=1), token_hash TEXT NOT NULL,
+ last_run INTEGER, last_count INTEGER
+);

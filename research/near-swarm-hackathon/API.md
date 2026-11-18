@@ -1,4 +1,4 @@
-# Swarm for Hire API — release 3
+# Swarm for Hire API — release 4
 
 Base: https://multihopper-swarm-for-hire.pages.dev/near-swarm
 
@@ -48,11 +48,13 @@ Live invoice agent-brief-01: 2,487,562 lamports paid, finalized Solana signature
 
 Apply site/schema.sql and site/settlement.sql to a dedicated D1 database before release. Reproduce site tests with `node --test research/near-swarm-hackathon/site/*.test.mjs`. Do not publish ops/build, private configurations, approval journals, keys, core programs or node_modules.
 
-## Durable reconciliation and unified receipts (isolated next release)
+## Durable reconciliation and unified receipts (live isolated service)
 
 `site/durable.mjs` treats saved invoices as the durable queue. A separate scheduled worker (`site/reconciler-worker.mjs`) polls due unfinished invoices, claims a 60-second lease atomically, verifies existing settlement evidence and schedules a retry after 30 seconds. Leases are fenced: an expired worker cannot overwrite its successor. Due ordering prevents a permanently pending invoice from starving later work. A missed webhook is recovered by polling. No preparation, signing, funding or broadcasting is performed by this worker.
 
-Build the standalone scheduled bundle with `node site/build.mjs /tmp/swarm-reconciler.mjs reconciler` from this integration directory. Configure a one-minute Cloudflare Cron Trigger, the same dedicated SWARM_JOBS database and the existing read/service configuration. Apply the added swarm_reconcile table first. There is no public HTTP trigger. This worker has not yet been activated in the hosted environment; build/test success is not evidence that scheduling is live. Browser-held unsigned or unbroadcast transactions still require the wallet flow; NEAR publication still requires its wallet approval.
+Live activation uses `site/reconcile-scheduler.mjs`: the dedicated `swarm-settlement-reconciler` Worker runs once per minute and calls POST /api/reconcile with its scoped secret. This endpoint only verifies existing invoices. It authenticates against a SHA-256 credential hash in the isolated D1 database; unauthenticated requests reject. The scheduler holds no wallet, Solana API or NEAR publisher key. `swarm_reconcile_control.last_run` records successful reconciliation heartbeats. Pages continues to hold its existing service configuration. Browser-held unsigned or unbroadcast transactions still require the wallet flow; NEAR publication still requires its wallet approval.
+
+The standalone direct-D1 reconciler build remains available for separate installations, but is not the deployed scheduler. Neither variant funds or broadcasts. No live in-flight invoice existed at activation: the existing invoice was already confirmed and was correctly skipped; interrupted processing and duplicate prevention were tested with synthetic fixtures.
 
 Shared receipt version 2 checks the pinned NEAR contract's finalized invoice against the verified Solana amount, outcome and evidence hash. A matching record includes the contract, job/invoice commitments and evidence commitment. Otherwise it explicitly says not-verified. The signed sharing consent includes NEAR commitments. These are a snapshot at issuance, not a continuously monitored status or a TRM-issued signature. Existing share URLs retain their original consented payload; revoke and create a new share to include newly confirmed NEAR evidence.
 

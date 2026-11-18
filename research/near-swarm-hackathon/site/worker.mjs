@@ -1,3 +1,4 @@
+import {reconcileTrigger} from './reconcile-trigger.mjs';
 import {shareReceipt,publicSharedReceipt,sharedReceiptHtml} from './shared-receipt.mjs';
 import {order} from './orders.mjs';
 import {screeningReceipt,lookupReceipt,ReceiptUnavailable,publicReceiptEndpoints} from './receipt.mjs';
@@ -55,12 +56,15 @@ export async function serve(request,env,assets,readRpc,services=settlementServic
         return json({...readiness,notifications},readiness.solanaApi==='authenticated'&&readiness.provider==='registered'&&readiness.nearContract==='verified'&&readiness.history==='available'?200:503);
       }
       const ready=readiness.solanaApi==='authenticated'&&readiness.provider==='registered'&&readiness.nearContract==='verified'&&readiness.history==='available';
-      return json({name:'MultiHopper Swarm for Hire',version:3,documentation:url.origin+base+'/api/docs',workspaceStop:true,healthyRouteCancellation:false,shareableReceipts:true,nearJobLinks:true,productionApiConfigured:services.configured,readiness,invoiceVerification:true,chain:'solana:mainnet',signedJobs:true,nearContract:services.near?.contract??null,fundedPayments:ready,refunds:ready,
+      return json({name:'MultiHopper Swarm for Hire',version:4,durableReconciliation:true,receiptVersion:2,documentation:url.origin+base+'/api/docs',workspaceStop:true,healthyRouteCancellation:false,shareableReceipts:true,nearJobLinks:true,productionApiConfigured:services.configured,readiness,invoiceVerification:true,chain:'solana:mainnet',signedJobs:true,nearContract:services.near?.contract??null,fundedPayments:ready,refunds:ready,
       methods:{'POST /near-swarm/api/settlement':'Dual-signed NEAR job linkage, signed invoice quotes, payout and recovery reconciliation. Refer to the integration source for the signed fields.', 'POST /near-swarm/api/orders':'Sign the canonical message for create, read or close with the owner’s Solana wallet. See the public integration for the message format.',
       'POST /near-swarm/api/screening':{signature:'finalized Solana transaction signature',routeId:'32-byte on-chain route ID in hex'}}});
     }
     const asset=assets[path||'/']; if(!asset)return json({error:'Not found'},404);
     return new Response(request.method==='HEAD'?null:asset[1],{headers:{...security,'Content-Type':asset[0]}});
+  }
+  if(request.method==='POST'&&path==='/api/reconcile'){
+    try {const r=await reconcileTrigger(request,env.SWARM_JOBS,services);return json(r.body,r.status);}catch{return json({error:'Reconciliation unavailable'},503);}
   }
   if(request.method==='POST'&&path==='/api/notifications'){
     if(!env.SWARM_JOBS)return json({error:'Service unavailable'},503);
