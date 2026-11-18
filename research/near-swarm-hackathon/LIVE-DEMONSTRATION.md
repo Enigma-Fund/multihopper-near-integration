@@ -117,3 +117,19 @@ Live read at finalized Solana slot 470855712: transfer 264 was executing; agent
 balance remained zero. Saved progress contained three landed steps and only one
 original keeper-funding entry. This is not yet evidence of completed payout,
 refund or final NEAR settlement. Do not create a second invoice to resume it.
+
+### Refresh continuity and stronger action indicators
+
+The browser restores the active job, invoice, recipient and cost limits from an
+allowlisted local draft. No signatures, keys or claims of confirmed delivery are
+stored in that draft. Chain progress is reconciled through the existing invoice
+record after wallet reconnection. Start a new job explicitly creates a separate
+draft; previous jobs remain selectable. Local recovery depends on retaining this
+browser's site storage; other devices still need the job ID and owner wallet.
+Two staggered 2px rings expand and fade around the next action. Reduced-motion
+settings keep a static indicator instead. Browser refresh verified that
+agent-brief-01 and all entered limits survived. 46 site tests pass.
+
+The live batch still has three landed steps and one original keeper funding.
+Payout and NEAR settlement are not yet verified. The remaining wallet-review
+window must stay open across the message and transaction-batch steps.

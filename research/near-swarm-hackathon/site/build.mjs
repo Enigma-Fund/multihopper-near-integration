@@ -7,6 +7,7 @@ const receipt=await read('receipt.mjs');
 const assets={'/receipt.mjs':['text/javascript; charset=utf-8',receipt.replace("'./orders.mjs'","'/near-swarm/orders.mjs'")],'/':['text/html; charset=utf-8',html],'/browser.mjs':['text/javascript; charset=utf-8',(await read('browser.mjs')).replace("'./orders.mjs'","'/near-swarm/orders.mjs'")],'/orders.mjs':['text/javascript; charset=utf-8',orders.split('export async function verifyOrderSignature(')[0]]};
 assets['/near-wallet.mjs']=['text/javascript; charset=utf-8',await read('near-wallet.mjs')];
 assets['/payment-runner.mjs']=['text/javascript; charset=utf-8',await read('payment-runner.mjs')];
+assets['/resume-state.mjs']=['text/javascript; charset=utf-8',await read('resume-state.mjs')];
 assets['/authorization-cache.mjs']=['text/javascript; charset=utf-8',await read('authorization-cache.mjs')];
 assets['/batch-payment.mjs']=['text/javascript; charset=utf-8',await read('batch-payment.mjs')];
 assets['/local-demo-wallet.mjs']=['text/javascript; charset=utf-8',(await read('local-demo-wallet.mjs')).replace("'./orders.mjs'","'/near-swarm/orders.mjs'")];

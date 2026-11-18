@@ -1,3 +1,4 @@
+import {resumeStore,resumeFields} from '/near-swarm/resume-state.mjs';
 import {authorizationCache} from '/near-swarm/authorization-cache.mjs';
 import {meteorRequest} from '/near-swarm/near-wallet.mjs';
 import {localDemoWallet,localNearRequest,prepareLocalApproval} from '/near-swarm/local-demo-wallet.mjs';
@@ -44,14 +45,47 @@ let connected;
 let currentJob;
 let unsubscribe;
 let working=false;
-for(const field of ['job-id','invoice'])el(field).addEventListener('input',()=>{milestoneDone=-1;milestone(-1,'Resume this invoice to verify its saved progress.');});
+let drafts,draftKey=crypto.randomUUID(),draftOwner='',explicitNew=false;
+try{drafts=resumeStore(localStorage);}catch{}
+function listDrafts(){
+ const select=el('saved-jobs');
+ select.replaceChildren(...(drafts?.list()||[]).map(row=>new Option((row.fields['job-id']||'New job draft')+(row.fields.invoice?' · '+row.fields.invoice:''),row.key)));
+ select.value=draftKey;
+}
+function saveDraft(){
+ try{drafts?.save(draftKey,{owner:connected?.owner||draftOwner,fields:Object.fromEntries(resumeFields.map(id=>[id,el(id).value]))});listDrafts();}
+ catch{el('resume-note').textContent='Browser storage is unavailable. Keep your job and invoice IDs to resume on another visit.';}
+}
+function restoreDraft(row){
+ if(!row)return;
+ draftKey=row.key;draftOwner=row.owner;explicitNew=!row.fields['job-id'];currentJob=undefined;permissions.clear();
+ for(const id of resumeFields)el(id).value=row.fields[id];
+ milestoneDone=-1;milestone(-1,'Saved job restored. Reconnect its wallet to verify current chain progress.');
+ el('resume-note').textContent='Resuming your saved job. No payment is submitted by restoring this page.';
+ listDrafts();
+ if(connected)guide('pay','Resume the saved invoice to reconcile confirmed transactions before signing anything new.');
+}
+for(const id of resumeFields)el(id).addEventListener('input',saveDraft);
+window.addEventListener('pagehide',saveDraft);
+el('new-job').onclick=()=>{
+ if(working)return;saveDraft();draftKey=crypto.randomUUID();draftOwner=connected?.owner||'';explicitNew=true;currentJob=undefined;permissions.clear();
+ for(const id of resumeFields)el(id).value='';
+ el('budget').value='0.1';el('cap').value='0.025';milestoneDone=-1;
+ milestone(-1,'New job draft. Your previous jobs remain in Saved jobs.');
+ el('resume-note').textContent='New job draft — no funds moved. Previous jobs remain available.';
+ guide(connected?'create':'connect','Set the new job terms, then sign them.');saveDraft();
+};
+el('resume-job').onclick=()=>{if(working)return;const selected=el('saved-jobs').value;saveDraft();explicitNew=false;restoreDraft(drafts?.select(selected));};
+restoreDraft(drafts?.load());
+
+for(const field of ['job-id','invoice'])el(field).addEventListener('input',()=>{milestoneDone=-1;milestone(-1,'Resume this invoice to verify its saved progress.');if(connected)guide(el('job-id').value&&el('invoice').value?'pay':'read','Resume the same job to verify saved progress before any new payment.');});
 function forgetWallet() {
   permissions.clear();
   unsubscribe?.();
   unsubscribe=undefined;
   connected=undefined;
   el('connect').textContent='Connect wallet';
-  el('job-id').value='';
+  // Retain the draft when the wallet disconnects.
   el('order-result').textContent='';
   currentJob=undefined;el('settlement-result').textContent='';milestoneDone=-1;milestone(-1,'Connect the wallet that owns this work order.');
 }
@@ -119,10 +153,12 @@ async function connect() {
   }
   el('connect').textContent=connected.owner.slice(0,5)+'…'+connected.owner.slice(-5);
   if(previousOwner && previousOwner!==connected.owner)el('job-id').value='';
-  if(!el('job-id').value){
+  if(draftOwner&&draftOwner!==connected.owner){forgetWallet();throw Error('Reconnect the wallet that owns the saved job, or choose Start a new job.');}
+  if(!explicitNew&&!el('job-id').value){
     try {el('job-id').value=localStorage.getItem('near-swarm-job:'+connected.owner)||'';} catch { /* Optional browser storage. */ }
   }
-  guide(el('job-id').value?'read':'create',el('job-id').value?'Resume your saved work order so we can verify what is already complete.':'Sign the work order to set the agent, budget and spending limit. This message does not move funds.');
+  guide(el('job-id').value?(el('invoice').value?'pay':'read'):'create',el('job-id').value?'Resume your saved work order so we can verify what is already complete.':'Sign the work order to set the agent, budget and spending limit. This message does not move funds.');
+  saveDraft();
   return connected;
 }
 function lamports(id) {
@@ -146,7 +182,7 @@ function button(id,output,fn) {
       if(demoMode&&id!=='verify'&&providers[Number(el('wallet').value)]?.name==='Dedicated demo wallet')prepareLocalApproval();
       el(output).textContent=await fn();
     } catch(e){el(output).textContent=e.message;if(output==='settlement-result'){el('payment-next').textContent='Paused: '+e.message+' Your saved invoice remains unchanged; do not create another payment.';guide('refresh','Check the saved invoice before taking any further payment action. No new funding is needed to check its status.');}}
-    finally{working=false;buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
+    finally{saveDraft();working=false;buttons.forEach(b=>b.disabled=b.dataset.unavailable==='true');}
   };
 }
 button('connect','order-result',async()=>{const w=await connect();return 'Connected '+w.owner;});
@@ -160,7 +196,7 @@ for(const action of ['create','read','close']) button(action,'order-result',asyn
   let id=el('job-id').value.trim();
   if (!id && action==='create') id=crypto.randomUUID();
   if (!id) throw Error('Enter the job ID or create a job first.');
-  el('job-id').value=id;
+  el('job-id').value=id;saveDraft();
   const body={id,action,owner:wallet.owner,expires:Date.now()+240000};
   if(action==='create') Object.assign(body,{recipient:el('recipient').value.trim(),budget:lamports('budget'),limit:lamports('cap')});
   const msg=signedMessage(location.origin,body);
